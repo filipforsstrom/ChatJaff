@@ -1,0 +1,112 @@
+﻿@page "/createchat";
+@using System.ComponentModel.DataAnnotations;
+@using ChatJaffApp.Client.Chat.CreateChat.Models
+@inject HttpClient httpClient;
+@inject NavigationManager navManager;
+
+
+<div>
+    <div>
+        <h3>Add User to chat</h3>
+        <EditForm Model="@invMemberRequest" OnValidSubmit="@handleSearchSubmit">
+            <InputText @bind-Value="invMemberRequest.SearchedUsername" />
+            <button>
+                Add
+            </button>
+        </EditForm>
+    </div>
+    <div>
+        <p>@(ErrorMessage != null ? ErrorMessage : null)</p>
+    </div>
+    <div>
+        <h3>Participants</h3>
+        <div>
+            @if (ChatMembers != null || ChatMembers?.Count < 1)
+            {
+                @foreach (var member in ChatMembers)
+                {
+                    <p>@member.Username <button class="btn btn-danger btn-sm">delete</button></p>
+                    
+                }
+            }
+            else
+            {
+                <p>No users added =(</p>
+            }
+        </div>
+
+        <div>
+            <p>
+            <label>
+                Chat name:
+                <InputText @bind-Value="createChatRequest.ChatName" />
+            </label>
+            </p>
+            <p>
+            <label>
+                Encrypted chat:
+                <InputCheckbox @bind-Value="createChatRequest.Encrypted" />
+            </label>
+            </p>
+            <button onclick="onCreateChatClick">Create Chat</button>
+        </div>
+    </div>
+</div>
+
+@code {
+    List<ChatMember>? ChatMembers { get; set; } = new();
+    string? ErrorMessage { get; set; } = string.Empty;
+
+    public InviteMemberRequest invMemberRequest { get; set; } = new();
+    public CreateChatRequest createChatRequest { get; set; } = new();
+
+    public async Task handleSearchSubmit()
+    {
+        // kolla om du försöker lägga till själv.
+        if (ChatMembers.Select(m => m.Username.ToLower()).Contains(invMemberRequest.SearchedUsername.ToLower()))
+        {
+            ErrorMessage = "Member is already added";
+            return;
+        }
+
+        if(string.IsNullOrEmpty(invMemberRequest.SearchedUsername))
+        {
+            ErrorMessage = "Member name is required.";
+            return;
+        }
+
+        if (ChatMembers?.Count >= 5)
+        {
+            ErrorMessage = "Maximum 5 members.";
+            return;
+        }
+
+        var memberSearchResponse = await httpClient.PostAsJsonAsync("api/member/addmembertochat", invMemberRequest);
+
+        if (!memberSearchResponse.IsSuccessStatusCode)
+        {
+            ErrorMessage = "Could not find member with that username.";
+            return;
+        }
+
+        var memberToAddToChat = await memberSearchResponse.Content.ReadFromJsonAsync<ChatMember>();
+
+        ChatMembers?.Add(memberToAddToChat);
+    }
+
+    public async Task onCreateChatClick()
+    {
+        if (ChatMembers?.Count < 1)
+        {
+            ErrorMessage = "Please add members to the chat.";
+            return;
+        }
+        else
+        {
+            // lägg till användare till requesten
+            // lägg till inloggad användare till payload
+            // skapa chattrum
+            navManager.NavigateTo("index");
+        }
+    }
+}
