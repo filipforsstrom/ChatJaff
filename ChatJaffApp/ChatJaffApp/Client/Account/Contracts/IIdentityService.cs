@@ -5,5 +5,6 @@ namespace ChatJaffApp.Client.Account.Contracts
     public interface IIdentityService
     {
         Task<RegisterResponse> Register(RegisterForm register);
+        Task<ChangePasswordResponse> ChangePassword(ChangePasswordForm changePassword);
     }
 }

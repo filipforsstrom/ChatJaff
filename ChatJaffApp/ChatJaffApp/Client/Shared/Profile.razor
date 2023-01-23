@@ -1,5 +1,7 @@
 ﻿@page "/profile"
-@using System.ComponentModel.DataAnnotations;
+@inject IIdentityService identityService;
+@using ChatJaffApp.Client.Account.Contracts;
+@using ChatJaffApp.Client.Account.Models;
 
 
 <h3>Profile</h3>
@@ -28,6 +30,9 @@
         </div>
         <button class="btn btn-sm btn-success">Confirm</button>
     </EditForm>
+    <div>
+        <p>@changePasswordResponseMessage</p>
+    </div>
 </div>
 
 @code {
@@ -35,20 +40,21 @@
     public bool showOldPassword { get; set; }
     public bool showNewPassword { get; set; }
 
+    public string? changePasswordResponseMessage { get; set; } = string.Empty;
+
     public async Task onChangePasswordSubmit()
     {
-        // skicka request till api
-        // om lyckas, visa meddelande
-        // om misslyckas, visa meddelande
+        
+        var changePasswordResponse = await identityService.ChangePassword(changePasswordForm);
+        
+        if (changePasswordResponse.Success)
+        {
+            changePasswordResponseMessage = "Password changed.";
+        } else
+        {
+            changePasswordResponseMessage = changePasswordResponse.Data;
+        }
     }
 
-    public class ChangePasswordForm
-    {
-        [Required]
-        [MinLength(6)]
-        public string? OldPassword { get; set; }
-        [Required]
-        [MinLength(6)]
-        public string? NewPassword { get; set; }
-    }
+    
 }
