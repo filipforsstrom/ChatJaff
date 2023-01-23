@@ -25,7 +25,7 @@
             {
                 @foreach (var member in ChatMembers)
                 {
-                    <p>@member.Username <button class="btn btn-danger btn-sm">delete</button></p>
+                    <p>@member.Username <button class="btn btn-danger btn-sm" @onclick="() => onDeleteMember(member)">delete</button></p>
                     
                 }
             }
@@ -92,6 +92,16 @@
         var memberToAddToChat = await memberSearchResponse.Content.ReadFromJsonAsync<ChatMember>();
 
         ChatMembers?.Add(memberToAddToChat);
+    }
+
+    private async Task onDeleteMember(ChatMember member)
+    {
+        var memberToDelete = ChatMembers.Find(m => m.Username.Equals(member.Username, StringComparison.OrdinalIgnoreCase));
+
+        if(memberToDelete != null)
+        {
+            ChatMembers.Remove(memberToDelete);
+        }
     }
 
     public async Task onCreateChatClick()
