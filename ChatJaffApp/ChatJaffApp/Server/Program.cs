@@ -1,4 +1,9 @@
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.EntityFrameworkCore;
+using ChatJaffApp.Server.Identity.Data;
+using ChatJaffApp.Server.Identity.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -6,6 +11,12 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
+
+builder.Services.AddDbContext<IdentityContext>(options => options.UseSqlite(
+    builder.Configuration.GetConnectionString("IdentityDb")
+    ));
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+    .AddEntityFrameworkStores<IdentityContext>();
 
 var app = builder.Build();
 

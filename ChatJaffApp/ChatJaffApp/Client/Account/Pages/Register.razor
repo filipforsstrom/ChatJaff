@@ -1,0 +1,49 @@
+﻿@page "/account/register"
+@using ChatJaffApp.Client.Account.Models;
+@using ChatJaffApp.Client.Account.Contracts;
+@inject IIdentityService IdentityService;
+@inject NavigationManager NavigationManager;
+
+<div class="card">
+    <h4 class="card-header">Register</h4>
+    <div class="card-body">
+
+        <EditForm Model="@register" OnValidSubmit="@HandleSubmit">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+            <div class="form-group">
+                <label>Email</label>
+                <InputText @bind-Value="register.Email" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label>Username</label>
+                <InputText @bind-Value="register.Username" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <InputText @bind-Value="register.Password" type="password" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label>Validate Password</label>
+                <InputText @bind-Value="register.ValidatePassword" type="password" class="form-control" />
+            </div>
+            <button class="btn btn-primary mt-2">
+                Register
+            </button>
+            <NavLink href="account/login" class="btn btn-link">Cancel</NavLink>
+        </EditForm>
+    </div>
+</div>
+
+@code {
+    private RegisterForm register = new();
+
+
+    private async Task HandleSubmit()
+    {
+        var response = await IdentityService.Register(register);
+
+        NavigationManager.NavigateTo("index");
+
+    }
+}
