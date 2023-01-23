@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33213.308
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatJaffApp.Server", "ChatJaffApp\Server\ChatJaffApp.Server.csproj", "{506A1547-C834-48E2-8550-72BF23BC2F54}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChatJaffApp.Server", "ChatJaffApp\Server\ChatJaffApp.Server.csproj", "{506A1547-C834-48E2-8550-72BF23BC2F54}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatJaffApp.Client", "ChatJaffApp\Client\ChatJaffApp.Client.csproj", "{514769FE-BF5B-4CBB-8FAF-9DDC440F2954}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChatJaffApp.Client", "ChatJaffApp\Client\ChatJaffApp.Client.csproj", "{514769FE-BF5B-4CBB-8FAF-9DDC440F2954}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatJaffApp.Shared", "ChatJaffApp\Shared\ChatJaffApp.Shared.csproj", "{61343FB1-5A4E-40D4-96D5-DE98B5B900AC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChatJaffApp.Shared", "ChatJaffApp\Shared\ChatJaffApp.Shared.csproj", "{61343FB1-5A4E-40D4-96D5-DE98B5B900AC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
