@@ -1,8 +1,54 @@
 ﻿@page "/profile"
+@using System.ComponentModel.DataAnnotations;
 
 
 <h3>Profile</h3>
 
-@code {
+<div>
+    <h4>User Info</h4>
+</div>
 
+
+<div>
+    <h4>Change password</h4>
+    <EditForm Model="changePasswordForm" OnValidSubmit="onChangePasswordSubmit"
+        style="display: flex; gap: 20px; flex-direction: column"    
+    >
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+        <div class="form-group">
+            <label>Old password</label>
+            <InputText class="form-control" type="@(showOldPassword ? "text" : "password")" @bind-Value="changePasswordForm.OldPassword" />
+            Show <InputCheckbox @bind-Value="showOldPassword"/>
+        </div>
+        <div class="form-group">
+            <label>New password</label>
+            <InputText class="form-control" type="@(showNewPassword ? "text" : "password")" @bind-Value="changePasswordForm.NewPassword" />
+            Show <InputCheckbox @bind-Value="showNewPassword" />
+        </div>
+        <button class="btn btn-sm btn-success">Confirm</button>
+    </EditForm>
+</div>
+
+@code {
+    public ChangePasswordForm changePasswordForm { get; set; } = new();
+    public bool showOldPassword { get; set; }
+    public bool showNewPassword { get; set; }
+
+    public async Task onChangePasswordSubmit()
+    {
+        // skicka request till api
+        // om lyckas, visa meddelande
+        // om misslyckas, visa meddelande
+    }
+
+    public class ChangePasswordForm
+    {
+        [Required]
+        [MinLength(6)]
+        public string? OldPassword { get; set; }
+        [Required]
+        [MinLength(6)]
+        public string? NewPassword { get; set; }
+    }
 }
