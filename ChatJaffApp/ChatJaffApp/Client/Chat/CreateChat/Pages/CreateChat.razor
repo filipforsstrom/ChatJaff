@@ -48,7 +48,7 @@
                 <InputCheckbox @bind-Value="createChatRequest.Encrypted" />
             </label>
             </p>
-            <button onclick="onCreateChatClick">Create Chat</button>
+            <button @onclick="onCreateChatClick">Create Chat</button>
         </div>
     </div>
 </div>
@@ -56,22 +56,30 @@
 @code {
     List<ChatMember>? ChatMembers { get; set; } = new();
     string? ErrorMessage { get; set; } = string.Empty;
+    private ChatMember mockedCurrentUser { get; set; } = new();
 
     public InviteMemberRequest invMemberRequest { get; set; } = new();
     public CreateChatRequest createChatRequest { get; set; } = new();
 
+    protected override async Task OnInitializedAsync()
+    {
+        //remove when we got current user logged in
+        mockedCurrentUser.UserId = "gsdgjads2";
+        mockedCurrentUser.Username = "Brady666";
+    }
+
     public async Task handleSearchSubmit()
     {
-        // kolla om du försöker lägga till själv.
-        if (ChatMembers.Select(m => m.Username.ToLower()).Contains(invMemberRequest.SearchedUsername.ToLower()))
+        if (string.IsNullOrEmpty(invMemberRequest.SearchedUsername))
         {
-            ErrorMessage = "Member is already added";
+            ErrorMessage = "Member name is required.";
             return;
         }
 
-        if(string.IsNullOrEmpty(invMemberRequest.SearchedUsername))
+        // kolla om du försöker lägga till själv.
+        if (ChatMembers.Select(m => m.Username?.ToLower()).Contains(invMemberRequest.SearchedUsername?.ToLower()))
         {
-            ErrorMessage = "Member name is required.";
+            ErrorMessage = "Member is already added";
             return;
         }
 
@@ -113,10 +121,13 @@
         }
         else
         {
-            // lägg till användare till requesten
             // lägg till inloggad användare till payload
+            ChatMembers?.Add(mockedCurrentUser);
+            // lägg till användare till requesten
+            createChatRequest.Chatmembers = ChatMembers;
             // skapa chattrum
-            navManager.NavigateTo("index");
+            var response = httpClient.PostAsJsonAsync<CreateChatRequest>("api/createchat/createchat", createChatRequest);
+            
         }
     }
 }
