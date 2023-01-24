@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using ChatJaffApp.Server.Identity.Data;
 using ChatJaffApp.Server.Identity.Models;
 using ChatJaffApp.Server.Extensions;
+using ChatJaffApp.Client;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +15,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
 builder.Services.ConfigureAuthentication(builder.Configuration);
+builder.Services.AddServiceInjections();
 
 builder.Services.AddDbContext<IdentityContext>(options => options.UseSqlite(
     builder.Configuration.GetConnectionString("IdentityDb")
@@ -50,5 +52,14 @@ app.UseAuthorization();
 app.MapRazorPages();
 app.MapControllers();
 app.MapFallbackToFile("index.html");
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+
+    var context = services.GetRequiredService<IdentityContext>();
+    context.Database.EnsureDeleted();
+    context.Database.EnsureCreated();
+}
 
 app.Run();
