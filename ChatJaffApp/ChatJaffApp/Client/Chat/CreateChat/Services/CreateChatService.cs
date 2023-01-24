@@ -27,6 +27,7 @@ namespace ChatJaffApp.Client.Chat.CreateChat.Services
             }
 
             chatResponse.Success = true;
+            chatResponse.Data = await response.Content.ReadAsStringAsync();
             return chatResponse;
         }
     }
