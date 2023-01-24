@@ -1,32 +1,32 @@
 ﻿@page "/chatrooms/createchat";
-@using System.ComponentModel.DataAnnotations;
-@using ChatJaffApp.Client.Chat.CreateChat.Models
+
 @inject HttpClient httpClient;
 @inject NavigationManager navManager;
+@inject ICreateChatService createChatservice;
+@inject IMemberService memberService;
 
 
 <div>
     <div>
         <h3>Add User to chat</h3>
         <EditForm Model="@invMemberRequest" OnValidSubmit="@handleSearchSubmit">
-            <InputText @bind-Value="invMemberRequest.SearchedUsername" />
-            <button>
-                Add
-            </button>
+            <DataAnnotationsValidator/>
+                <InputText @bind-Value="invMemberRequest.SearchedUsername" />
+                <button>
+                    Add
+                </button>
+            <ValidationMessage For="() => invMemberRequest.SearchedUsername" />
         </EditForm>
     </div>
+    
     <div>
-        <p>@(ErrorMessage != null ? ErrorMessage : null)</p>
-    </div>
-    <div>
-        <h3>Participants</h3>
+        <h3>Chat members</h3>
         <div>
             @if (ChatMembers != null || ChatMembers?.Count < 1)
             {
                 @foreach (var member in ChatMembers)
                 {
                     <p>@member.Username <button class="btn btn-danger btn-sm" @onclick="() => onDeleteMember(member)">delete</button></p>
-                    
                 }
             }
             else
@@ -51,6 +51,11 @@
             <button @onclick="onCreateChatClick">Create Chat</button>
         </div>
     </div>
+
+    <div>
+        <h3>@(ErrorMessage != null ? ErrorMessage : null)</h3>
+    </div>
+
 </div>
 
 @code {
@@ -58,8 +63,8 @@
     string? ErrorMessage { get; set; } = string.Empty;
     private ChatMember mockedCurrentUser { get; set; } = new();
 
-    public InviteMemberRequest invMemberRequest { get; set; } = new();
-    public CreateChatRequest createChatRequest { get; set; } = new();
+    public InviteMemberDTO invMemberRequest { get; set; } = new();
+    public CreateChatDTO createChatRequest { get; set; } = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -70,12 +75,6 @@
 
     public async Task handleSearchSubmit()
     {
-        if (string.IsNullOrEmpty(invMemberRequest.SearchedUsername))
-        {
-            ErrorMessage = "Member name is required.";
-            return;
-        }
-
         // kolla om du försöker lägga till själv.
         if (ChatMembers.Select(m => m.Username?.ToLower()).Contains(invMemberRequest.SearchedUsername?.ToLower()))
         {
@@ -83,22 +82,21 @@
             return;
         }
 
-        if (ChatMembers?.Count >= 5)
+        var memberSearchResponse = await memberService.AddMemberToChat(invMemberRequest);
+
+        if (!memberSearchResponse.Success)
         {
-            ErrorMessage = "Maximum 5 members.";
+            ErrorMessage = memberSearchResponse.Message;
             return;
         }
 
-        var memberSearchResponse = await httpClient.PostAsJsonAsync("api/member/addmembertochat", invMemberRequest);
-
-        if (!memberSearchResponse.IsSuccessStatusCode)
+        ChatMember memberToAddToChat = new()
         {
-            ErrorMessage = "Could not find member with that username.";
-            return;
-        }
+            UserId = memberSearchResponse.MemberData.UserId,
+            Username = memberSearchResponse.MemberData.Username
+        };
 
-        var memberToAddToChat = await memberSearchResponse.Content.ReadFromJsonAsync<ChatMember>();
-
+        ErrorMessage = "";
         ChatMembers?.Add(memberToAddToChat);
     }
 
@@ -121,13 +119,23 @@
         }
         else
         {
-            // lägg till inloggad användare till payload
-            ChatMembers?.Add(mockedCurrentUser);
+
             // lägg till användare till requesten
             createChatRequest.Chatmembers = ChatMembers;
+
+            // lägg till inloggad användare till payload
+            createChatRequest.Chatmembers?.Add(mockedCurrentUser);
             // skapa chattrum
-            var response = httpClient.PostAsJsonAsync<CreateChatRequest>("api/createchat/createchat", createChatRequest);
-            
+            var response = await createChatservice.CreateChat(createChatRequest);
+
+            if (!response.Success)
+            {
+                ErrorMessage = response.Data;
+                return;
+            }
+
+            navManager.NavigateTo("/index");
+
         }
     }
 }
