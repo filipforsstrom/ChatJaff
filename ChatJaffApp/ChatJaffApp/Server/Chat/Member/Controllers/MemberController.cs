@@ -10,7 +10,7 @@ namespace ChatJaffApp.Server.Chat.Member.Controllers
     {
         [HttpPost]
         [Route("[action]")]
-        public async Task<IActionResult> AddMemberToChat(AddMemberRequest addMemberRequest)
+        public async Task<IActionResult> AddMemberToChat(AddMemberDto addMemberDto)
         {
             List<AddMemberResponse> mockMembersDb = new()
             {
@@ -28,11 +28,21 @@ namespace ChatJaffApp.Server.Chat.Member.Controllers
                 {
                     UserId = "19o1j412k12",
                     Username = "Randy"
+                },
+                new AddMemberResponse
+                {
+                    UserId = "19o1j412k12",
+                    Username = "Bandy"
+                },
+                new AddMemberResponse
+                {
+                    UserId = "19o1j412k12",
+                    Username = "Wolverine"
                 }
             };
 
             var requestedMember = mockMembersDb
-                .FirstOrDefault(member => string.Equals(member.Username, addMemberRequest.SearchedUsername, StringComparison.OrdinalIgnoreCase));
+                .FirstOrDefault(member => string.Equals(member.Username, addMemberDto.SearchedUsername, StringComparison.OrdinalIgnoreCase));
 
             return requestedMember != null ? Ok(requestedMember) : BadRequest("Could not find member.");
         }
