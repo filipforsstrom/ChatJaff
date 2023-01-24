@@ -20,20 +20,29 @@
     </div>
     
     <div>
-        <h3>Chat members</h3>
-        <div>
-            @if (ChatMembers != null || ChatMembers?.Count < 1)
-            {
-                @foreach (var member in ChatMembers)
+        <br />
+        <div class="card" style="width: 18rem; ">
+            <div class="card-header">
+                Chat members
+            </div>
+            <ul class="list-group list-group-flush">
+                @if (ChatMembers != null || ChatMembers?.Count < 1)
                 {
-                    <p>@member.Username <button class="btn btn-danger btn-sm" @onclick="() => onDeleteMember(member)">delete</button></p>
+                    @foreach (var member in ChatMembers)
+                    {
+                        <li class="list-group-item">@member.Username <button class="btn btn-danger btn-sm" @onclick="() => onDeleteMember(member)">delete</button></li>
+                    }
                 }
-            }
-            else
-            {
-                <p>No users added =(</p>
-            }
+                else
+                {
+                    <p>No users added =(</p>
+                }
+               
+            </ul>
         </div>
+        <br />
+            
+        
 
         <div>
             <p>
@@ -134,7 +143,6 @@
                 return;
             }
 
-            navManager.NavigateTo("/index");
 
         }
     }
