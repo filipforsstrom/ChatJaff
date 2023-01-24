@@ -1,6 +1,8 @@
 ﻿@page "/profile"
 @inject IIdentityService identityService;
 @inject NavigationManager navManager;
+@inject ILocalStorageService localStorageService;
+@inject AuthenticationStateProvider authStateProvider;
 @using ChatJaffApp.Client.Account.Contracts;
 @using ChatJaffApp.Client.Account.Models;
 
@@ -97,7 +99,8 @@
 
         if (deleteResponse.Success)
         {
-            // logout
+            await localStorageService.RemoveItemAsync("token");
+            await authStateProvider.GetAuthenticationStateAsync();
             toggleDeleteDialog();
             navManager.NavigateTo("/");            
         } else
