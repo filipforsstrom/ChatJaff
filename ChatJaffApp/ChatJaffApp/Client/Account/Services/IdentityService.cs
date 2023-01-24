@@ -13,6 +13,28 @@ namespace ChatJaffApp.Client.Account.Services
         {
             _httpClient = httpClient;
         }
+
+        public async Task<ChangePasswordResponse> ChangePassword(ChangePasswordForm changePassword)
+        {
+            ChangePasswordResponse changePasswordResponse = new();
+
+            ChangePasswordDTO changePasswordDTO = new()
+            {
+                OldPassword= changePassword.OldPassword,
+                NewPassword= changePassword.NewPassword,
+            };
+            var apiResponse = await _httpClient.PostAsJsonAsync("api/identity/changepassword", changePasswordDTO);
+
+            if (!apiResponse.IsSuccessStatusCode)
+            {
+                changePasswordResponse.Data = await apiResponse.Content.ReadAsStringAsync();
+                return changePasswordResponse;
+            }
+
+            changePasswordResponse.Success = true;
+            return changePasswordResponse;
+        }
+
         public async Task<RegisterResponse> Register(RegisterForm register)
         {
             RegisterResponse registerResponse = new();

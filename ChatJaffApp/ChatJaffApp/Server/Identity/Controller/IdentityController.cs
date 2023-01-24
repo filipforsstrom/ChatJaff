@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Authentication;
 using System.Security.Principal;
+using System.Security.Claims;
 
 namespace ChatJaffApp.Server.Identity.Controller
 {
@@ -16,12 +17,18 @@ namespace ChatJaffApp.Server.Identity.Controller
     {
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IIdentityService _identityService;
+                private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public IdentityController(SignInManager<ApplicationUser> signInManager, IIdentityService identityService)
+
+        public IdentityController(SignInManager<ApplicationUser> signInManager, IIdentityService identityService,IHttpContextAccessor httpContextAccessor)
         {
             _signInManager = signInManager;
             _identityService = identityService;
+            _httpContextAccessor = httpContextAccessor;
+
         }
+
+
         [HttpPost]
         [Route("[action]")]
         public async Task<IActionResult> Register(RegisterRequest request)
@@ -49,7 +56,7 @@ namespace ChatJaffApp.Server.Identity.Controller
             }
 
         }
-
+    
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequestDto user)
         {
@@ -63,6 +70,34 @@ namespace ChatJaffApp.Server.Identity.Controller
             catch (AuthenticationException exception)
             {
                 return Unauthorized(exception.Message);
+            }
+        }
+        [HttpPost]
+        [Route("[action]")]
+        public async Task<IActionResult> ChangePassword(ChangePasswordRequest request)
+        {
+            if (string.Equals(request.OldPassword, request.NewPassword))
+            {
+                return BadRequest("The new password can't be the old password.");
+            }
+
+            var userId = _httpContextAccessor?.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            var exampleUser = await _signInManager.UserManager.FindByIdAsync(userId);
+
+            if (exampleUser == null)
+            {
+                return BadRequest("User not found.");
+            }
+
+            var response = await _signInManager.UserManager.ChangePasswordAsync(exampleUser, request.OldPassword, request.NewPassword);
+
+            if (response.Succeeded)
+            {
+                return Ok();
+            } else
+            {
+                return BadRequest();  
             }
         }
     }
