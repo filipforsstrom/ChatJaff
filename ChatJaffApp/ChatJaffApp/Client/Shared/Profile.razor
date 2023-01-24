@@ -14,7 +14,7 @@
 <div>
     <h4>Change password</h4>
     <EditForm Model="changePasswordForm" OnValidSubmit="onChangePasswordSubmit"
-        style="display: flex; gap: 20px; flex-direction: column"    
+        style="display: flex; gap: 20px; flex-direction: column; max-width: 300px;"    
     >
         <DataAnnotationsValidator />
         <ValidationSummary />
@@ -44,15 +44,15 @@
 
     public async Task onChangePasswordSubmit()
     {
-        
-        var changePasswordResponse = await identityService.ChangePassword(changePasswordForm);
-        
+
+        var changePasswordResponse = await identityService.ChangePassword(changePasswordForm);        
+
         if (changePasswordResponse.Success)
         {
             changePasswordResponseMessage = "Password changed.";
         } else
         {
-            changePasswordResponseMessage = changePasswordResponse.Data;
+            changePasswordResponseMessage = "Failed";
         }
     }
 
