@@ -103,9 +103,34 @@ namespace ChatJaffApp.Server.Identity.Controller
         }
 
         [HttpDelete]
-        public async Task<IActionResult> DeleteIdentity()
+        [Route("[action]/{id}")]
+        public async Task<IActionResult> DeleteIdentity(string id)
         {
-            return NoContent();
+            var userId = _httpContextAccessor?.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;            
+
+            try
+            {
+                if (userId == id)
+                {
+                    var userToDelete = await _signInManager.UserManager.FindByIdAsync(userId);
+                    if (userToDelete != null)
+                    {
+                        await _signInManager.UserManager.DeleteAsync(userToDelete);
+
+                        return NoContent();
+                    }
+
+                    return BadRequest("Server error");
+                }
+                else
+                {
+                    return Unauthorized();
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
         }
     }
 }

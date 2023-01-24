@@ -1,5 +1,6 @@
 ﻿@page "/profile"
 @inject IIdentityService identityService;
+@inject NavigationManager navManager;
 @using ChatJaffApp.Client.Account.Contracts;
 @using ChatJaffApp.Client.Account.Models;
 
@@ -49,6 +50,7 @@
                 </div>
                 <div class="modal-body">
                     <p>This will remove you from our database.</p>
+                    <p>@deleteIdentityResponseMessage</p>
                     <button type="button" class="btn btn-sm btn-primary" @onclick="toggleDeleteDialog">Cancel</button>
                     <button type="button" class="btn btn-sm btn-danger" @onclick="onDeleteClick">Confirm</button>
                 </div>                
@@ -65,6 +67,7 @@
     public bool showDeleteDialog { get; set; }
 
     public string? changePasswordResponseMessage { get; set; } = string.Empty;
+    public string? deleteIdentityResponseMessage { get; set; } = string.Empty;
 
     public async Task onChangePasswordSubmit()
     {
@@ -80,13 +83,27 @@
         }
     }
 
-    public void toggleDeleteDialog() => showDeleteDialog = !showDeleteDialog;
+    public void toggleDeleteDialog()
+    {
+        deleteIdentityResponseMessage = string.Empty;
+        showDeleteDialog = !showDeleteDialog;
+    }
 
     public async Task onDeleteClick()
     {
-        // call api to delete user
-        // logout
-        // redirect to home
+        // get userid from cookie
+        string userId = "m1";
+        var deleteResponse = await identityService.DeleteIdentity(userId);
+
+        if (deleteResponse.Success)
+        {
+            // logout
+            toggleDeleteDialog();
+            navManager.NavigateTo("/");            
+        } else
+        {
+            deleteIdentityResponseMessage = deleteResponse.Data;
+        }
     }
 
     
