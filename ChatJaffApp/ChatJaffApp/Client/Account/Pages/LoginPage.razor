@@ -33,11 +33,14 @@
     public async Task HandleSubmit()
     {
         var response = await IdentityService.Login(loginModel);
-        FailedLogin = response.Message;
 
         if (response.Success)
         {
             NavigationManager.NavigateTo("/");
+        }
+        else
+        {
+            FailedLogin = "Login failed";
         }
 
     }

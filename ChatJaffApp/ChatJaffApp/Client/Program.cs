@@ -18,4 +18,6 @@ builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.
 
 builder.Services.AddBlazoredLocalStorage();
 
+builder.Services.AddAuthorizationCore();
+
 await builder.Build().RunAsync();

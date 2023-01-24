@@ -1,7 +1,6 @@
 ﻿using ChatJaffApp.Server.Identity.Models;
 using ChatJaffApp.Server.Identity.Models.Contracts;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Authentication;
@@ -26,19 +25,19 @@ namespace ChatJaffApp.Server.Identity.Services
 
             if (user == null)
             {
-                throw new NullReferenceException($"Couldn't find any user with userName {loginRequest.Email}");
+                throw new NullReferenceException($"Couldn't find any user with email {loginRequest.Email}");
             }
 
             var signInResult = await _signInManager.PasswordSignInAsync(user.UserName, loginRequest.Password, false, false);
 
             if (!signInResult.Succeeded) throw new AuthenticationException(signInResult.ToString());
-           
+
             var jwt = await CreateTokenAsync(user);
 
             return new LoginResponseDto
             {
                 Token = jwt
-               
+
             };
 
         }
