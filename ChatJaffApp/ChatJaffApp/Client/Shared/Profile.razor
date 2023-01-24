@@ -3,42 +3,66 @@
 @using ChatJaffApp.Client.Account.Contracts;
 @using ChatJaffApp.Client.Account.Models;
 
+<PageTitle>Profile</PageTitle>
 
-<h3>Profile</h3>
-
-<div>
-    <h4>User Info</h4>
-</div>
-
-
-<div>
-    <h4>Change password</h4>
-    <EditForm Model="changePasswordForm" OnValidSubmit="onChangePasswordSubmit"
-        style="display: flex; gap: 20px; flex-direction: column; max-width: 300px;"    
-    >
-        <DataAnnotationsValidator />
-        <ValidationSummary />
-        <div class="form-group">
-            <label>Old password</label>
-            <InputText class="form-control" type="@(showOldPassword ? "text" : "password")" @bind-Value="changePasswordForm.OldPassword" />
-            Show <InputCheckbox @bind-Value="showOldPassword"/>
-        </div>
-        <div class="form-group">
-            <label>New password</label>
-            <InputText class="form-control" type="@(showNewPassword ? "text" : "password")" @bind-Value="changePasswordForm.NewPassword" />
-            Show <InputCheckbox @bind-Value="showNewPassword" />
-        </div>
-        <button class="btn btn-sm btn-success">Confirm</button>
-    </EditForm>
+<div style="display: flex; padding: 10px;flex-direction: column; gap: 50px; box-shadow: rgba(0, 0, 0, 0.16) 0px 10px 36px 0px, rgba(0, 0, 0, 0.06) 0px 0px 0px 1px;">
     <div>
-        <p>@changePasswordResponseMessage</p>
+        <h4>User Info</h4>
+    </div>
+
+    <div>
+        <h4>Change password</h4>
+        <EditForm Model="changePasswordForm" OnValidSubmit="onChangePasswordSubmit"
+                  style="display: flex; gap: 20px; flex-direction: column; max-width: 300px;">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+            <div class="form-group">
+                <label>Old password</label>
+                <InputText class="form-control" type="@(showOldPassword ? "text" : "password")" @bind-Value="changePasswordForm.OldPassword" />
+                Show <InputCheckbox @bind-Value="showOldPassword" />
+            </div>
+            <div class="form-group">
+                <label>New password</label>
+                <InputText class="form-control" type="@(showNewPassword ? "text" : "password")" @bind-Value="changePasswordForm.NewPassword" />
+                Show <InputCheckbox @bind-Value="showNewPassword" />
+            </div>
+            <button class="btn btn-sm btn-success">Confirm</button>
+        </EditForm>
+        <div>
+            <p>@changePasswordResponseMessage</p>
+        </div>
+    </div>
+
+    <div>
+        <button @onclick="toggleDeleteDialog" class="btn btn-danger btn-sm">Delete Account</button>
     </div>
 </div>
+
+
+@if (showDeleteDialog)
+{
+    <div class="modal fade show" style="display:block; background-color: rgba(10,10,10,.8)" aria-modal="true" role="dialog">
+        <div class="modal-dialog" @onclick:stopPropagation="true">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Really delete profile?</h4>                    
+                </div>
+                <div class="modal-body">
+                    <p>This will remove you from our database.</p>
+                    <button type="button" class="btn btn-sm btn-primary" @onclick="toggleDeleteDialog">Cancel</button>
+                    <button type="button" class="btn btn-sm btn-danger" @onclick="onDeleteClick">Confirm</button>
+                </div>                
+            </div>
+        </div>
+    </div>
+}
 
 @code {
     public ChangePasswordForm changePasswordForm { get; set; } = new();
     public bool showOldPassword { get; set; }
     public bool showNewPassword { get; set; }
+
+    public bool showDeleteDialog { get; set; }
 
     public string? changePasswordResponseMessage { get; set; } = string.Empty;
 
@@ -54,6 +78,15 @@
         {
             changePasswordResponseMessage = "Failed";
         }
+    }
+
+    public void toggleDeleteDialog() => showDeleteDialog = !showDeleteDialog;
+
+    public async Task onDeleteClick()
+    {
+        // call api to delete user
+        // logout
+        // redirect to home
     }
 
     

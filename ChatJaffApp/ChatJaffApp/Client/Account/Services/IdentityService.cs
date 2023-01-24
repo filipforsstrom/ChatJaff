@@ -35,6 +35,11 @@ namespace ChatJaffApp.Client.Account.Services
             return changePasswordResponse;
         }
 
+        public Task<RegisterResponse> Login(LoginDto login)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<RegisterResponse> Register(RegisterForm register)
         {
             RegisterResponse registerResponse = new();

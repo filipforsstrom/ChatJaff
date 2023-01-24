@@ -72,6 +72,7 @@ namespace ChatJaffApp.Server.Identity.Controller
                 return Unauthorized(exception.Message);
             }
         }
+
         [HttpPost]
         [Route("[action]")]
         public async Task<IActionResult> ChangePassword(ChangePasswordRequest request)
@@ -99,6 +100,12 @@ namespace ChatJaffApp.Server.Identity.Controller
             {
                 return BadRequest();  
             }
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> DeleteIdentity()
+        {
+            return NoContent();
         }
     }
 }
