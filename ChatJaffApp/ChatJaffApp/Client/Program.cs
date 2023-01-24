@@ -2,6 +2,10 @@ using Blazored.LocalStorage;
 using ChatJaffApp.Client;
 using ChatJaffApp.Client.Account.Contracts;
 using ChatJaffApp.Client.Account.Services;
+using ChatJaffApp.Client.Chat.CreateChat.Contracts;
+using ChatJaffApp.Client.Chat.CreateChat.Services;
+using ChatJaffApp.Client.Chat.Member.Contracts;
+using ChatJaffApp.Client.Chat.Member.Services;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
@@ -11,6 +15,8 @@ builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services.AddScoped<IIdentityService, IdentityService>();
+builder.Services.AddScoped<ICreateChatService, CreateChatService>();
+builder.Services.AddScoped<IMemberService, MemberService>();
 
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
 
