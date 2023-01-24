@@ -1,6 +1,12 @@
 ﻿using ChatJaffApp.Server.Identity.Models;
+using ChatJaffApp.Server.Identity.Models.Contracts;
+using ChatJaffApp.Server.Identity.Services;
+using JaffChat.Server.Identity.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Security.Authentication;
+using System.Security.Principal;
 using System.Security.Claims;
 
 namespace ChatJaffApp.Server.Identity.Controller
@@ -10,13 +16,19 @@ namespace ChatJaffApp.Server.Identity.Controller
     public class IdentityController : ControllerBase
     {
         private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IIdentityService _identityService;
+                private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public IdentityController(SignInManager<ApplicationUser> signInManager, IHttpContextAccessor httpContextAccessor)
+
+        public IdentityController(SignInManager<ApplicationUser> signInManager, IIdentityService identityService,IHttpContextAccessor httpContextAccessor)
         {
             _signInManager = signInManager;
+            _identityService = identityService;
             _httpContextAccessor = httpContextAccessor;
+
         }
+
+
         [HttpPost]
         [Route("[action]")]
         public async Task<IActionResult> Register(RegisterRequest request)
@@ -44,7 +56,22 @@ namespace ChatJaffApp.Server.Identity.Controller
             }
 
         }
+    
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] LoginRequestDto user)
+        {
+            try
+            {
+                var loginResponse = await _identityService.LoginAsync(user);
 
+                HttpContext.Response.Headers.Add("AuthToken", loginResponse.Token); // for RestClient in vscode
+                return Ok(loginResponse);
+            }
+            catch (AuthenticationException exception)
+            {
+                return Unauthorized(exception.Message);
+            }
+        }
         [HttpPost]
         [Route("[action]")]
         public async Task<IActionResult> ChangePassword(ChangePasswordRequest request)
