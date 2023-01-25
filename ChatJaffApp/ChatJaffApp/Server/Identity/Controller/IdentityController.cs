@@ -110,14 +110,14 @@ namespace ChatJaffApp.Server.Identity.Controller
         }
 
         [HttpDelete, Authorize]
-        [Route("[action]/{id}")]
-        public async Task<IActionResult> DeleteIdentity(string id)
+        [Route("{id}")]
+        public async Task<IActionResult> DeleteIdentity([FromRoute] Guid id)
         {
-            var userId = _httpContextAccessor?.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;            
-
+            var userId = _httpContextAccessor?.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            Guid userGuid = new Guid(userId);
             try
             {
-                if (userId == id)
+                if (userGuid == id)
                 {
                     var userToDelete = await _signInManager.UserManager.FindByIdAsync(userId);
                     if (userToDelete != null)

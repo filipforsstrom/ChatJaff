@@ -46,7 +46,8 @@ namespace ChatJaffApp.Client.Account.Services
         public async Task<DeleteIdentityResponse> DeleteIdentity(string identityId)
         {
             DeleteIdentityResponse deleteResponse = new();
-            var apiResponse = await _httpClient.DeleteAsync($"api/identity/deleteidentity/{identityId}");
+            Guid identityGuid = Guid.NewGuid();
+            var apiResponse = await _httpClient.DeleteAsync($"api/identity/{identityGuid}");
 
             if (apiResponse.IsSuccessStatusCode)
             {
@@ -59,9 +60,6 @@ namespace ChatJaffApp.Client.Account.Services
             return deleteResponse;
         }
 
-        public Task<RegisterResponse> Login(LoginDto login)
-        {
-            throw new NotImplementedException();
         public async Task<IServiceResponseViewModel<RegisterResponse>> Login(LoginDto login)
         {
             ServiceResponseViewModel<RegisterResponse> responseViewModel = new();

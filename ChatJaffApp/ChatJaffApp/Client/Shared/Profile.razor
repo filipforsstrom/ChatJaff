@@ -91,8 +91,7 @@
 
     public async Task onDeleteClick()
     {
-        // get userid from cookie
-        string userId = "m1";
+        string userId = "";
         var deleteResponse = await identityService.DeleteIdentity(userId);
 
         if (deleteResponse.Success)
