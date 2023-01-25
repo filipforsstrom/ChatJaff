@@ -14,7 +14,7 @@ namespace ChatJaffApp.Client.Chat.Member.Services
         {
             _httpClient = httpClient;
         }
-        public async Task<InviteMemberResponse> AddMemberToChat(InviteMemberDTO invMemberDto)
+        public async Task<InviteMemberResponse> AddMemberToChat(InviteMemberDto invMemberDto)
         {
             InviteMemberResponse invMemberResponse = new();
             var response = await _httpClient.PostAsJsonAsync("api/member/addmembertochat", invMemberDto);

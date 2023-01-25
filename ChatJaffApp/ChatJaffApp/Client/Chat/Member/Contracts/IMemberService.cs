@@ -5,6 +5,6 @@ namespace ChatJaffApp.Client.Chat.Member.Contracts
 {
     public interface IMemberService
     {
-        Task<InviteMemberResponse> AddMemberToChat(InviteMemberDTO invMemberDto);
+        Task<InviteMemberResponse> AddMemberToChat(InviteMemberDto invMemberDto);
     }
 }

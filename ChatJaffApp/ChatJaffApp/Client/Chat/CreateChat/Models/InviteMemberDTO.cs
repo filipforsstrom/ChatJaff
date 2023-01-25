@@ -2,7 +2,7 @@
 
 namespace ChatJaffApp.Client.Chat.CreateChat.Models
 {
-    public class InviteMemberDTO
+    public class InviteMemberDto
     {
         [Required(ErrorMessage = "Search field must not be empty.")]
         [MinLength(2, ErrorMessage = "Username must be longer than 1 character")]

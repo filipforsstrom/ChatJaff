@@ -1,7 +1,12 @@
-﻿@page "/chatrooms/chat/{id:int}"
+﻿@page "/chatrooms/chat/{id:guid}"
 <h3>Welcome</h3>
 
 @code {
     [Parameter]
-    public int Id { get; set; }
+    public Guid Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var newId = Id;
+    }
 }

@@ -1,5 +1,4 @@
 ﻿@page "/chatrooms/createchat";
-
 @inject HttpClient httpClient;
 @inject NavigationManager navManager;
 @inject ICreateChatService createChatservice;
@@ -73,13 +72,13 @@
     string? ErrorMessage { get; set; } = string.Empty;
     private ChatMember mockedCurrentUser { get; set; } = new();
 
-    public InviteMemberDTO invMemberRequest { get; set; } = new();
-    public CreateChatDTO createChatRequest { get; set; } = new();
+    public InviteMemberDto invMemberRequest { get; set; } = new();
+    public CreateChatDto createChatRequest { get; set; } = new();
 
     protected override async Task OnInitializedAsync()
     {
         //remove when we got current user logged in
-        mockedCurrentUser.UserId = "gsdgjads2";
+        mockedCurrentUser.UserId = Guid.NewGuid();
         mockedCurrentUser.Username = "Brady666";
     }
 
@@ -129,19 +128,25 @@
         }
         else
         {
+            List<Guid> tempIds = new List<Guid>();
+
+            foreach(var member in ChatMembers)
+            {
+                tempIds.Add(member.UserId);
+            }
 
             // lägg till användare till requesten
-            createChatRequest.Chatmembers = ChatMembers;
+            createChatRequest.ChatMembersIds = tempIds;
 
             // lägg till inloggad användare till payload
-            createChatRequest.Chatmembers?.Add(mockedCurrentUser);
+            //createChatRequest.Chatmembers?.Add(mockedCurrentUser);
 
             // skapa chattrum
             var response = await createChatservice.CreateChat(createChatRequest);
 
             if (!response.Success)
             {
-                ErrorMessage = response.Data;
+                //ErrorMessage = response.Data;
                 return;
             }
 

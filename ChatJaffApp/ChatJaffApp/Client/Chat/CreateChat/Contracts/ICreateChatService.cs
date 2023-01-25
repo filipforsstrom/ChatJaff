@@ -4,7 +4,7 @@ namespace ChatJaffApp.Client.Chat.CreateChat.Contracts
 {
     public interface ICreateChatService
     {
-        Task<CreateChatResponse> CreateChat(CreateChatDTO createChatRequest);
+        Task<CreateChatResponse> CreateChat(CreateChatDto createChatRequest);
 
     }
 }

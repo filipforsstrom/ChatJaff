@@ -16,27 +16,27 @@ namespace ChatJaffApp.Server.Chat.Member.Controllers
             {
                 new AddMemberResponse
                 {
-                    UserId = "192391n3j1j23",
+                    UserId = Guid.NewGuid(),
                     Username = "Batman42"
                 },
                 new AddMemberResponse
                 {
-                    UserId = "192kjasdjas1j23",
+                    UserId = Guid.NewGuid(),
                     Username = "Catwoman"
                 },
                 new AddMemberResponse
                 {
-                    UserId = "19o1j412k12",
+                    UserId = Guid.NewGuid(),
                     Username = "Randy"
                 },
                 new AddMemberResponse
                 {
-                    UserId = "19o1j412k12",
+                    UserId = Guid.NewGuid(),
                     Username = "Bandy"
                 },
                 new AddMemberResponse
                 {
-                    UserId = "19o1j412k12",
+                    UserId = Guid.NewGuid(),
                     Username = "Wolverine"
                 }
             };

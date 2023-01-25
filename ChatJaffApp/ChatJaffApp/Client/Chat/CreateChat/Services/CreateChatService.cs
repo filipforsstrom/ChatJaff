@@ -14,20 +14,19 @@ namespace ChatJaffApp.Client.Chat.CreateChat.Services
             _httpClient = httpClient;
         }
 
-        public async Task<CreateChatResponse> CreateChat(CreateChatDTO createChatRequest)
+        public async Task<CreateChatResponse> CreateChat(CreateChatDto createChatRequest)
         {
             CreateChatResponse chatResponse = new();
 
-            var response = await _httpClient.PostAsJsonAsync<CreateChatDTO>("api/chatroom/createchat", createChatRequest);
+            var response = await _httpClient.PostAsJsonAsync<CreateChatDto>("api/chatroom/createchat", createChatRequest);
             if (!response.IsSuccessStatusCode)
             {
-                chatResponse.Data = "Something went wrong";
                 chatResponse.Success = false; 
                 return chatResponse;
             }
 
             chatResponse.Success = true;
-            chatResponse.Data = await response.Content.ReadAsStringAsync();
+            chatResponse.Data = await response.Content.ReadFromJsonAsync<Guid>();
             return chatResponse;
         }
     }

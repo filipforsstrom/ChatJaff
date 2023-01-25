@@ -2,7 +2,7 @@
 {
     public class CreateChatResponse
     {
-        public string Data { get; set; } = string.Empty;
+        public Guid Data { get; set; }
         public bool Success { get; set; }
     }
 }
