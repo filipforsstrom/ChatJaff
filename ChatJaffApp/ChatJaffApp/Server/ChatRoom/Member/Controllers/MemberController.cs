@@ -1,7 +1,7 @@
 ﻿using ChatJaffApp.Server.ChatRoom.Member.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using static ChatJaffApp.Server.Chat.ChatRoom.Controllers.ChatRoomController;
+using static ChatJaffApp.Server.ChatRoom.Controllers.ChatRoomController;
 
 namespace ChatJaffApp.Server.ChatRoom.Member.Controllers
 {
@@ -10,12 +10,6 @@ namespace ChatJaffApp.Server.ChatRoom.Member.Controllers
     [ApiController]
     public class MemberController : ControllerBase
     {
-        private readonly IMapper _mapper;
-
-        public MemberController(IMapper mapper)
-        {
-            _mapper = mapper;
-        }
 
         [HttpPost]
         [Route("[action]")]
