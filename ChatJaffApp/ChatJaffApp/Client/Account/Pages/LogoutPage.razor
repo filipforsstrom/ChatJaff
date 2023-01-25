@@ -1,0 +1,37 @@
+﻿@page "/account/logout"
+@using ChatJaffApp.Client.Account.Contracts;
+@inject NavigationManager NavigationManager
+@inject IIdentityService IdentityService
+<h4>Du loggas ut...</h4>
+
+@code {
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        var response=await IdentityService.Logout();
+
+        if (!response.Success)
+        {
+            NavigationManager.NavigateTo("/counter");
+        }
+       
+        NavigationManager.NavigateTo("/");
+
+        OnAfterRender(response.Success);
+         
+        
+
+    }
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var timer = new Timer(new TimerCallback(_ =>
+            {
+                NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);
+            }), null, 10, 10);
+        }
+    }
+
+}
