@@ -109,8 +109,8 @@ namespace ChatJaffApp.Server.Identity.Controller
             }
         }
 
-        [HttpDelete, Authorize]
-        [Route("{id}")]
+        
+        [HttpDelete("{id:guid}")]
         public async Task<IActionResult> DeleteIdentity([FromRoute] Guid id)
         {
             var userId = _httpContextAccessor?.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
