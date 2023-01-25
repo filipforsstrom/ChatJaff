@@ -1,0 +1,152 @@
+﻿@page "/chatrooms/createchat";
+
+@inject HttpClient httpClient;
+@inject NavigationManager navManager;
+@inject ICreateChatService createChatservice;
+@inject IMemberService memberService;
+
+
+<div>
+    <div>
+        <h3>Add User to chat</h3>
+        <EditForm Model="@invMemberRequest" OnValidSubmit="@handleSearchSubmit">
+            <DataAnnotationsValidator/>
+                <InputText @bind-Value="invMemberRequest.SearchedUsername" />
+                <button>
+                    Add
+                </button>
+            <ValidationMessage For="() => invMemberRequest.SearchedUsername" />
+        </EditForm>
+    </div>
+    
+    <div>
+        <br />
+        <div class="card" style="width: 18rem; ">
+            <div class="card-header">
+                Chat members
+            </div>
+            <ul class="list-group list-group-flush">
+                @if (ChatMembers != null || ChatMembers?.Count < 1)
+                {
+                    @foreach (var member in ChatMembers)
+                    {
+                        <li class="list-group-item"><p>@member.Username</p><button class="btn btn-danger btn-sm" @onclick="() => onDeleteMember(member)">Remove</button> </li>
+                        
+                    }
+                }
+                else
+                {
+                    <p>No users added =(</p>
+                }
+               
+            </ul>
+        </div>
+        <br />
+            
+        
+
+        <div>
+            <p>
+            <label>
+                Chat name:
+                <InputText @bind-Value="createChatRequest.ChatName" />
+            </label>
+            </p>
+            <p>
+            <label>
+                Encrypted chat:
+                <InputCheckbox @bind-Value="createChatRequest.Encrypted" />
+            </label>
+            </p>
+            <button @onclick="onCreateChatClick">Create Chat</button>
+        </div>
+    </div>
+
+    <div>
+        <h3>@(ErrorMessage != null ? ErrorMessage : null)</h3>
+    </div>
+
+</div>
+
+@code {
+    List<ChatMember>? ChatMembers { get; set; } = new();
+    string? ErrorMessage { get; set; } = string.Empty;
+    private ChatMember mockedCurrentUser { get; set; } = new();
+
+    public InviteMemberDTO invMemberRequest { get; set; } = new();
+    public CreateChatDTO createChatRequest { get; set; } = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        //remove when we got current user logged in
+        mockedCurrentUser.UserId = "gsdgjads2";
+        mockedCurrentUser.Username = "Brady666";
+    }
+
+    public async Task handleSearchSubmit()
+    {
+        // kolla om du försöker lägga till själv.
+        if (ChatMembers.Select(m => m.Username?.ToLower()).Contains(invMemberRequest.SearchedUsername?.ToLower()))
+        {
+            ErrorMessage = "Member is already added";
+            return;
+        }
+
+        var memberSearchResponse = await memberService.AddMemberToChat(invMemberRequest);
+
+        if (!memberSearchResponse.Success)
+        {
+            ErrorMessage = memberSearchResponse.Message;
+            return;
+        }
+
+        ChatMember memberToAddToChat = new()
+        {
+            UserId = memberSearchResponse.MemberData.UserId,
+            Username = memberSearchResponse.MemberData.Username
+        };
+
+        ErrorMessage = "";
+        ChatMembers?.Add(memberToAddToChat);
+    }
+
+    private async Task onDeleteMember(ChatMember member)
+    {
+        var memberToDelete = ChatMembers.Find(m => m.Username.Equals(member.Username, StringComparison.OrdinalIgnoreCase));
+
+        if(memberToDelete != null)
+        {
+            ChatMembers.Remove(memberToDelete);
+        }
+    }
+
+    public async Task onCreateChatClick()
+    {
+        if (ChatMembers?.Count < 1)
+        {
+            ErrorMessage = "Please add members to the chat.";
+            return;
+        }
+        else
+        {
+
+            // lägg till användare till requesten
+            createChatRequest.Chatmembers = ChatMembers;
+
+            // lägg till inloggad användare till payload
+            createChatRequest.Chatmembers?.Add(mockedCurrentUser);
+
+            // skapa chattrum
+            var response = await createChatservice.CreateChat(createChatRequest);
+
+            if (!response.Success)
+            {
+                ErrorMessage = response.Data;
+                return;
+            }
+
+            navManager.NavigateTo($"/chatrooms/chat/{response.Data}");
+
+        }
+    }
+}

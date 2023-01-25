@@ -1,4 +1,5 @@
 ﻿using ChatJaffApp.Client.Account.Models;
+using ChatJaffApp.Client.Shared.Models.Contracts;
 
 namespace ChatJaffApp.Client.Account.Contracts
 {
@@ -6,10 +7,11 @@ namespace ChatJaffApp.Client.Account.Contracts
     {
         Task<RegisterResponse> Register(RegisterForm register);
 
-        Task<RegisterResponse> Login(LoginDto login);
+        Task<IServiceResponseViewModel<RegisterResponse>> Login(LoginDto login);
         
         Task<ChangePasswordResponse> ChangePassword(ChangePasswordForm changePassword);
         Task<DeleteIdentityResponse> DeleteIdentity(string identityId);
+
 
     }
 }

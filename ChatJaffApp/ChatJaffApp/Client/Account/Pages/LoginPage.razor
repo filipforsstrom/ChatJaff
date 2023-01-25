@@ -22,14 +22,26 @@
             </button>
             <NavLink href="account/register" class="btn btn-link">Register</NavLink>
         </EditForm>
+        <h2>@FailedLogin</h2>
     </div>
 </div>
 
 @code {
     private LoginDto loginModel = new();
+    private string? FailedLogin;
 
     public async Task HandleSubmit()
     {
         var response = await IdentityService.Login(loginModel);
+
+        if (response.Success)
+        {
+            NavigationManager.NavigateTo("/");
+        }
+        else
+        {
+            FailedLogin = "Login failed";
+        }
+
     }
 }

@@ -1,12 +1,9 @@
 ﻿using ChatJaffApp.Server.Identity.Models;
-using ChatJaffApp.Server.Identity.Models.Contracts;
 using ChatJaffApp.Server.Identity.Services;
 using JaffChat.Server.Identity.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using System.Security.Authentication;
-using System.Security.Principal;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 
@@ -18,10 +15,10 @@ namespace ChatJaffApp.Server.Identity.Controller
     {
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IIdentityService _identityService;
-                private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
 
-        public IdentityController(SignInManager<ApplicationUser> signInManager, IIdentityService identityService,IHttpContextAccessor httpContextAccessor)
+        public IdentityController(SignInManager<ApplicationUser> signInManager, IIdentityService identityService, IHttpContextAccessor httpContextAccessor)
         {
             _signInManager = signInManager;
             _identityService = identityService;
@@ -57,7 +54,7 @@ namespace ChatJaffApp.Server.Identity.Controller
             }
 
         }
-    
+
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequestDto user)
         {
@@ -71,6 +68,14 @@ namespace ChatJaffApp.Server.Identity.Controller
             catch (AuthenticationException exception)
             {
                 return Unauthorized(exception.Message);
+            }
+            catch (NullReferenceException exception)
+            {
+                return BadRequest(exception.Message);
+            }
+            catch (Exception exception)
+            {
+                return StatusCode(500);
             }
         }
 
@@ -97,9 +102,10 @@ namespace ChatJaffApp.Server.Identity.Controller
             if (response.Succeeded)
             {
                 return Ok();
-            } else
+            }
+            else
             {
-                return BadRequest();  
+                return BadRequest();
             }
         }
 
