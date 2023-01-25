@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Security.Authentication;
 using System.Security.Principal;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ChatJaffApp.Server.Identity.Controller
 {
@@ -102,7 +103,7 @@ namespace ChatJaffApp.Server.Identity.Controller
             }
         }
 
-        [HttpDelete]
+        [HttpDelete, Authorize]
         [Route("[action]/{id}")]
         public async Task<IActionResult> DeleteIdentity(string id)
         {
