@@ -6,6 +6,12 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <PropertyGroup Condition=" '$(RunConfiguration)' == 'https' ">
+    <ExternalConsole>true</ExternalConsole>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(RunConfiguration)' == 'http' ">
+    <ExternalConsole>true</ExternalConsole>
+  </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Blazored.LocalStorage" Version="4.3.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="7.0.2" />
@@ -17,4 +23,10 @@
     <ProjectReference Include="..\Shared\ChatJaffApp.Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="Chat\Pages\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="ChatRoom\Pages\" />
+  </ItemGroup>
 </Project>

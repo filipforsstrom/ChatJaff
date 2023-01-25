@@ -1,0 +1,45 @@
+﻿using ChatJaffApp.Server.ChatRoom.Contracts;
+using ChatJaffApp.Server.ChatRoom.Models;
+using Microsoft.AspNetCore.Mvc;
+
+namespace ChatJaffApp.Server.ChatRoom.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class ChatRoomController : ControllerBase
+    {
+        private readonly IChatRoomRepository _chatRoomRepository;
+
+        public ChatRoomController(IChatRoomRepository chatRoomRepository)
+        {
+            _chatRoomRepository = chatRoomRepository;
+        }
+
+        [HttpPost]
+        [Route("[action]")]
+        public async Task<IActionResult> CreateChat(CreateChatDTO chatRequest)
+        {
+            var newChat = new Chat()
+            {
+                Encrypted = chatRequest.Encrypted,
+                ChatName = chatRequest.ChatName,
+                ChatMembersIds = chatRequest.ChatMembersIds
+            };
+
+            var result = await _chatRoomRepository.CreateChatRoomAsync(newChat);
+
+            return Ok(result);
+        }
+
+
+        public class MockChatModel
+        {
+            public int Id { get; set; }
+            public List<string> Members { get; set; } = new();
+            public string? Creator { get; set; }
+            public List<string> Messages { get; set; } = new();
+            public bool Encrypted { get; set; }
+            public string? ChatName { get; set; }
+        }
+    }
+}

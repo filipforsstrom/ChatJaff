@@ -1,5 +1,5 @@
-﻿using ChatJaffApp.Server.Chat.Contracts;
-using ChatJaffApp.Server.Chat.Repositories;
+﻿using ChatJaffApp.Server.ChatRoom.Contracts;
+using ChatJaffApp.Server.ChatRoom.Repositories;
 using ChatJaffApp.Server.Identity.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
