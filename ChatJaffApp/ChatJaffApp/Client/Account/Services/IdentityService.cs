@@ -43,6 +43,23 @@ namespace ChatJaffApp.Client.Account.Services
             return changePasswordResponse;
         }
 
+        public async Task<DeleteIdentityResponse> DeleteIdentity(string identityId)
+        {
+            DeleteIdentityResponse deleteResponse = new();
+            Guid id = Guid.NewGuid();
+            var apiResponse = await _httpClient.DeleteAsync($"api/identity/{id}");
+
+            if (apiResponse.IsSuccessStatusCode)
+            {
+                deleteResponse.Success = true;
+            } else
+            {
+                deleteResponse.Data = await apiResponse.Content.ReadAsStringAsync();
+            }
+
+            return deleteResponse;
+        }
+
         public async Task<IServiceResponseViewModel<RegisterResponse>> Login(LoginDto login)
         {
             ServiceResponseViewModel<RegisterResponse> responseViewModel = new();

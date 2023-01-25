@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Authentication;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ChatJaffApp.Server.Identity.Controller
 {
@@ -77,6 +78,7 @@ namespace ChatJaffApp.Server.Identity.Controller
                 return StatusCode(500);
             }
         }
+
         [HttpPost]
         [Route("[action]")]
         public async Task<IActionResult> ChangePassword(ChangePasswordRequest request)
@@ -104,6 +106,37 @@ namespace ChatJaffApp.Server.Identity.Controller
             else
             {
                 return BadRequest();
+            }
+        }
+
+        
+        [HttpDelete("{id:guid}")]
+        public async Task<IActionResult> DeleteIdentity([FromRoute] Guid id)
+        {
+            var userId = _httpContextAccessor?.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            Guid userGuid = new Guid(userId);
+            try
+            {
+                if (userGuid == id)
+                {
+                    var userToDelete = await _signInManager.UserManager.FindByIdAsync(userId);
+                    if (userToDelete != null)
+                    {
+                        await _signInManager.UserManager.DeleteAsync(userToDelete);
+
+                        return NoContent();
+                    }
+
+                    return BadRequest("Server error");
+                }
+                else
+                {
+                    return Unauthorized();
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
     }
