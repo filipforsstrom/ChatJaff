@@ -6,6 +6,7 @@ using ChatJaffApp.Server.Identity.Data;
 using ChatJaffApp.Server.Identity.Models;
 using ChatJaffApp.Server.Extensions;
 using ChatJaffApp.Client;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,7 +15,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
-builder.Services.ConfigureAuthentication(builder.Configuration);
+
 builder.Services.AddServiceInjections();
 
 builder.Services.AddDbContext<IdentityContext>(options => options.UseSqlite(
@@ -23,7 +24,28 @@ builder.Services.AddDbContext<IdentityContext>(options => options.UseSqlite(
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddEntityFrameworkStores<IdentityContext>();
 
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(setupAction =>
+{
+    setupAction.AddSecurityDefinition("AuthToken", new OpenApiSecurityScheme()
+    {
+        Type = SecuritySchemeType.Http,
+        Scheme = "Bearer",
+        Description = "Input a valid token to access this API"
+    });
+
+    setupAction.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "AuthToken" }
+            }, new List<string>() }
+    });
+});
+
+builder.Services.ConfigureAuthentication(builder.Configuration);
 
 var app = builder.Build();
 
