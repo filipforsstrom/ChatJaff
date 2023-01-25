@@ -1,4 +1,5 @@
-﻿using ChatJaffApp.Server.Chat.ChatRoom.Models;
+﻿using AutoMapper;
+using ChatJaffApp.Server.Chat.ChatRoom.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,6 +9,13 @@ namespace ChatJaffApp.Server.Chat.ChatRoom.Controllers
     [ApiController]
     public class ChatRoomController : ControllerBase
     {
+        private readonly IMapper _mapper;
+
+        public ChatRoomController(IMapper mapper)
+        {
+            _mapper = mapper;
+        }
+
         //fake db
         public static List<MockChatModel> ChatModel { get; set; } = new();
 
@@ -15,13 +23,14 @@ namespace ChatJaffApp.Server.Chat.ChatRoom.Controllers
         [Route("[action]")]
         public async Task<IActionResult> CreateChat(CreateChatDTO chatRequest)
         {
-            MockChatModel newChat = new MockChatModel()
-            {
-                Id = 23,
-                Encrypted = chatRequest.Encrypted,
-                ChatName = chatRequest.ChatName,
+            var newChat = _mapper.Map<MockChatModel>(chatRequest);
+            //MockChatModel newChat = new MockChatModel()
+            //{
+            //    Id = 23,
+            //    Encrypted = chatRequest.Encrypted,
+            //    ChatName = chatRequest.ChatName,
 
-            };
+            //};
 
             foreach (var member in chatRequest.Chatmembers)
             {
