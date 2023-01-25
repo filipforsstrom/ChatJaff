@@ -23,7 +23,16 @@ builder.Services.AddDbContext<IdentityContext>(options => options.UseSqlite(
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddEntityFrameworkStores<IdentityContext>();
 
+builder.Services.AddSwaggerGen();
+
 var app = builder.Build();
+
+app.UseSwagger();
+app.UseSwaggerUI(c =>
+{
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Blazor API V1");
+});
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
