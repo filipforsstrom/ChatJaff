@@ -11,7 +11,7 @@ namespace ChatJaffApp.Server.ChatRoom.Repositories
 
         public ChatRoomRepository(JaffDbContext context)
         {
-            
+
             _context = context;
         }
 
@@ -21,6 +21,10 @@ namespace ChatJaffApp.Server.ChatRoom.Repositories
             ChatRooms.Add(chatRoom);
             var createdRoom = ChatRooms.LastOrDefault();
             return createdRoom.Id;
+        }
+        public IEnumerable<IChat> GetAllChatRooms()
+        {
+            return ChatRooms;
         }
     }
 }

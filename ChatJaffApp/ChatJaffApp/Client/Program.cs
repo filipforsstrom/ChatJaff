@@ -6,6 +6,8 @@ using ChatJaffApp.Client.ChatRoom.CreateChat.Contracts;
 using ChatJaffApp.Client.ChatRoom.CreateChat.Services;
 using ChatJaffApp.Client.ChatRoom.Member.Contracts;
 using ChatJaffApp.Client.ChatRoom.Member.Services;
+using ChatJaffApp.Client.ChatRoom.MyChatRooms.Contracts;
+using ChatJaffApp.Client.ChatRoom.MyChatRooms.Services;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
@@ -17,6 +19,7 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 builder.Services.AddScoped<IIdentityService, IdentityService>();
 builder.Services.AddScoped<ICreateChatService, CreateChatService>();
 builder.Services.AddScoped<IMemberService, MemberService>();
+builder.Services.AddScoped<IChatRoomsService, ChatRoomsService>();
 
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
 
