@@ -1,12 +1,87 @@
 ﻿@page "/chatrooms/chat/{id:guid}"
+@using System.Security.Claims;
+@using Microsoft.AspNetCore.SignalR.Client;
+@inject AuthenticationStateProvider authStateProvider
+@inject HttpClient httpClient;
+@inject NavigationManager navigation
 <h3>Welcome</h3>
+
+<div>
+    <p>Your Messages:</p>
+    @if (Messages != null)
+    {
+        <ul>
+        @foreach (var message in Messages)
+        {
+            <li>@message</li>
+        }
+        </ul>
+    }
+</div>
+<div>
+    <InputTextArea maxlength="150" @bind-Value="Message" />
+    <button @onclick="onSendMessageClick" class=" btn btn-primary">Send</button>
+</div>
 
 @code {
     [Parameter]
     public Guid Id { get; set; }
+    private string Message { get; set; } = string.Empty;
+    public SendMessageDto MessageDto { get; set; } = new();
+    private string ErrorMessage { get; set; } = string.Empty;
 
+    private List<string> Messages { get; set; } = new();
+
+    private HubConnection? hubConnection;
+    public bool IsConnected => hubConnection.State == HubConnectionState.Connected;
     protected override async Task OnInitializedAsync()
     {
-        var newId = Id;
+        var state = await authStateProvider.GetAuthenticationStateAsync();
+        var userId = state.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+        MessageDto.UserId = Guid.Parse(userId);
+        MessageDto.UserName = "brady666";
+
+        var url = navigation.ToAbsoluteUri("/chathub");
+
+        hubConnection = new HubConnectionBuilder()
+            .WithUrl(url)
+            .WithAutomaticReconnect()
+            .Build();
+
+        hubConnection.On<string, string>("ReceiveMessage", (user, message) =>
+        {
+            var encodedMsg = $"{user}: {message}";
+            Messages.Add(encodedMsg);
+            InvokeAsync(StateHasChanged);
+        });
+
+        await hubConnection.StartAsync();
     }
+
+    private async Task onSendMessageClick()
+    {
+
+        if (string.IsNullOrEmpty(Message))
+        {
+            ErrorMessage = "Message can not be empty";
+            //ta bort meddelande efteråt
+        }
+        else {
+            //skicka meddelandet till server
+            await hubConnection.SendAsync("SendMessageAsync", Message, MessageDto.UserName);
+            //var sendMessageResponse = httpClient.PostAsJsonAsync("");
+            ////om meddelandet = success nollställ message
+            //om != success => error meddelande
+        }
+
+    }
+
+    public class SendMessageDto
+    {
+        public Guid UserId { get; set; }
+        public string Message { get; set; }
+        public string UserName { get; set; }
+    }
+
+    
 }
