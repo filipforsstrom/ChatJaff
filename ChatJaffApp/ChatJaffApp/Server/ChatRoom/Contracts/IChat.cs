@@ -2,8 +2,11 @@
 {
     public interface IChat
     {
-        List<Guid> ChatMembersIds { get; set; }
-        bool Encrypted { get; set; }
-        string ChatName { get; set; }
+        public Guid Id { get; set; }
+        public List<Guid> ChatMembersIds { get; set; }
+        public string Creator { get; set; }
+        public bool Encrypted { get; set; }
+        public string ChatName { get; set; }
+        public List<string> Messages { get; set; }
     }
 }
