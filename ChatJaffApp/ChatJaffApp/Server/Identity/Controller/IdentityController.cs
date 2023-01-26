@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Security.Authentication;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using AutoMapper;
 
 namespace ChatJaffApp.Server.Identity.Controller
 {
@@ -16,26 +17,28 @@ namespace ChatJaffApp.Server.Identity.Controller
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IIdentityService _identityService;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IMapper _mapper;
 
 
-        public IdentityController(SignInManager<ApplicationUser> signInManager, IIdentityService identityService, IHttpContextAccessor httpContextAccessor)
+        public IdentityController(SignInManager<ApplicationUser> signInManager, IIdentityService identityService, IHttpContextAccessor httpContextAccessor, IMapper mapper)
         {
             _signInManager = signInManager;
             _identityService = identityService;
             _httpContextAccessor = httpContextAccessor;
+            _mapper = mapper;
 
         }
-
 
         [HttpPost]
         [Route("[action]")]
         public async Task<IActionResult> Register(RegisterRequest request)
         {
-            ApplicationUser newUser = new()
-            {
-                Email = request.Email,
-                UserName = request.Username,
-            };
+            var newUser = _mapper.Map<ApplicationUser>(request);
+            //ApplicationUser newUser = new()
+            //{
+            //    Email = request.Email,
+            //    UserName = request.Username,
+            //};
 
             try
             {
