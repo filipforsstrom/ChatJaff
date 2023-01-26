@@ -2,6 +2,7 @@
 using ChatJaffApp.Server.ChatRoom.Repositories;
 using ChatJaffApp.Server.Identity.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
@@ -35,6 +36,6 @@ public static class ServiceExtensions
     public static void AddServiceInjections(this IServiceCollection services)
     {
         services.AddScoped<IIdentityService, IdentityService>();
-        services.AddScoped<IChatRoomRepository, ChatRoomRepository>();
+        services.AddScoped<IChatRoomRepository, ChatRoomRepository>();        
     }
 }

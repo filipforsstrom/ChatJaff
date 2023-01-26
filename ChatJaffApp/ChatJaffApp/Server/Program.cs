@@ -8,6 +8,7 @@ using ChatJaffApp.Server.Extensions;
 using ChatJaffApp.Client;
 using Microsoft.OpenApi.Models;
 using ChatJaffApp.Server.Data;
+using ChatJaffApp.Server.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -51,7 +52,15 @@ builder.Services.AddDbContext<JaffDbContext>(options => options.UseSqlite(
 
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
+builder.Services.AddSignalR();
+builder.Services.AddResponseCompression(opts =>
+{
+    opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
+        new[] { "application/octet-stream" });
+});
+
 var app = builder.Build();
+app.UseResponseCompression();
 
 app.UseSwagger();
 app.UseSwaggerUI(c =>
@@ -86,6 +95,7 @@ app.UseAuthorization();
 
 app.MapRazorPages();
 app.MapControllers();
+app.MapHub<ChatHub>("/chathub");
 app.MapFallbackToFile("index.html");
 
 using (var scope = app.Services.CreateScope())

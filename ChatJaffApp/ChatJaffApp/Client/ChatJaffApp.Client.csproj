@@ -30,6 +30,7 @@
     <None Remove="Microsoft.AspNetCore.SignalR.Client" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="ChatRoom\Messages\Models\" />
     <Folder Include="ChatRoom\Pages\" />
   </ItemGroup>
 </Project>
