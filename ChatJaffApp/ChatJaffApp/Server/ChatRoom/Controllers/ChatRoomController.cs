@@ -15,6 +15,12 @@ namespace ChatJaffApp.Server.ChatRoom.Controllers
             _chatRoomRepository = chatRoomRepository;
         }
 
+        [HttpGet]
+        public IEnumerable<IChat> GetAllUsers()
+        {
+            return _chatRoomRepository.GetAllChatRooms();
+        }
+
         [HttpPost]
         [Route("[action]")]
         public async Task<IActionResult> CreateChat(CreateChatDTO chatRequest)
