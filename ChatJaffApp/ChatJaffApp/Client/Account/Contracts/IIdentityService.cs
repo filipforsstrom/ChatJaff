@@ -13,7 +13,7 @@ namespace ChatJaffApp.Client.Account.Contracts
 
 
         Task<ChangePasswordResponse> ChangePassword(ChangePasswordForm changePassword);
-        Task<DeleteIdentityResponse> DeleteIdentity(string identityId);
+        Task<DeleteIdentityResponseDto> DeleteIdentity(string identityId);
 
 
     }
