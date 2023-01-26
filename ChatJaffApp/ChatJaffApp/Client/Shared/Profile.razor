@@ -110,9 +110,8 @@
         if (deleteResponse.Success)
         {
             toggleDeleteDialog();
-            await localStorage.RemoveItemAsync("token");
-            await authenticationStateProvider.GetAuthenticationStateAsync();
-            navManager.NavigateTo("/");
+            await identityService.Logout();
+            //navManager.NavigateTo("/");
         } else
         {
             deleteIdentityResponseMessage = deleteResponse.Data;

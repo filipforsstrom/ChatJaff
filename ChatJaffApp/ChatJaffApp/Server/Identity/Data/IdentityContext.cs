@@ -24,7 +24,7 @@ namespace ChatJaffApp.Server.Identity.Data
             PasswordHasher<ApplicationUser> passwordHasher = new PasswordHasher<ApplicationUser>();
             ApplicationUser member1 = new ApplicationUser()
             {
-                Id = "m1",
+                Id = "8491fc93-57f5-493f-839d-18990b568e80",
                 UserName = "member1",
                 NormalizedUserName = "MEMBER1",
                 Email = "member1@gmail.com",

@@ -44,9 +44,9 @@ namespace ChatJaffApp.Client.Account.Services
             return changePasswordResponse;
         }
 
-        public async Task<DeleteIdentityResponse> DeleteIdentity(string identityId)
+        public async Task<DeleteIdentityResponseDto> DeleteIdentity(string identityId)
         {
-            DeleteIdentityResponse deleteResponse = new();
+            DeleteIdentityResponseDto deleteResponse = new();
 
             var guidId = Guid.Parse(identityId);
 
