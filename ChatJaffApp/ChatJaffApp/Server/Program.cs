@@ -7,6 +7,7 @@ using ChatJaffApp.Server.Identity.Models;
 using ChatJaffApp.Server.Extensions;
 using ChatJaffApp.Client;
 using Microsoft.OpenApi.Models;
+using ChatJaffApp.Server.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -45,6 +46,9 @@ builder.Services.AddSwaggerGen(setupAction =>
             }, new List<string>() }
     });
 });
+builder.Services.AddDbContext<JaffDbContext>(options => options.UseSqlite(
+    builder.Configuration.GetConnectionString("JaffDb")));
+
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
 var app = builder.Build();

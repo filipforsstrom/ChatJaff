@@ -1,0 +1,12 @@
+﻿@page "/chatrooms/chat/{id:guid}"
+<h3>Welcome</h3>
+
+@code {
+    [Parameter]
+    public Guid Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var newId = Id;
+    }
+}
