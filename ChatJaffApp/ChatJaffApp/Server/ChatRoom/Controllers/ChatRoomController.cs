@@ -31,15 +31,5 @@ namespace ChatJaffApp.Server.ChatRoom.Controllers
             return Ok(result);
         }
 
-
-        public class MockChatModel
-        {
-            public int Id { get; set; }
-            public List<string> Members { get; set; } = new();
-            public string? Creator { get; set; }
-            public List<string> Messages { get; set; } = new();
-            public bool Encrypted { get; set; }
-            public string? ChatName { get; set; }
-        }
     }
 }
