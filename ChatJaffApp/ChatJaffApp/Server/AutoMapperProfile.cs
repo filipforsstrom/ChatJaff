@@ -12,7 +12,6 @@ namespace ChatJaffApp.Server
     {
         public AutoMapperProfile()
         {
-            CreateMap<CreateChatDTO, MockChatModel>();
             CreateMap<RegisterRequest, ApplicationUser>();
             CreateMap<AddMemberResponse, AddMemberDto>();
         }

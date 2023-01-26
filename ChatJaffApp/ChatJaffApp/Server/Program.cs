@@ -6,6 +6,7 @@ using ChatJaffApp.Server.Identity.Data;
 using ChatJaffApp.Server.Identity.Models;
 using ChatJaffApp.Server.Extensions;
 using ChatJaffApp.Client;
+using ChatJaffApp.Server.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +23,9 @@ builder.Services.AddDbContext<IdentityContext>(options => options.UseSqlite(
     ));
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddEntityFrameworkStores<IdentityContext>();
+
+builder.Services.AddDbContext<JaffDbContext>(options => options.UseSqlite(
+    builder.Configuration.GetConnectionString("JaffDb")));
 
 builder.Services.AddSwaggerGen();
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
