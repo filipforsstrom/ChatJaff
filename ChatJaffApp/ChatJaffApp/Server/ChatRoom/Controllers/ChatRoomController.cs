@@ -16,9 +16,11 @@ namespace ChatJaffApp.Server.ChatRoom.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<IChat> GetAllUsers()
+        [Route("[action]")]
+        public IEnumerable<IChat> GetAllChats()
         {
-            return _chatRoomRepository.GetAllChatRooms();
+            var tempList = _chatRoomRepository.GetAllChatRooms();
+            return tempList;
         }
 
         [HttpPost]
