@@ -49,9 +49,6 @@ namespace ChatJaffApp.Client.Account.Services
 
             var guidId = Guid.Parse(identityId);
 
-            var header = _httpClient.DefaultRequestHeaders.Authorization.Scheme;
-            var parameter = _httpClient.DefaultRequestHeaders.Authorization.Parameter;
-
             var apiResponse = await _httpClient.DeleteAsync($"api/identity/{guidId}");
 
             if (apiResponse.IsSuccessStatusCode)

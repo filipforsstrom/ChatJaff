@@ -16,6 +16,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
 
+builder.Services.ConfigureAuthentication(builder.Configuration);
 builder.Services.AddServiceInjections();
 
 builder.Services.AddDbContext<IdentityContext>(options => options.UseSqlite(
@@ -45,7 +46,6 @@ builder.Services.AddSwaggerGen(setupAction =>
     });
 });
 
-builder.Services.ConfigureAuthentication(builder.Configuration);
 
 var app = builder.Build();
 

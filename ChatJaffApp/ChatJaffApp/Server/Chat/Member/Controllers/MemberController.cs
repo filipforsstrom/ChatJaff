@@ -1,4 +1,5 @@
 ﻿using ChatJaffApp.Server.Chat.Member.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,6 +9,7 @@ namespace ChatJaffApp.Server.Chat.Member.Controllers
     [ApiController]
     public class MemberController : ControllerBase
     {
+        [Authorize]
         [HttpPost]
         [Route("[action]")]
         public async Task<IActionResult> AddMemberToChat(AddMemberDto addMemberDto)

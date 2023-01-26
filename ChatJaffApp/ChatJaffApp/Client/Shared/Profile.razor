@@ -7,6 +7,8 @@
 @using ChatJaffApp.Client.Account.Contracts;
 @using ChatJaffApp.Client.Account.Models;
 @using System.Security.Claims;
+@using Microsoft.AspNetCore.Authorization;
+@attribute [Authorize];
 
 <PageTitle>Profile</PageTitle>
 
@@ -102,14 +104,14 @@
     {
         var state = await authenticationStateProvider.GetAuthenticationStateAsync();
         var userId = state.User.FindFirst(ClaimTypes.NameIdentifier).Value;
-        
+
         var deleteResponse = await identityService.DeleteIdentity(userId);
 
         if (deleteResponse.Success)
         {
-            await localStorage.RemoveItemAsync("token");
             toggleDeleteDialog();
-            StateHasChanged();
+            await localStorage.RemoveItemAsync("token");
+                       
         } else
         {
             deleteIdentityResponseMessage = deleteResponse.Data;
