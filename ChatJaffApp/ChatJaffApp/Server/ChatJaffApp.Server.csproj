@@ -26,6 +26,7 @@
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
       <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+      <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="7.0.2" />
   </ItemGroup>
 
   <ItemGroup>
@@ -36,8 +37,11 @@
 
   <ItemGroup>
     <None Remove="Data\" />
+    <None Remove="Microsoft.AspNetCore.SignalR.Client" />
+    <None Remove="Hubs\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Data\" />
+    <Folder Include="Hubs\" />
   </ItemGroup>
 </Project>
