@@ -47,8 +47,10 @@ namespace ChatJaffApp.Client.Account.Services
         public async Task<DeleteIdentityResponse> DeleteIdentity(string identityId)
         {
             DeleteIdentityResponse deleteResponse = new();
-            Guid id = Guid.NewGuid();
-            var apiResponse = await _httpClient.DeleteAsync($"api/identity/{id}");
+
+            var guidId = Guid.Parse(identityId);
+
+            var apiResponse = await _httpClient.DeleteAsync($"api/identity/{guidId}");
 
             if (apiResponse.IsSuccessStatusCode)
             {

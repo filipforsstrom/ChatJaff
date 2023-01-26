@@ -33,8 +33,25 @@ namespace ChatJaffApp.Server.Identity.Data
                 EmailConfirmed = true,
             };
             member1.PasswordHash = passwordHasher.HashPassword(member1, "member1");
+            
+            ApplicationUser member2 = new ApplicationUser()
+            {
+                Id = "b8381d75-d110-42f9-85e5-9c92a062fbc8",
+                UserName = "member2",
+                NormalizedUserName = "MEMBER2",
+                Email = "member2@gmail.com",
+                NormalizedEmail = "MEMBER2@GMAIL.COM",
+                LockoutEnabled = false,
+                EmailConfirmed = true,
+            };
 
-            builder.Entity<ApplicationUser>().HasData(member1);
+            member2.PasswordHash = passwordHasher.HashPassword(member2, "member2");
+
+            var listOfInitialUsers = new List<ApplicationUser>()
+            {
+                member1, member2
+            };
+            builder.Entity<ApplicationUser>().HasData(listOfInitialUsers);
         }
 
         private void SeedRoles(ModelBuilder builder)

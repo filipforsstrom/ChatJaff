@@ -1,8 +1,14 @@
 ﻿@page "/profile"
 @inject IIdentityService identityService;
+@inject ILocalStorageService localStorage;
+@inject AuthenticationStateProvider authenticationStateProvider;
 @inject NavigationManager navManager;
+@using Blazored.LocalStorage;
 @using ChatJaffApp.Client.Account.Contracts;
 @using ChatJaffApp.Client.Account.Models;
+@using System.Security.Claims;
+@using Microsoft.AspNetCore.Authorization;
+@attribute [Authorize];
 
 <PageTitle>Profile</PageTitle>
 
@@ -69,6 +75,11 @@
     public string? changePasswordResponseMessage { get; set; } = string.Empty;
     public string? deleteIdentityResponseMessage { get; set; } = string.Empty;
 
+    protected async override Task OnInitializedAsync()
+    {
+
+    }
+
     public async Task onChangePasswordSubmit()
     {
 
@@ -91,14 +102,17 @@
 
     public async Task onDeleteClick()
     {
-        string userId = "";
+        var state = await authenticationStateProvider.GetAuthenticationStateAsync();
+        var userId = state.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+
         var deleteResponse = await identityService.DeleteIdentity(userId);
 
         if (deleteResponse.Success)
         {
-            
             toggleDeleteDialog();
-            navManager.NavigateTo("/");            
+            await localStorage.RemoveItemAsync("token");
+            await authenticationStateProvider.GetAuthenticationStateAsync();
+            navManager.NavigateTo("/");
         } else
         {
             deleteIdentityResponseMessage = deleteResponse.Data;
