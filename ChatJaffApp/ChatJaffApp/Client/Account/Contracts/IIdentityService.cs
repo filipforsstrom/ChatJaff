@@ -9,6 +9,9 @@ namespace ChatJaffApp.Client.Account.Contracts
 
         Task<IServiceResponseViewModel<RegisterResponse>> Login(LoginDto login);
         
+        Task Logout();
+
+
         Task<ChangePasswordResponse> ChangePassword(ChangePasswordForm changePassword);
         Task<DeleteIdentityResponse> DeleteIdentity(string identityId);
 

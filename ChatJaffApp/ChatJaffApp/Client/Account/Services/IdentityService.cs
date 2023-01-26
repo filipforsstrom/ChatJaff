@@ -3,6 +3,7 @@ using ChatJaffApp.Client.Account.Contracts;
 using ChatJaffApp.Client.Account.Models;
 using ChatJaffApp.Client.Shared.Models;
 using ChatJaffApp.Client.Shared.Models.Contracts;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -46,8 +47,10 @@ namespace ChatJaffApp.Client.Account.Services
         public async Task<DeleteIdentityResponse> DeleteIdentity(string identityId)
         {
             DeleteIdentityResponse deleteResponse = new();
-            Guid id = Guid.NewGuid();
-            var apiResponse = await _httpClient.DeleteAsync($"api/identity/{id}");
+
+            var guidId = Guid.Parse(identityId);
+
+            var apiResponse = await _httpClient.DeleteAsync($"api/identity/{guidId}");
 
             if (apiResponse.IsSuccessStatusCode)
             {
@@ -102,5 +105,27 @@ namespace ChatJaffApp.Client.Account.Services
 
         }
 
+        public async Task Logout()
+        {
+            //RegisterResponse RegisterResponse = new();
+
+            await _localStorage.RemoveItemAsync("i18nextLng");
+            await _localStorage.RemoveItemAsync("token");
+            await _authStateProvider.GetAuthenticationStateAsync();
+
+            //var tokenCheck = await _localStorage.GetItemAsStringAsync("token");
+            //var lngCheck=await _localStorage.GetItemAsStringAsync("token");
+
+            //if(tokenCheck == null && lngCheck==null) 
+            //{
+            //    RegisterResponse.Success = true;
+            //}
+            //else
+            //{
+            //   RegisterResponse.Success = false;
+            //}
+            //return RegisterResponse;
+
+        }
     }
 }
