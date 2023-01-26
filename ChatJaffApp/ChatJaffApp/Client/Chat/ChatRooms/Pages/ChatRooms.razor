@@ -6,182 +6,131 @@
         <a href="/chatRooms/createchat"><button class="btn btn-primary">+</button></a>
 </label>
 </h3>
+<div class="container py-5 px-4">
+    <!-- For demo purpose-->
+    <header class="text-center">
+        <h1 class="display-4 text-white">Bootstrap Chat</h1>
+        <p class="text-white lead mb-0">An elegant chat widget compatible with Bootstrap 4</p>
+        <p class="text-white lead mb-4">
+            Snippet by
+            <a href="https://bootstrapious.com" class="text-white">
+                <u>Bootstrapious</u>
+            </a>
+        </p>
+    </header>
 
-<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
-<div class="container">
+    <div class="row rounded-lg overflow-hidden shadow">
+        <!-- Users box-->
+        <div class="col-5 px-0">
+            <div class="bg-white">
 
-    <!-- Page header start -->
-    <div class="page-title">
-        <div class="row gutters">
-            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
-                <h5 class="title">Chat App</h5>
-            </div>
-            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12"> </div>
-        </div>
-    </div>
-    <!-- Page header end -->
-
-    <!-- Content wrapper start -->
-    <div class="content-wrapper">
-
-        <!-- Row start -->
-        <div class="row gutters">
-
-            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-
-                <div class="card m-0">
-
-                    <!-- Row start -->
-                    <div class="row no-gutters">
-                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-3 col-3">
-                            <div class="users-container">
-                                <div class="chat-search-box">
-                                    <div class="input-group">
-                                        <input class="form-control" placeholder="Search">
-                                        <div class="input-group-btn">
-                                            <button type="button" class="btn btn-info">
-                                                <i class="fa fa-search"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                                <ul class="users">
-                                    <li class="person" data-chat="person1">
-                                        <div class="user">
-                                            <span class="status busy"></span>
-                                        </div>
-                                        <p class="name-time">
-                                            <span class="name">Steve Bangalter</span>
-                                            <span class="time">15/02/2019</span>
-                                        </p>
-                                    </li>
-                                    <li class="person" data-chat="person1">
-                                        <div class="user">
-                                            <span class="status offline"></span>
-                                        </div>
-                                        <p class="name-time">
-                                            <span class="name">Steve Bangalter</span>
-                                            <span class="time">15/02/2019</span>
-                                        </p>
-                                    </li>
-                                    <li class="person active-user" data-chat="person2">
-                                        <div class="user">
-                                            <span class="status away"></span>
-                                        </div>
-                                        <p class="name-time">
-                                            <span class="name">Peter Gregor</span>
-                                            <span class="time">12/02/2019</span>
-                                        </p>
-                                    </li>
-                                    <li class="person" data-chat="person3">
-                                        <div class="user">
-                                            <span class="status busy"></span>
-                                        </div>
-                                        <p class="name-time">
-                                            <span class="name">Jessica Larson</span>
-                                            <span class="time">11/02/2019</span>
-                                        </p>
-                                    </li>
-                                    <li class="person" data-chat="person4">
-                                        <div class="user">
-                                            <span class="status offline"></span>
-                                        </div>
-                                        <p class="name-time">
-                                            <span class="name">Lisa Guerrero</span>
-                                            <span class="time">08/02/2019</span>
-                                        </p>
-                                    </li>
-                                    <li class="person" data-chat="person5">
-                                        <div class="user">
-                                            <span class="status away"></span>
-                                        </div>
-                                        <p class="name-time">
-                                            <span class="name">Michael Jordan</span>
-                                            <span class="time">05/02/2019</span>
-                                        </p>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="col-xl-8 col-lg-8 col-md-8 col-sm-9 col-9">
-                            <div class="selected-user">
-                                <span>To: <span class="name">Emily Russell</span></span>
-                            </div>
-                            <div class="chat-container">
-                                <ul class="chat-box chatContainerScroll">
-                                    <li class="chat-left">
-                                        <div class="chat-avatar">
-                                            <div class="chat-name">Russell</div>
-                                        </div>
-                                        <div class="chat-text">Hello, I'm Russell.
-                                            <br>How can I help you today?</div>
-                                        <div class="chat-hour">08:55 <span class="fa fa-check-circle"></span></div>
-                                    </li>
-                                    <li class="chat-right">
-                                        <div class="chat-hour">08:56 <span class="fa fa-check-circle"></span></div>
-                                        <div class="chat-text">Hi, Russell
-                                            <br> I need more information about Developer Plan.</div>
-                                        <div class="chat-avatar">
-                                            <div class="chat-name">Sam</div>
-                                        </div>
-                                    </li>
-                                    <li class="chat-left">
-                                        <div class="chat-avatar">
-                                            <div class="chat-name">Russell</div>
-                                        </div>
-                                        <div class="chat-text">Are we meeting today?
-                                            <br>Project has been already finished and I have results to show you.</div>
-                                        <div class="chat-hour">08:57 <span class="fa fa-check-circle"></span></div>
-                                    </li>
-                                    <li class="chat-right">
-                                        <div class="chat-hour">08:59 <span class="fa fa-check-circle"></span></div>
-                                        <div class="chat-text">Well I am not sure.
-                                            <br>I have results to show you.</div>
-                                        <div class="chat-avatar">
-                                            <div class="chat-name">Joyse</div>
-                                        </div>
-                                    </li>
-                                    <li class="chat-left">
-                                        <div class="chat-avatar">
-                                            <div class="chat-name">Russell</div>
-                                        </div>
-                                        <div class="chat-text">The rest of the team is not here yet.
-                                            <br>Maybe in an hour or so?</div>
-                                        <div class="chat-hour">08:57 <span class="fa fa-check-circle"></span></div>
-                                    </li>
-                                    <li class="chat-right">
-                                        <div class="chat-hour">08:59 <span class="fa fa-check-circle"></span></div>
-                                        <div class="chat-text">Have you faced any problems at the last phase of the project?</div>
-                                        <div class="chat-avatar">
-                                            <div class="chat-name">Jin</div>
-                                        </div>
-                                    </li>
-                                    <li class="chat-left">
-                                        <div class="chat-avatar">
-                                            <div class="chat-name">Russell</div>
-                                        </div>
-                                        <div class="chat-text">Actually everything was fine.
-                                            <br>I'm very excited to show this to our team.</div>
-                                        <div class="chat-hour">07:00 <span class="fa fa-check-circle"></span></div>
-                                    </li>
-                                </ul>
-                                <div class="form-group mt-3 mb-0">
-                                    <textarea class="form-control" rows="3" placeholder="Type your message here..."></textarea>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Row end -->
+                <div class="bg-gray px-4 py-2 bg-light">
+                    <p class="h5 mb-0 py-1">Recent</p>
                 </div>
 
+                <div class="messages-box">
+                    <div class="list-group rounded-0">
+                        <a class="list-group-item list-group-item-action active text-white rounded-0">
+                            <div class="media">
+                                <img src="https://bootstrapious.com/i/snippets/sn-chat/avatar.svg" alt="user" width="50" class="rounded-circle">
+                                <div class="media-body ml-4">
+                                    <div class="d-flex align-items-center justify-content-between mb-1">
+                                        <h6 class="mb-0">Jason Doe</h6><small class="small font-weight-bold">25 Dec</small>
+                                    </div>
+                                    <p class="font-italic mb-0 text-small">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore.</p>
+                                </div>
+                            </div>
+                        </a>
+
+                        <a href="#" class="list-group-item list-group-item-action list-group-item-light rounded-0">
+                            <div class="media">
+                                <img src="https://bootstrapious.com/i/snippets/sn-chat/avatar.svg" alt="user" width="50" class="rounded-circle">
+                                <div class="media-body ml-4">
+                                    <div class="d-flex align-items-center justify-content-between mb-1">
+                                        <h6 class="mb-0">Jason Doe</h6><small class="small font-weight-bold">14 Dec</small>
+                                    </div>
+                                    <p class="font-italic text-muted mb-0 text-small">Lorem ipsum dolor sit amet, consectetur. incididunt ut labore.</p>
+                                </div>
+                            </div>
+                        </a>
+
+                        <a href="#" class="list-group-item list-group-item-action list-group-item-light rounded-0">
+                            <div class="media">
+                                <img src="https://bootstrapious.com/i/snippets/sn-chat/avatar.svg" alt="user" width="50" class="rounded-circle">
+                                <div class="media-body ml-4">
+                                    <div class="d-flex align-items-center justify-content-between mb-1">
+                                        <h6 class="mb-0">Jason Doe</h6><small class="small font-weight-bold">9 Nov</small>
+                                    </div>
+                                    <p class="font-italic text-muted mb-0 text-small">consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore.</p>
+                                </div>
+                            </div>
+                        </a>
+
+                        <a href="#" class="list-group-item list-group-item-action list-group-item-light rounded-0">
+                            <div class="media">
+                                <img src="https://bootstrapious.com/i/snippets/sn-chat/avatar.svg" alt="user" width="50" class="rounded-circle">
+                                <div class="media-body ml-4">
+                                    <div class="d-flex align-items-center justify-content-between mb-1">
+                                        <h6 class="mb-0">Jason Doe</h6><small class="small font-weight-bold">18 Oct</small>
+                                    </div>
+                                    <p class="font-italic text-muted mb-0 text-small">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore.</p>
+                                </div>
+                            </div>
+                        </a>
+
+                        <a href="#" class="list-group-item list-group-item-action list-group-item-light rounded-0">
+                            <div class="media">
+                                <img src="https://bootstrapious.com/i/snippets/sn-chat/avatar.svg" alt="user" width="50" class="rounded-circle">
+                                <div class="media-body ml-4">
+                                    <div class="d-flex align-items-center justify-content-between mb-1">
+                                        <h6 class="mb-0">Jason Doe</h6><small class="small font-weight-bold">17 Oct</small>
+                                    </div>
+                                    <p class="font-italic text-muted mb-0 text-small">consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore.</p>
+                                </div>
+                            </div>
+                        </a>
+
+                        <a href="#" class="list-group-item list-group-item-action list-group-item-light rounded-0">
+                            <div class="media">
+                                <img src="https://bootstrapious.com/i/snippets/sn-chat/avatar.svg" alt="user" width="50" class="rounded-circle">
+                                <div class="media-body ml-4">
+                                    <div class="d-flex align-items-center justify-content-between mb-1">
+                                        <h6 class="mb-0">Jason Doe</h6><small class="small font-weight-bold">2 Sep</small>
+                                    </div>
+                                    <p class="font-italic text-muted mb-0 text-small">Quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                                </div>
+                            </div>
+                        </a>
+
+                        <a href="#" class="list-group-item list-group-item-action list-group-item-light rounded-0">
+                            <div class="media">
+                                <img src="https://bootstrapious.com/i/snippets/sn-chat/avatar.svg" alt="user" width="50" class="rounded-circle">
+                                <div class="media-body ml-4">
+                                    <div class="d-flex align-items-center justify-content-between mb-1">
+                                        <h6 class="mb-0">Jason Doe</h6><small class="small font-weight-bold">30 Aug</small>
+                                    </div>
+                                    <p class="font-italic text-muted mb-0 text-small">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore.</p>
+                                </div>
+                            </div>
+                        </a>
+
+                        <a href="#" class="list-group-item list-group-item-action list-group-item-light rounded-0">
+                            <div class="media">
+                                <img src="https://bootstrapious.com/i/snippets/sn-chat/avatar.svg" alt="user" width="50" class="rounded-circle">
+                                <div class="media-body ml-4">
+                                    <div class="d-flex align-items-center justify-content-between mb-3">
+                                        <h6 class="mb-0">Jason Doe</h6><small class="small font-weight-bold">21 Aug</small>
+                                    </div>
+                                    <p class="font-italic text-muted mb-0 text-small">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore.</p>
+                                </div>
+                            </div>
+                        </a>
+
+                    </div>
+                </div>
             </div>
-
         </div>
-        <!-- Row end -->
-
     </div>
-    <!-- Content wrapper end -->
-
 </div>
 @code {
 
