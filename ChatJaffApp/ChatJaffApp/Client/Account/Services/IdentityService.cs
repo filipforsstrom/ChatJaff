@@ -86,25 +86,26 @@ namespace ChatJaffApp.Client.Account.Services
 
         }
 
-        public async Task<RegisterResponse> Logout()
+        public async Task Logout()
         {
-            RegisterResponse RegisterResponse = new();
+            //RegisterResponse RegisterResponse = new();
 
             await _localStorage.RemoveItemAsync("i18nextLng");
             await _localStorage.RemoveItemAsync("token");
+            await _authStateProvider.GetAuthenticationStateAsync();
 
-            var tokenCheck = await _localStorage.GetItemAsStringAsync("token");
-            var lngCheck=await _localStorage.GetItemAsStringAsync("token");
+            //var tokenCheck = await _localStorage.GetItemAsStringAsync("token");
+            //var lngCheck=await _localStorage.GetItemAsStringAsync("token");
 
-            if(tokenCheck == null && lngCheck==null) 
-            {
-                RegisterResponse.Success = true;
-            }
-            else
-            {
-               RegisterResponse.Success = false;
-            }
-            return RegisterResponse;
+            //if(tokenCheck == null && lngCheck==null) 
+            //{
+            //    RegisterResponse.Success = true;
+            //}
+            //else
+            //{
+            //   RegisterResponse.Success = false;
+            //}
+            //return RegisterResponse;
 
         }
     }

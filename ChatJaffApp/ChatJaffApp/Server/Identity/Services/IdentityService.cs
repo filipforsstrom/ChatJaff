@@ -46,7 +46,7 @@ namespace ChatJaffApp.Server.Identity.Services
             var claims = await CreateUserClaimsAsync(user);
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
                _configuration.GetSection("JWTSettings:SecretForKey").Value));
-
+               
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var token = new JwtSecurityToken(

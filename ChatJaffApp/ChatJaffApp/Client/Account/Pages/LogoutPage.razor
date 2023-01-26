@@ -9,29 +9,29 @@
     protected override async Task OnInitializedAsync()
     {
 
-        var response=await IdentityService.Logout();
+        await IdentityService.Logout();
 
-        if (!response.Success)
-        {
-            NavigationManager.NavigateTo("/counter");
-        }
+        //if (!response.Success)
+        //{
+        //    NavigationManager.NavigateTo("/counter");
+        //}
        
-        NavigationManager.NavigateTo("/");
+        NavigationManager.NavigateTo("/account/login");
 
-        OnAfterRender(response.Success);
+        //OnAfterRender(response.Success);
          
         
 
     }
-    protected override void OnAfterRender(bool firstRender)
-    {
-        if (firstRender)
-        {
-            var timer = new Timer(new TimerCallback(_ =>
-            {
-                NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);
-            }), null, 10, 10);
-        }
-    }
+    //protected override void OnAfterRender(bool firstRender)
+    //{
+    //    if (firstRender)
+    //    {
+    //        var timer = new Timer(new TimerCallback(_ =>
+    //        {
+    //            NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);
+    //        }), null, 10, 10);
+    //    }
+    //}
 
 }
