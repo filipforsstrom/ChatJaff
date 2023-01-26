@@ -1,11 +1,36 @@
 ﻿@page "/chatrooms"
+@using ChatJaffApp.Client.ChatRoom.MyChatRooms.Contracts;
+@using ChatJaffApp.Client.ChatRoom.MyChatRooms.Models;
+@inject IChatRoomsService _chatRoomsService
 
 <h3>
     <label>
         Create new chat
         <a href="/chatRooms/createchat"><button class="btn btn-primary">+</button></a>
-</label>
+    </label>
 </h3>
+<div class="list-group rounded-0">
+    @foreach (var chatRoom in ChatRoomList)
+    {
+        <a href="/chatrooms/chat/@chatRoom.Id" class="list-group-item list-group-item-action list-group-item-light rounded-0">
+            <div class="media">
+                <div class="media-body ml-4">
+                    <tr>
+                        <td>
+                            <p class="font-italic text-muted mb-0 text-small">@chatRoom.ChatName</p>
+                        </td>
+                    </tr>
+                </div>
+            </div>
+        </a>
+    }
+</div>
 @code {
+    public List<ChatRoomsViewModel> ChatRoomList { get; set; } = new();
 
+    protected override async Task OnInitializedAsync()
+    {
+        //Get user specific chats with Id from token later
+        ChatRoomList = await _chatRoomsService.GetAllChats();
+    }
 }
