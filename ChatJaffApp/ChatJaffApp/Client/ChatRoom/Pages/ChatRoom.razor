@@ -34,6 +34,8 @@
 
     private HubConnection? hubConnection;
     public bool IsConnected => hubConnection.State == HubConnectionState.Connected;
+
+    
     protected override async Task OnInitializedAsync()
     {
         var state = await authStateProvider.GetAuthenticationStateAsync();
@@ -55,7 +57,14 @@
             InvokeAsync(StateHasChanged);
         });
 
+        hubConnection.On<string>("MemberJoined", (message) =>
+        {
+            var encodedMsg = $"System: {message}";
+            Messages.Add(encodedMsg);
+            InvokeAsync(StateHasChanged);
+        });        
         await hubConnection.StartAsync();
+        await hubConnection.SendAsync("AddToGroup", MessageDto.UserName);
     }
 
     private async Task onSendMessageClick()
@@ -68,8 +77,8 @@
         }
         else {
             //skicka meddelandet till server
-            await hubConnection.SendAsync("SendMessageAsync", Message, MessageDto.UserName);
-            //var sendMessageResponse = httpClient.PostAsJsonAsync("");
+            await hubConnection.SendAsync("SendMessageAsync", Message, MessageDto.UserName, Id);
+            
             ////om meddelandet = success nollställ message
             //om != success => error meddelande
         }
