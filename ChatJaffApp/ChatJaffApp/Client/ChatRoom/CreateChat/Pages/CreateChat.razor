@@ -4,12 +4,10 @@
 @inject NavigationManager navManager;
 @inject ICreateChatService createChatservice;
 
-
-
 <div>
     <div>
-        <h3>Add User to chat</h3>
-        <AddMemberToChat CurrentChatMembers="ChatMembers" OnFoundMember="HandleFoundMember"/>
+        <h3>Add User To Chat</h3>
+        <FindMemberForChat CurrentChatMembers="ChatMembers" OnFoundMember="HandleFoundMember"/>
     </div>
     
     <div>
