@@ -57,12 +57,14 @@
             InvokeAsync(StateHasChanged);
         });
 
-        //hubConnection.On<string>("AddToGroup", (Id) =>
-        //{
-
-        //});        
+        hubConnection.On<string>("MemberJoined", (message) =>
+        {
+            var encodedMsg = $"System: {message}";
+            Messages.Add(encodedMsg);
+            InvokeAsync(StateHasChanged);
+        });        
         await hubConnection.StartAsync();
-        await hubConnection.SendAsync("AddToGroup", Id);
+        await hubConnection.SendAsync("AddToGroup", MessageDto.UserName);
     }
 
     private async Task onSendMessageClick()
@@ -76,7 +78,7 @@
         else {
             //skicka meddelandet till server
             await hubConnection.SendAsync("SendMessageAsync", Message, MessageDto.UserName, Id);
-            //var sendMessageResponse = httpClient.PostAsJsonAsync("");
+            
             ////om meddelandet = success nollställ message
             //om != success => error meddelande
         }

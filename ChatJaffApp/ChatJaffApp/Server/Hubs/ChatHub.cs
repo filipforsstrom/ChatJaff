@@ -5,11 +5,16 @@ namespace ChatJaffApp.Server.Hubs
 {
 	public class ChatHub : Hub
 	{
-        
+        public ChatHub()
+        {
+
+        }
+
         public async Task SendMessageAsync(string userName,string message, Guid chatroomId)
         {
 
             await Clients.Groups(chatroomId.ToString()).SendAsync("ReceiveMessage", userName, message);
+            
         }
 
         public async Task AddToGroup(string chatRoomId)
@@ -18,7 +23,7 @@ namespace ChatJaffApp.Server.Hubs
 
             var group = Groups;
 
-            await Clients.Group(chatRoomId).SendAsync("ReceiveMessage", $"{Context.ConnectionId} has joined the group {chatRoomId}.");
+            await Clients.Group(chatRoomId).SendAsync("MemberJoined", $"{Context.ConnectionId} has joined the group {chatRoomId}.");
         }
 
         public async Task RemoveFromGroup(string groupName)
