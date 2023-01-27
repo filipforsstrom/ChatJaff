@@ -1,5 +1,7 @@
 ﻿using ChatJaffApp.Server.ChatRoom.Contracts;
 using ChatJaffApp.Server.Data;
+using ChatJaffApp.Server.Data.Contracts;
+using ChatJaffApp.Server.Data.Models;
 
 namespace ChatJaffApp.Server.ChatRoom.Repositories
 {
@@ -25,6 +27,13 @@ namespace ChatJaffApp.Server.ChatRoom.Repositories
         public IEnumerable<IChat> GetAllChatRooms()
         {
             return ChatRooms;
+        }
+
+        public async Task SaveMessage(IMessage message)
+        {
+            //var chatroom = ChatRooms.FirstOrDefault(cr => cr.Id == message.ChatId);
+            //chatroom.Messages.Add(message);
+            //await Task.Delay(1000);
         }
     }
 }
