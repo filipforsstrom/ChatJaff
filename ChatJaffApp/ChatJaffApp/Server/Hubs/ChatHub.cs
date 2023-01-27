@@ -37,5 +37,6 @@ namespace ChatJaffApp.Server.Hubs
         //    await Clients.All.SendAsync("ReceiveChatNotification", message, receiverUserId, senderUserId);
         //}
     }
+
 }
 
