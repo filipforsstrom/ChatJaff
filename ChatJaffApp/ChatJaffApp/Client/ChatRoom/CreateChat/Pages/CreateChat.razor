@@ -9,7 +9,7 @@
 <div>
     <div>
         <h3>Add User to chat</h3>
-        <AddMemberToChat CurrentChatMembers="ChatMembers" OnRetrievedMember="HandleRetrievedMember"/>
+        <AddMemberToChat CurrentChatMembers="ChatMembers" OnFoundMember="HandleFoundMember"/>
     </div>
     
     <div>
@@ -33,8 +33,6 @@
             </ul>
         </div>
         <br />
-            
-        
 
         <div>
             <p>
@@ -72,7 +70,7 @@
         mockedCurrentUser.Username = "Brady666";
     }
 
-    private void HandleRetrievedMember(ChatMember memberToAddToChat)
+    private void HandleFoundMember(ChatMember memberToAddToChat)
     {
         ChatMembers.Add(memberToAddToChat);
     }

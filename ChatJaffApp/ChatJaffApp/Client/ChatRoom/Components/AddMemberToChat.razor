@@ -17,7 +17,7 @@
     [Parameter]
     public List<ChatMember> CurrentChatMembers { get; set; } = new();
     [Parameter]
-    public EventCallback<ChatMember> OnRetrievedMember { get; set; }
+    public EventCallback<ChatMember> OnFoundMember { get; set; }
     public InviteMemberDto invMemberRequest { get; set; } = new();
     public string ErrorMessage { get; set; } = string.Empty;
 
@@ -45,7 +45,7 @@
         };
 
         ErrorMessage = "";
-        await OnRetrievedMember.InvokeAsync(memberToAddToChat);
+        await OnFoundMember.InvokeAsync(memberToAddToChat);
     }
 }
 
