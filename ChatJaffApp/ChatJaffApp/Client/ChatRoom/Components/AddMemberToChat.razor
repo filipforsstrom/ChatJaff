@@ -1,0 +1,51 @@
+﻿@inject IMemberService memberService;
+
+<EditForm Model="@invMemberRequest" OnValidSubmit="@handleUserSearchSubmit">
+    <DataAnnotationsValidator />
+    <InputText @bind-Value="invMemberRequest.SearchedUsername" />
+    <button>
+        Add
+    </button>
+    <ValidationMessage For="() => invMemberRequest.SearchedUsername" />
+</EditForm>
+
+<div>
+    <h4>@(ErrorMessage != null ? ErrorMessage : null)</h4>
+</div>
+
+@code {
+    [Parameter]
+    public List<ChatMember> CurrentChatMembers { get; set; } = new();
+    [Parameter]
+    public EventCallback<ChatMember> OnRetrievedMember { get; set; }
+    public InviteMemberDto invMemberRequest { get; set; } = new();
+    public string ErrorMessage { get; set; } = string.Empty;
+
+    public async Task handleUserSearchSubmit()
+    {
+        // kolla om du försöker lägga till själv.
+        if (CurrentChatMembers.Select(m => m.Username?.ToLower()).Contains(invMemberRequest.SearchedUsername?.ToLower()))
+        {
+            ErrorMessage = "Member is already added";
+            return;
+        }
+
+        var memberSearchResponse = await memberService.AddMemberToChat(invMemberRequest);
+
+        if (!memberSearchResponse.Success)
+        {
+            ErrorMessage = memberSearchResponse.Message;
+            return;
+        }
+
+        ChatMember memberToAddToChat = new()
+        {
+            UserId = memberSearchResponse.MemberData.UserId,
+            Username = memberSearchResponse.MemberData.Username
+        };
+
+        ErrorMessage = "";
+        await OnRetrievedMember.InvokeAsync(memberToAddToChat);
+    }
+}
+

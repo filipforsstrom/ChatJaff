@@ -1,21 +1,15 @@
 ﻿@page "/chatrooms/createchat";
+@using ChatJaffApp.Client.ChatRoom.Components;
 @inject HttpClient httpClient;
 @inject NavigationManager navManager;
 @inject ICreateChatService createChatservice;
-@inject IMemberService memberService;
+
 
 
 <div>
     <div>
         <h3>Add User to chat</h3>
-        <EditForm Model="@invMemberRequest" OnValidSubmit="@handleSearchSubmit">
-            <DataAnnotationsValidator/>
-                <InputText @bind-Value="invMemberRequest.SearchedUsername" />
-                <button>
-                    Add
-                </button>
-            <ValidationMessage For="() => invMemberRequest.SearchedUsername" />
-        </EditForm>
+        <AddMemberToChat CurrentChatMembers="ChatMembers" OnRetrievedMember="HandleRetrievedMember"/>
     </div>
     
     <div>
@@ -30,14 +24,12 @@
                     @foreach (var member in ChatMembers)
                     {
                         <li class="list-group-item"><p>@member.Username</p><button class="btn btn-danger btn-sm" @onclick="() => onDeleteMember(member)">Remove</button> </li>
-                        
                     }
                 }
                 else
                 {
                     <p>No users added =(</p>
                 }
-               
             </ul>
         </div>
         <br />
@@ -71,8 +63,6 @@
     List<ChatMember>? ChatMembers { get; set; } = new();
     string? ErrorMessage { get; set; } = string.Empty;
     private ChatMember mockedCurrentUser { get; set; } = new();
-
-    public InviteMemberDto invMemberRequest { get; set; } = new();
     public CreateChatDto createChatRequest { get; set; } = new();
 
     protected override async Task OnInitializedAsync()
@@ -82,32 +72,11 @@
         mockedCurrentUser.Username = "Brady666";
     }
 
-    public async Task handleSearchSubmit()
+    private void HandleRetrievedMember(ChatMember memberToAddToChat)
     {
-        // kolla om du försöker lägga till själv.
-        if (ChatMembers.Select(m => m.Username?.ToLower()).Contains(invMemberRequest.SearchedUsername?.ToLower()))
-        {
-            ErrorMessage = "Member is already added";
-            return;
-        }
-
-        var memberSearchResponse = await memberService.AddMemberToChat(invMemberRequest);
-
-        if (!memberSearchResponse.Success)
-        {
-            ErrorMessage = memberSearchResponse.Message;
-            return;
-        }
-
-        ChatMember memberToAddToChat = new()
-        {
-            UserId = memberSearchResponse.MemberData.UserId,
-            Username = memberSearchResponse.MemberData.Username
-        };
-
-        ErrorMessage = "";
-        ChatMembers?.Add(memberToAddToChat);
+        ChatMembers.Add(memberToAddToChat);
     }
+
 
     private async Task onDeleteMember(ChatMember member)
     {
