@@ -13,6 +13,7 @@ public class Tests : PageTest
     [Test]
     public async Task HomepageHasPlaywrightInTitleAndGetStartedLinkLinkingtoTheIntroPage()
     {
+        int nr = 6;
         await Page.GotoAsync("https://playwright.dev");
 
         // Expect a title "to contain" a substring.
