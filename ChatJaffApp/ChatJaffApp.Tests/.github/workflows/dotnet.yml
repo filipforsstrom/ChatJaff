@@ -22,6 +22,6 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore
       - name: Build
-        run: dotnet build ChatJaffApp/ChatJaffApp.Tests/ChatJaffApp.Tests.csproj --no-restore
+        run: dotnet build --no-restore
       - name: Test
-        run: dotnet test ChatJaffApp/ChatJaffApp.Tests/ChatJaffApp.Tests.csproj -- NUnit.NumberOfTestWorkers=5
+        run: dotnet test -- NUnit.NumberOfTestWorkers=5
