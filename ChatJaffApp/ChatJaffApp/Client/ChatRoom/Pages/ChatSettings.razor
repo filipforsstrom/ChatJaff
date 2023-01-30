@@ -1,0 +1,33 @@
+﻿@page "/chatrooms/chat/{id:guid}/chatsettings"
+@using ChatJaffApp.Client.ChatRoom.Components
+
+<div>
+    <container>
+        <h2>
+            Members
+        </h2>
+        @foreach(var member in ChatMembers){
+            <tr>
+                <td>
+                    <p class="font-italic text-muted mb-0 text-small">@member.Username</p>
+                </td>
+            </tr>
+        }
+        <br><br>
+       <h2>Change chat name</h2>
+       <input type="text"/>
+        <br><br>
+       <h2>Add Member</h2>
+       <FindMemberForChat CurrentChatMembers="ChatMembers" OnFoundMember="HandleFoundMember"></FindMemberForChat>
+    </container>
+</div>
+@code {
+    [Parameter]
+    public Guid id { get; set; }
+    public List<ChatMember> ChatMembers = new List<ChatMember>();
+
+    private void HandleFoundMember(ChatMember memberToAddToChat)
+    {
+        ChatMembers.Add(memberToAddToChat);
+    }
+}
