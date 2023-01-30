@@ -17,7 +17,7 @@
             <li style="padding: 5px; background-color: @(MessageDto.UserName == message.UserName ? "green" : "cornflowerblue"); color: whitesmoke; margin-bottom: 5px; max-width: 300px;display: flex;
                     justify-content: center; align-items: center; flex-direction: column;">
                 <h4 data-testid="messagecontent" style="font-size: 15px;">@message.UserName says @message.Content</h4>
-                    <p data-testid="messagetimestamp" style="font-size: 10px;">Sent: @message.Sent</p>
+                <p data-testid="messagetimestamp" style="font-size: 10px;">Sent: @message.Sent</p>
             </li>
         }
         </ul>
