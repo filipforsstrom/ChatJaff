@@ -9,19 +9,16 @@ namespace ChatJaffApp.Server.Hubs
 	{
         
 
-        public async Task SendMessageAsync(string userName,string message, Guid chatroomId)
+        public async Task SendMessageAsync(string message, Guid chatroomId)
         {
-            //var responseMsg = new MessageDto
-            //{
-            //    Id = new Guid(),
-            //    UserName = userName,
-            //    Sent = DateTime.UtcNow,
-            //    Content = message
-            //};
+            var deserializedMessage = JsonSerializer.Deserialize<MessageDto>(message);
+            deserializedMessage.Sent = DateTime.UtcNow;
+            deserializedMessage.ChatroomId = chatroomId;
 
-            //var serializedResponse = JsonSerializer.Serialize(responseMsg);
-            await Clients.Groups(chatroomId.ToString()).SendAsync("ReceiveMessage", userName, message);
-            //await Clients.All.SendAsync("ReceiveMessage", userName, message);
+            //save to db?
+
+            var serializedResponse = JsonSerializer.Serialize(deserializedMessage);
+            await Clients.Groups(chatroomId.ToString()).SendAsync("ReceiveMessage", serializedResponse);
 
         }
 
@@ -31,7 +28,7 @@ namespace ChatJaffApp.Server.Hubs
 
             var group = Groups;
 
-            await Clients.Group(chatRoomId).SendAsync("MemberJoined", $"{Context.ConnectionId} has joined the group {chatRoomId}.");
+            await Clients.Group(chatRoomId).SendAsync("MemberJoined", $"{Context.ConnectionId} has joined the group.");
         }
 
         public async Task RemoveFromGroup(string groupName)
@@ -49,8 +46,9 @@ namespace ChatJaffApp.Server.Hubs
     public class MessageDto
     {
         public Guid Id { get; set; }
+        public Guid ChatroomId { get; set; }
         public string? UserName { get; set; }
-        public string? Content { get; set; }
+        public string? Content { get; set; }        
         public DateTime Sent { get; set; }
     }
 
