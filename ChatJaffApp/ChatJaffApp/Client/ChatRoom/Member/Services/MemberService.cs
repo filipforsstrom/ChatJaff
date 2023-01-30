@@ -1,6 +1,7 @@
 ﻿using ChatJaffApp.Client.ChatRoom.CreateChat.Models;
 using ChatJaffApp.Client.ChatRoom.Member.Contracts;
 using ChatJaffApp.Client.ChatRoom.Member.Models;
+using ChatJaffApp.Client.Shared.Models;
 using System.Net.Http;
 using System.Net.Http.Json;
 
@@ -14,22 +15,40 @@ namespace ChatJaffApp.Client.ChatRoom.Member.Services
         {
             _httpClient = httpClient;
         }
-        public async Task<InviteMemberResponse> AddMemberToChat(InviteMemberDto invMemberDto)
+
+        public async Task<ServiceResponseViewModel<ChatMemberResponse>> AddChatMember(AddMemberDto addMemberDto)
         {
-            InviteMemberResponse invMemberResponse = new();
-            var response = await _httpClient.PostAsJsonAsync("api/member/addmembertochat", invMemberDto);
+            ServiceResponseViewModel<ChatMemberResponse> addMemberResponse = new();
+            var response = await _httpClient.PostAsJsonAsync("api/chatroom/addmembertochat", addMemberDto);
 
             if (!response.IsSuccessStatusCode)
             {
-                invMemberResponse.Success = false;
-                invMemberResponse.Message = await response.Content.ReadAsStringAsync();
-                return invMemberResponse;
+                addMemberResponse.Success = false;
+                addMemberResponse.Message = await response.Content.ReadAsStringAsync();
+                return addMemberResponse;
             }
 
-            invMemberResponse.Success = true;
-            invMemberResponse.MemberData = await response.Content.ReadFromJsonAsync<ChatMemberResponse>();
-            invMemberResponse.Message = "User added";
-            return invMemberResponse;
+            addMemberResponse.Success = true;
+            addMemberResponse.Message = await response.Content.ReadAsStringAsync();
+            return addMemberResponse;
+
+        }
+
+        public async Task<ServiceResponseViewModel<ChatMemberResponse>> GetChatMember(InviteMemberDto invMemberDto)
+        {
+            ServiceResponseViewModel<ChatMemberResponse> getMemberResponse = new();
+            var response = await _httpClient.PostAsJsonAsync("api/member/getchatmember", invMemberDto);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                getMemberResponse.Success = false;
+                getMemberResponse.Message = await response.Content.ReadAsStringAsync();
+                return getMemberResponse;
+            }
+
+            getMemberResponse.Success = true;
+            getMemberResponse.Data = await response.Content.ReadFromJsonAsync<ChatMemberResponse>();
+            return getMemberResponse;
         }
     }
 }

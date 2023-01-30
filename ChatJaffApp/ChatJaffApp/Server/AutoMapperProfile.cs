@@ -13,7 +13,7 @@ namespace ChatJaffApp.Server
         public AutoMapperProfile()
         {
             CreateMap<RegisterRequest, ApplicationUser>();
-            CreateMap<AddMemberResponse, AddMemberDto>();
+            CreateMap<GetMemberResponse, GetMemberDto>();
         }
     }
 }
