@@ -23,5 +23,7 @@ jobs:
         run: dotnet restore ChatJaffApp/ChatJaffApp.Tests/ChatJaffApp.Tests.csproj
       - name: Build
         run: dotnet build ChatJaffApp/ChatJaffApp.Tests/ChatJaffApp.Tests.csproj  --no-restore
+      - name: Install playwright dependencies
+        run: pwsh ChatJaffApp/ChatJaffApp.Tests/bin/Debug/net7.0/playwright.ps1 install
       - name: Test
         run: dotnet test ChatJaffApp/ChatJaffApp.Tests/ChatJaffApp.Tests.csproj  -- NUnit.NumberOfTestWorkers=5
