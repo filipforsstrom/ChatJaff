@@ -5,16 +5,14 @@ namespace ChatJaffApp.Server.Hubs
 {
 	public class ChatHub : Hub
 	{
-        public ChatHub()
-        {
-
-        }
+        
 
         public async Task SendMessageAsync(string userName,string message, Guid chatroomId)
         {
 
             await Clients.Groups(chatroomId.ToString()).SendAsync("ReceiveMessage", userName, message);
-            
+            //await Clients.All.SendAsync("ReceiveMessage", userName, message);
+
         }
 
         public async Task AddToGroup(string chatRoomId)
