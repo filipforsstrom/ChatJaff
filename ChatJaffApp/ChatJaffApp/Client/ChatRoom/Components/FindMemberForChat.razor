@@ -1,12 +1,12 @@
 ﻿@inject IMemberService memberService;
 
-<EditForm Model="@invMemberRequest" OnValidSubmit="@handleUserSearchSubmit">
+<EditForm Model="@findMemberRequest" OnValidSubmit="@handleUserSearchSubmit">
     <DataAnnotationsValidator />
-    <InputText @bind-Value="invMemberRequest.SearchedUsername" />
+    <InputText @bind-Value="findMemberRequest.SearchedUsername" />
     <button>
         Add
     </button>
-    <ValidationMessage For="() => invMemberRequest.SearchedUsername" />
+    <ValidationMessage For="() => findMemberRequest.SearchedUsername" />
 </EditForm>
 
 <div>
@@ -18,19 +18,19 @@
     public List<ChatMember> CurrentChatMembers { get; set; } = new();
     [Parameter]
     public EventCallback<ChatMember> OnFoundMember { get; set; }
-    public InviteMemberDto invMemberRequest { get; set; } = new();
+    public InviteMemberDto findMemberRequest { get; set; } = new();
     public string ErrorMessage { get; set; } = string.Empty;
 
     public async Task handleUserSearchSubmit()
     {
         // kolla om du försöker lägga till själv.
-        if (CurrentChatMembers.Select(m => m.Username?.ToLower()).Contains(invMemberRequest.SearchedUsername?.ToLower()))
+        if (CurrentChatMembers.Select(m => m.Username?.ToLower()).Contains(findMemberRequest.SearchedUsername?.ToLower()))
         {
             ErrorMessage = "Member is already added";
             return;
         }
 
-        var memberSearchResponse = await memberService.AddMemberToChat(invMemberRequest);
+        var memberSearchResponse = await memberService.GetChatMember(findMemberRequest);
 
         if (!memberSearchResponse.Success)
         {
@@ -40,8 +40,8 @@
 
         ChatMember memberToAddToChat = new()
         {
-            UserId = memberSearchResponse.MemberData.UserId,
-            Username = memberSearchResponse.MemberData.Username
+            UserId = memberSearchResponse.Data.UserId,
+            Username = memberSearchResponse.Data.Username
         };
 
         ErrorMessage = "";
