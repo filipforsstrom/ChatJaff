@@ -64,7 +64,7 @@
             InvokeAsync(StateHasChanged);
         });        
         await hubConnection.StartAsync();
-        await hubConnection.SendAsync("AddToGroup", MessageDto.UserName);
+        await hubConnection.SendAsync("AddToGroup", Id);
     }
 
     private async Task onSendMessageClick()
