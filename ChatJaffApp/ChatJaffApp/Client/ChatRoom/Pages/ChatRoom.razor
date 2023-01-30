@@ -11,21 +11,21 @@
     <p>Your Messages:</p>
     @if (Messages != null)
     {
-        <ul style="list-style-type: none;">
+        <ul data-testid="messagesinchatlist" style="list-style-type: none;">
         @foreach (var message in Messages)
         {
-            <li style="padding: 5px; background-color: cornflowerblue; color: whitesmoke; margin-bottom: 5px; max-width: 300px;display: flex;
-  justify-content: center; align-items: center; flex-direction: column;">
-                <h4 style="font-size: 15px;">@message.UserName says @message.Content</h4>
-                <p style="font-size: 10px;">Sent: @message.Sent</p>
+            <li style="padding: 5px; background-color: @(MessageDto.UserName == message.UserName ? "green" : "cornflowerblue"); color: whitesmoke; margin-bottom: 5px; max-width: 300px;display: flex;
+                    justify-content: center; align-items: center; flex-direction: column;">
+                <h4 data-testid="messagecontent" style="font-size: 15px;">@message.UserName says @message.Content</h4>
+                    <p data-testid="messagetimestamp" style="font-size: 10px;">Sent: @message.Sent</p>
             </li>
         }
         </ul>
     }
 </div>
 <div>
-    <InputTextArea maxlength="150" @bind-Value="MessageDto.Content" />
-    <button @onclick="onSendMessageClick" class=" btn btn-primary">Send</button>
+    <InputTextArea data-testid="messageinputarea" maxlength="150" @bind-Value="MessageDto.Content" />
+    <button data-testid="sendmessagebtn" @onclick="onSendMessageClick" class=" btn btn-primary">Send</button>
 </div>
 
 @code {
