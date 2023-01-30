@@ -20,8 +20,8 @@ jobs:
         with:
           dotnet-version: 7.0.x
       - name: Restore dependencies
-        run: dotnet restore
+        run: dotnet restore build ChatJaffApp/
       - name: Build
-        run: dotnet build ChatJaffApp/ChatJaffApp.sln --no-restore
+        run: dotnet build ChatJaffApp/ --no-restore
       - name: Test
         run: dotnet test ChatJaffApp/ -- NUnit.NumberOfTestWorkers=5
