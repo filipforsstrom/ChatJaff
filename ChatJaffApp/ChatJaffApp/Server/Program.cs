@@ -107,4 +107,18 @@ using (var scope = app.Services.CreateScope())
     context.Database.EnsureCreated();
 }
 
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+
+    var context = services.GetRequiredService<JaffDbContext>();
+    context.Database.EnsureDeleted();
+    context.Database.EnsureCreated();
+}
+
 app.Run();
+
+public partial class Program
+{
+
+}
