@@ -2,6 +2,8 @@
 using ChatJaffApp.Server.ChatRoom.Contracts;
 using ChatJaffApp.Server.ChatRoom.Models;
 using ChatJaffApp.Server.Data;
+using ChatJaffApp.Server.Data.Contracts;
+using ChatJaffApp.Server.Data.Models;
 
 namespace ChatJaffApp.Server.ChatRoom.Repositories
 {
