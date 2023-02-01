@@ -11,10 +11,10 @@ USER appuser
 
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
-COPY ["Server/ChatJaffApp.Server.csproj", "Server/"]
-RUN dotnet restore "Server/ChatJaffApp.Server.csproj"
+COPY ["ChatJaffApp/ChatJaffApp/Server/ChatJaffApp.Server.csproj", "ChatJaffApp/ChatJaffApp/Server/"]
+RUN dotnet restore "ChatJaffApp/ChatJaffApp/Server/ChatJaffApp.Server.csproj"
 COPY . .
-WORKDIR "/src/Server"
+WORKDIR "/src/ChatJaffApp/ChatJaffApp/Server"
 RUN dotnet build "ChatJaffApp.Server.csproj" -c Release -o /app/build
 
 FROM build AS publish

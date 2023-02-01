@@ -1,5 +1,6 @@
 ﻿using ChatJaffApp.Server.ChatRoom.Contracts;
 using ChatJaffApp.Server.ChatRoom.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ChatJaffApp.Server.ChatRoom.Controllers
@@ -39,5 +40,14 @@ namespace ChatJaffApp.Server.ChatRoom.Controllers
             return Ok(result);
         }
 
+        [Authorize]
+        [HttpPost]
+        [Route("[action]")]
+        public async Task<IActionResult> AddMemberToChat(AddMemberToChatDto addMemberDto)
+        {
+            var result = _chatRoomRepository.AddMemberToChat(addMemberDto);
+            
+            return result ? Ok("Member added") : BadRequest();
+        }
     }
 }

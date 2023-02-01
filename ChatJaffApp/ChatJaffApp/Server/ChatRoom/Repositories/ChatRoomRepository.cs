@@ -1,4 +1,6 @@
-﻿using ChatJaffApp.Server.ChatRoom.Contracts;
+﻿using ChatJaffApp.Client.ChatRoom.CreateChat.Models;
+using ChatJaffApp.Server.ChatRoom.Contracts;
+using ChatJaffApp.Server.ChatRoom.Models;
 using ChatJaffApp.Server.Data;
 using ChatJaffApp.Server.Data.Contracts;
 using ChatJaffApp.Server.Data.Models;
@@ -29,11 +31,17 @@ namespace ChatJaffApp.Server.ChatRoom.Repositories
             return ChatRooms;
         }
 
-        public async Task SaveMessage(IMessage message)
+        public bool AddMemberToChat(AddMemberToChatDto chatMemberData)
         {
-            //var chatroom = ChatRooms.FirstOrDefault(cr => cr.Id == message.ChatId);
-            //chatroom.Messages.Add(message);
-            //await Task.Delay(1000);
+            var chatRoom = ChatRooms.FirstOrDefault(c => c.Id == chatMemberData.ChatId);
+            chatRoom.ChatMembersIds.Add(chatMemberData.UserId);
+
+            if(!chatRoom.ChatMembersIds.Contains(chatMemberData.UserId))
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 }

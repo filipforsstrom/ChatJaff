@@ -1,4 +1,4 @@
-﻿using ChatJaffApp.Server.Data.Contracts;
+﻿using ChatJaffApp.Server.ChatRoom.Models;
 
 namespace ChatJaffApp.Server.ChatRoom.Contracts
 {
@@ -6,6 +6,6 @@ namespace ChatJaffApp.Server.ChatRoom.Contracts
     {
         Task<Guid> CreateChatRoomAsync(IChat chatRoom);
         IEnumerable<IChat> GetAllChatRooms();
-        Task SaveMessage(IMessage message);
+        bool AddMemberToChat(AddMemberToChatDto member);
     }
 }
