@@ -2,6 +2,7 @@
 using ChatJaffApp.Server.ChatRoom.Contracts;
 using ChatJaffApp.Server.ChatRoom.Models;
 using ChatJaffApp.Server.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace ChatJaffApp.Server.ChatRoom.Repositories
 {
@@ -13,33 +14,52 @@ namespace ChatJaffApp.Server.ChatRoom.Repositories
 
         public ChatRoomRepository(JaffDbContext context)
         {
-
             _context = context;
         }
 
-        public async Task<Guid> CreateChatRoomAsync(IChat chatRoom)
+        public async Task<Guid> CreateChatRoomAsync(Chat chatRoom)
         {
-            chatRoom.Id = Guid.NewGuid();
-            ChatRooms.Add(chatRoom);
-            var createdRoom = ChatRooms.LastOrDefault();
-            return createdRoom.Id;
+            chatRoom.Creator = "Jaff";
+            _context.ChatRooms.Add(chatRoom);
+            var result = await _context.SaveChangesAsync();
+
+            return chatRoom.Id;
+
         }
         public IEnumerable<IChat> GetAllChatRooms()
         {
-            return ChatRooms;
+            return _context.ChatRooms.ToList();
         }
 
-        public bool AddMemberToChat(AddMemberToChatDto chatMemberData)
+        public bool AddMemberToChat(AddMemberToChatDto addMemberToChatDto)
         {
-            var chatRoom = ChatRooms.FirstOrDefault(c => c.Id == chatMemberData.ChatId);
-            chatRoom.ChatMembersIds.Add(chatMemberData.UserId);
+            var chatRoom = _context.ChatRooms.FirstOrDefault(c => c.Id == addMemberToChatDto.ChatId);
+            //chatRoom.ChatMembersIds.Add(chatMemberData.UserId);
 
-            if(!chatRoom.ChatMembersIds.Contains(chatMemberData.UserId))
-            {
-                return false;
-            }
+            //if(!chatRoom.ChatMembersIds.Contains(chatMemberData.UserId))
+            //{
+            //    return false;
+            //}
 
             return true;
+        }
+
+        public async Task<Chat> GetChatRoomAsync(Guid chatId)
+        {
+            var chatRoom = await _context.ChatRooms.FirstOrDefaultAsync(c => c.Id == chatId);
+            if(chatRoom == null)
+            {
+                return new Chat();
+            }
+
+            return chatRoom;
+            
+        }
+
+        public async Task UpdateChatRoomAsync(Chat chatRoomToUpdate)
+        {
+            _context.ChatRooms.Update(chatRoomToUpdate);
+            await _context.SaveChangesAsync();
         }
     }
 }
