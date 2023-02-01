@@ -1,0 +1,57 @@
+﻿@page "/chatrooms/chat/settings/{id:guid}"
+@using ChatJaffApp.Client.ChatRoom.Components
+@using ChatJaffApp.Client.ChatRoom.Member.Models;
+@inject IMemberService memberService
+
+<div>
+    <container>
+        <h2>
+            Members
+        </h2>
+        @foreach (var member in ChatMembers)
+        {
+            <tr>
+                <td>
+                    <p class="font-italic text-muted mb-0 text-small">@member.Username</p>
+                </td>
+            </tr>
+        }
+        <br><br>
+        <h2>Change chat name</h2>
+        <input type="text" />
+        <br><br>
+        <h2>Add Member</h2>
+        <FindMemberForChat CurrentChatMembers="ChatMembers" OnFoundMember="HandleFoundMember"></FindMemberForChat>
+
+        @if (!string.IsNullOrEmpty(ErrorMessage))
+        {
+            <p>@ErrorMessage</p>
+        }
+    </container>
+</div>
+
+@code {
+    [Parameter]
+    public Guid Id { get; set; }
+    public List<ChatMember> ChatMembers = new List<ChatMember>();
+    public string? ErrorMessage { get; set; }
+
+    public async Task HandleFoundMember(ChatMember memberToAddToChat)
+    {
+        AddMemberDto addMemberDto = new()
+        {
+            UserId = memberToAddToChat.UserId,
+            ChatId = Id
+        };
+
+        var memberResponse = await memberService.AddChatMember(addMemberDto);
+
+        if (!memberResponse.Success)
+        {
+            ErrorMessage = memberResponse.Message;
+            return;
+        }
+        
+        ChatMembers.Add(memberToAddToChat);
+    }
+}

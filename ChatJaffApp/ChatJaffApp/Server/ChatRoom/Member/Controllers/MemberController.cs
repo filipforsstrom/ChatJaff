@@ -12,48 +12,50 @@ namespace ChatJaffApp.Server.ChatRoom.Member.Controllers
     [ApiController]
     public class MemberController : ControllerBase
     {
-
-        [Authorize]
-        [HttpPost]
-        [Route("[action]")]
-        public async Task<IActionResult> AddMemberToChat(AddMemberDto addMemberDto)
-        {
-            //List<AddMemberResponse> mockMembersDb = new();
-            //var newMember = _mapper.Map<AddMemberResponse>(addMemberDto);
-            //mockMembersDb.Add(newMember);
-            List<AddMemberResponse> mockMembersDb = new()
+        public List<GetMemberResponse> mockMembersDb = new()
             {
-                new AddMemberResponse
+                new GetMemberResponse
                 {
                     UserId = Guid.NewGuid(),
                     Username = "Batman42"
                 },
-                new AddMemberResponse
+                new GetMemberResponse
                 {
                     UserId = Guid.NewGuid(),
                     Username = "Catwoman"
                 },
-                new AddMemberResponse
+                new GetMemberResponse
                 {
                     UserId = Guid.NewGuid(),
                     Username = "Randy"
                 },
-                new AddMemberResponse
+                new GetMemberResponse
                 {
                     UserId = Guid.NewGuid(),
                     Username = "Bandy"
                 },
-                new AddMemberResponse
+                new GetMemberResponse
                 {
                     UserId = Guid.NewGuid(),
                     Username = "Wolverine"
                 }
             };
 
+        [Authorize]
+        [HttpPost]
+        [Route("[action]")]
+        public async Task<IActionResult> GetChatMember(GetMemberDto addMemberDto)
+        {
+            //List<AddMemberResponse> mockMembersDb = new();
+            //var newMember = _mapper.Map<AddMemberResponse>(addMemberDto);
+            //mockMembersDb.Add(newMember);
+
             var requestedMember = mockMembersDb
                 .FirstOrDefault(member => string.Equals(member.Username, addMemberDto.SearchedUsername, StringComparison.OrdinalIgnoreCase));
 
             return requestedMember != null ? Ok(requestedMember) : BadRequest("Could not find member.");
         }
+
+
     }
 }
