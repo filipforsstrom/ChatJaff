@@ -2,11 +2,12 @@
 {
     public interface IChat
     {
-        public Guid Id { get; set; }
-        public List<Guid> ChatMembersIds { get; set; }
-        public string Creator { get; set; }
-        public bool Encrypted { get; set; }
-        public string ChatName { get; set; }
-        public List<string> Messages { get; set; }
+        Guid Id { get; set; }
+        List<ChatJaffApp.Server.ChatRoom.Models.ChatMember> ChatMembersIds { get; }
+        string Creator { get; set; }
+        bool Encrypted { get; set; }
+        string ChatName { get; set; }
+        //List<string> Messages { get; set; }
+        void AddMember(Guid userId);
     }
 }
