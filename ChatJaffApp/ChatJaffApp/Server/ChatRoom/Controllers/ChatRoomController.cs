@@ -32,8 +32,12 @@ namespace ChatJaffApp.Server.ChatRoom.Controllers
             {
                 Encrypted = chatRequest.Encrypted,
                 ChatName = chatRequest.ChatName,
-                ChatMembersIds = chatRequest.ChatMembersIds
             };
+
+            foreach(var members in chatRequest.ChatMembersIds)
+            {
+                newChat.AddMember(members);
+            }
 
             var result = await _chatRoomRepository.CreateChatRoomAsync(newChat);
 
@@ -41,13 +45,22 @@ namespace ChatJaffApp.Server.ChatRoom.Controllers
         }
 
         [Authorize]
-        [HttpPost]
-        [Route("[action]")]
-        public async Task<IActionResult> AddMemberToChat(AddMemberToChatDto addMemberDto)
+        [HttpPatch]
+        [Route("{chatId:guid}")]
+        public async Task<IActionResult> AddMemberToChat([FromRoute]Guid chatId, [FromBody]Guid userId)
         {
-            var result = _chatRoomRepository.AddMemberToChat(addMemberDto);
-            
-            return result ? Ok("Member added") : BadRequest();
+            var addMemberToChatDto = new AddMemberToChatDto
+            {
+                ChatId = chatId,
+                UserId = userId
+            };
+
+            var chatRoom = await _chatRoomRepository.GetChatRoomAsync(chatId);
+
+            chatRoom.AddMember(userId);
+            await _chatRoomRepository.UpdateChatRoomAsync(chatRoom);
+
+            return Ok("Member added");
         }
     }
 }
