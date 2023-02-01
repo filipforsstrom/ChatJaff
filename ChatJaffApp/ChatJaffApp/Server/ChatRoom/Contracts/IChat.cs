@@ -1,4 +1,7 @@
-﻿namespace ChatJaffApp.Server.ChatRoom.Contracts
+﻿
+using ChatJaffApp.Server.Data.Models;
+
+namespace ChatJaffApp.Server.ChatRoom.Contracts
 {
     public interface IChat
     {
@@ -9,5 +12,6 @@
         string ChatName { get; set; }
         //List<string> Messages { get; set; }
         void AddMember(Guid userId);
+        ICollection<Message> Messages { get; set; }
     }
 }
