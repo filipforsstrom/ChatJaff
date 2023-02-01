@@ -26,4 +26,4 @@ jobs:
       - name: Install playwright dependencies
         run: pwsh ChatJaffApp/ChatJaffApp.Tests/bin/Debug/net7.0/playwright.ps1 install
       - name: Test
-        run: dotnet test ChatJaffApp/ChatJaffApp.Tests/ChatJaffApp.Tests.csproj  -- NUnit.NumberOfTestWorkers=5
+        run: dotnet test ChatJaffApp/ChatJaffApp.UITest/ChatJaffApp.UITest.csproj  -- NUnit.NumberOfTestWorkers=5
