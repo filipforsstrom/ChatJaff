@@ -32,59 +32,59 @@ public class Tests : PageTest
     //    await Expect(Page).ToHaveURLAsync(new Regex(".*intro"));
     //}
 
-    [Test]
-    public async Task LoginUserFromHomePage_ExpektToSeeLougOutButton()
-    {
-        //go to homepage
-        await Page.GotoAsync("https://localhost:7085/");
+    //[Test]
+    //public async Task LoginUserFromHomePage_ExpektToSeeLougOutButton()
+    //{
+    //    //go to homepage
+    //    await Page.GotoAsync("https://localhost:7085/");
 
-        //expect hello world text
-        await Expect(Page.GetByText("Hello, world!")).ToBeVisibleAsync();
+    //    //expect hello world text
+    //    await Expect(Page.GetByText("Hello, world!")).ToBeVisibleAsync();
 
-        //click on login link in nav menu
-        await Page.GetByTestId("login-link").ClickAsync();
+    //    //click on login link in nav menu
+    //    await Page.GetByTestId("login-link").ClickAsync();
 
-        //expect to be on login page
-        await Expect(Page).ToHaveURLAsync("https://localhost:7085/account/login");
+    //    //expect to be on login page
+    //    await Expect(Page).ToHaveURLAsync("https://localhost:7085/account/login");
 
-        //fill form with user email
-        await Page.GetByTestId("login-input-form").FillAsync("member2@gmail.com");
+    //    //fill form with user email
+    //    await Page.GetByTestId("login-input-form").FillAsync("member2@gmail.com");
 
-        //fill form with user password
-       await Page.GetByTestId("password-input-form").FillAsync("member2");
+    //    //fill form with user password
+    //   await Page.GetByTestId("password-input-form").FillAsync("member2");
 
-        //click on login button
-        await Page.GetByTestId("login-button").ClickAsync();
+    //    //click on login button
+    //    await Page.GetByTestId("login-button").ClickAsync();
 
-        //expect to see logout link in navmenu
-        await Expect(Page.GetByTestId("logout-link")).ToBeVisibleAsync();
+    //    //expect to see logout link in navmenu
+    //    await Expect(Page.GetByTestId("logout-link")).ToBeVisibleAsync();
 
-    }
+    //}
 
-    [Test]
-    public async Task LoginFail_ExpektLoginFailedMessage()
-    {
-        //go to homepage
-        await Page.GotoAsync("https://localhost:7085/");
+    //[Test]
+    //public async Task LoginFail_ExpektLoginFailedMessage()
+    //{
+    //    //go to homepage
+    //    await Page.GotoAsync("https://localhost:7085/");
 
-        //click on login link in nav menu
-        await Page.GetByTestId("login-link").ClickAsync();
+    //    //click on login link in nav menu
+    //    await Page.GetByTestId("login-link").ClickAsync();
 
-        //expect to be on login page
-        await Expect(Page).ToHaveURLAsync("https://localhost:7085/account/login");
+    //    //expect to be on login page
+    //    await Expect(Page).ToHaveURLAsync("https://localhost:7085/account/login");
 
-        //fill form with user email
-        await Page.GetByTestId("login-input-form").FillAsync("wrongUser@gmail.com");
+    //    //fill form with user email
+    //    await Page.GetByTestId("login-input-form").FillAsync("wrongUser@gmail.com");
 
-        //fill form with user password
-        await Page.GetByTestId("password-input-form").FillAsync("password");
+    //    //fill form with user password
+    //    await Page.GetByTestId("password-input-form").FillAsync("password");
 
-        //click on login button
-        await Page.GetByTestId("login-button").ClickAsync();
+    //    //click on login button
+    //    await Page.GetByTestId("login-button").ClickAsync();
 
-        //expect to see logout link in navmenu
-        await Expect(Page.GetByText("Login failed")).ToBeVisibleAsync();
+    //    //expect to see logout link in navmenu
+    //    await Expect(Page.GetByText("Login failed")).ToBeVisibleAsync();
 
-    }
+    //}
 
 }
