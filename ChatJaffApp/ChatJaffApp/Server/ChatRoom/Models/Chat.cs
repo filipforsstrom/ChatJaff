@@ -8,7 +8,7 @@ namespace ChatJaffApp.Server.ChatRoom.Models
     public class Chat : IChat
     {
         public Guid Id { get; set; }
-        public ICollection<ChatMember> ChatMembers { get; }
+        public List<ChatMember> ChatMembers { get; set; } = new();
         public string? Creator { get; set; }
         public bool Encrypted { get; set; }
         public string? ChatName { get; set; }
@@ -18,7 +18,6 @@ namespace ChatJaffApp.Server.ChatRoom.Models
         {
             ChatMembers.Add(new ChatMember {UserId = userId});
         }
-
     }
    
 }

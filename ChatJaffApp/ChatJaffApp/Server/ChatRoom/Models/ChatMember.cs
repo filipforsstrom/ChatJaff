@@ -6,12 +6,12 @@ namespace ChatJaffApp.Server.ChatRoom.Models
 {
     public class ChatMember
     {
-        [ForeignKey(nameof(User))]
+        [ForeignKey(nameof(Member))]
         public Guid UserId { get; set; }
         [ForeignKey(nameof(Chat))]
         public Guid? ChatId { get; set; }
 
-        public User User { get; set; }
+        public Data.Models.Member User { get; set; }
         public Chat Chat { get; set; }
     }
 }

@@ -19,7 +19,6 @@ namespace ChatJaffApp.Server.ChatRoom.Repositories
 
         public async Task<Guid> CreateChatRoomAsync(Chat chatRoom)
         {
-            chatRoom.Creator = "Jaff";
             _context.ChatRooms.Add(chatRoom);
             var result = await _context.SaveChangesAsync();
 
