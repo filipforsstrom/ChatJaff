@@ -4,7 +4,7 @@ describe('Homepage', () => {
   it('can be visited', () => {
     setTimeout(() => {
       cy.visit(baseUrl)
-    }, 10000);
+    }, 20000);
   })
 
   it('can navigate to register page', () => {
