@@ -2,6 +2,9 @@ const baseUrl = 'http://localhost:5172/'
 
 describe('Homepage', () => {
   it('can be visited', () => {
+    setTimeout(() => {
+
+    }, 10000);
     cy.visit(baseUrl)
   })
 
