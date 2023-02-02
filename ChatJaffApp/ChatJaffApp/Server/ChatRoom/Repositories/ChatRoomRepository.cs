@@ -31,7 +31,7 @@ namespace ChatJaffApp.Server.ChatRoom.Repositories
         }
         public IEnumerable<IChat> GetMyChatRooms(Guid memberId)
         {
-            return ChatRooms.Where(x => x.ChatMembersIds.Contains(memberId));
+            return ChatRooms.Where(x => x.ChatMembers.Any(cm => cm.UserId == memberId));
         }
 
         public bool AddMemberToChat(AddMemberToChatDto addMemberToChatDto)
