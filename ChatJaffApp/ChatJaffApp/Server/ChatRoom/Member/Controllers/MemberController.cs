@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using static ChatJaffApp.Server.ChatRoom.Controllers.ChatRoomController;
+using ChatJaffApp.Server.ChatRoom.Member.Contracts;
 
 namespace ChatJaffApp.Server.ChatRoom.Member.Controllers
 {
@@ -12,48 +13,32 @@ namespace ChatJaffApp.Server.ChatRoom.Member.Controllers
     [ApiController]
     public class MemberController : ControllerBase
     {
-        public List<GetMemberResponse> mockMembersDb = new()
-            {
-                new GetMemberResponse
-                {
-                    UserId = Guid.NewGuid(),
-                    Username = "Batman42"
-                },
-                new GetMemberResponse
-                {
-                    UserId = Guid.NewGuid(),
-                    Username = "Catwoman"
-                },
-                new GetMemberResponse
-                {
-                    UserId = Guid.NewGuid(),
-                    Username = "Randy"
-                },
-                new GetMemberResponse
-                {
-                    UserId = Guid.NewGuid(),
-                    Username = "Bandy"
-                },
-                new GetMemberResponse
-                {
-                    UserId = Guid.NewGuid(),
-                    Username = "Wolverine"
-                }
-            };
+        private readonly IMemberRepository _memberRepository;
+
+        public MemberController(IMemberRepository memberRepository)
+        {
+            _memberRepository = memberRepository;
+        }
 
         [Authorize]
         [HttpPost]
         [Route("[action]")]
-        public async Task<IActionResult> GetChatMember(GetMemberDto addMemberDto)
+        public async Task<IActionResult> GetMember([FromBody]string searchedUsername)
         {
-            //List<AddMemberResponse> mockMembersDb = new();
-            //var newMember = _mapper.Map<AddMemberResponse>(addMemberDto);
-            //mockMembersDb.Add(newMember);
-
-            var requestedMember = mockMembersDb
-                .FirstOrDefault(member => string.Equals(member.Username, addMemberDto.SearchedUsername, StringComparison.OrdinalIgnoreCase));
-
-            return requestedMember != null ? Ok(requestedMember) : BadRequest("Could not find member.");
+            try
+            {
+                var requestedMember = await _memberRepository.GetMember(searchedUsername);
+                return Ok(requestedMember);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            
         }
 
 
