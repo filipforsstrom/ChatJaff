@@ -6,7 +6,7 @@ namespace ChatJaffApp.Server.ChatRoom.Contracts
     public interface IChat
     {
         Guid Id { get; set; }
-        ICollection<ChatMember> ChatMembers { get; }
+        List<ChatMember> ChatMembers { get; }
         string Creator { get; set; }
         bool Encrypted { get; set; }
         string ChatName { get; set; }
