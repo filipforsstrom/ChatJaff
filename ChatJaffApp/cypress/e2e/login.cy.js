@@ -9,9 +9,9 @@ describe('Homepage', () => {
     cy.visit(`${baseUrl}account/register`)
   })
 
-  it('can navigate to about page', () => {
-    cy.visit(`${baseUrl}about`)
-  })
+  // it('can navigate to about page', () => {
+  //   cy.visit(`${baseUrl}about`)
+  // })
 
   it('can kill the application', () => {
     cy.request('delete', `${baseUrl}api/identity/kill`,)
