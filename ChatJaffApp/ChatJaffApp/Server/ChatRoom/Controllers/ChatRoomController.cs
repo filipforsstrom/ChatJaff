@@ -58,6 +58,7 @@ namespace ChatJaffApp.Server.ChatRoom.Controllers
             var chatRoom = await _chatRoomRepository.GetChatRoomAsync(chatId);
 
             chatRoom.AddMember(userId);
+
             await _chatRoomRepository.UpdateChatRoomAsync(chatRoom);
 
             return Ok("Member added");

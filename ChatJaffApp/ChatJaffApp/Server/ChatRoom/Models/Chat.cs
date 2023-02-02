@@ -1,5 +1,7 @@
 ﻿using ChatJaffApp.Server.ChatRoom.Contracts;
 using ChatJaffApp.Server.Data.Models;
+using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 
 namespace ChatJaffApp.Server.ChatRoom.Models
 {
@@ -14,7 +16,7 @@ namespace ChatJaffApp.Server.ChatRoom.Models
 
         public void AddMember(Guid userId)
         {
-            ChatMembersIds.Add(new ChatMember { Id = userId });
+            ChatMembersIds.Add(new ChatMember { Id = userId});
         }
 
     }
