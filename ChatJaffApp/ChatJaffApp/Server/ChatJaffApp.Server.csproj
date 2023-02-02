@@ -35,7 +35,7 @@
   </ItemGroup>
 
 	<ItemGroup>
-		<InternalsVisibleTo Include="ChatJaffApi.Tests"/>
+		<InternalsVisibleTo Include="ChatJaffApi.Tests" />
 	</ItemGroup>
 
 

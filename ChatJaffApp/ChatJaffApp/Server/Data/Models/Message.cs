@@ -7,7 +7,7 @@ namespace ChatJaffApp.Server.Data.Models
     public class Message : IMessage
     {
         public Guid Id { get; set; }
-        [ForeignKey(nameof(User))]
+        [ForeignKey(nameof(Member))]
         public Guid UserId { get; set; }
         public string? Content { get; set; }
         public DateTime Sent { get; set; } = DateTime.UtcNow;
@@ -15,6 +15,6 @@ namespace ChatJaffApp.Server.Data.Models
         public Guid ChatId { get; set; }
 
         public Chat Chat { get; set; }
-        public User User { get; set; }
+        public Server.Data.Models.Member Member { get; set; }
     }
 }

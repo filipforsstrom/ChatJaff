@@ -1,4 +1,6 @@
 ﻿using ChatJaffApp.Server.ChatRoom.Contracts;
+using ChatJaffApp.Server.ChatRoom.Member.Contracts;
+using ChatJaffApp.Server.ChatRoom.Member.Repositories;
 using ChatJaffApp.Server.ChatRoom.Repositories;
 using ChatJaffApp.Server.Identity.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -36,6 +38,7 @@ public static class ServiceExtensions
     public static void AddServiceInjections(this IServiceCollection services)
     {
         services.AddScoped<IIdentityService, IdentityService>();
-        services.AddScoped<IChatRoomRepository, ChatRoomRepository>();        
+        services.AddScoped<IChatRoomRepository, ChatRoomRepository>();
+        services.AddScoped<IMemberRepository, MemberRepository>();
     }
 }

@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using ChatJaffApp.Server.ChatRoom.Models;
 using ChatJaffApp.Server.Data.Models;
-using ChatJaffApp.Server.ChatRoom.Contracts;
 
 namespace ChatJaffApp.Server.Data
 {
@@ -13,7 +12,7 @@ namespace ChatJaffApp.Server.Data
 
 		public DbSet<ChatMember> ChatMembers { get; set; }
 
-		public DbSet<User> Users { get; set; }
+		public DbSet<Member> Members { get; set; }
 
 		public JaffDbContext(DbContextOptions<JaffDbContext> options) : base(options)
 		{
@@ -53,16 +52,16 @@ namespace ChatJaffApp.Server.Data
 
 		private void SeedUsers(ModelBuilder modelBuilder)
 		{
-			List<User> users = new()
+			List<Member> members = new()
 			{
-				new User () { Id = Guid.Parse("9F7E8005-873A-489D-B569-AFB17A58B051"), UserName = "Batman42"},
-                new User () { Id = Guid.Parse("C4423797-979C-4A72-A7F8-53499AAB5469"), UserName = "Catwoman"},
-                new User () { Id = Guid.Parse("{28E44613-4ACE-474B-965F-E589E72AAF46}"), UserName = "Randy"},
-                new User () { Id = Guid.Parse("{E36D119F-F8E3-4BD1-A3F1-0845F8CBE529}"), UserName = "Bandy"},
-                new User () { Id = Guid.Parse("{95A471EE-E8A7-44D4-BB13-C5090FB1A5CE}"), UserName = "Silvio"},
+				new Member () { Id = Guid.Parse("9F7E8005-873A-489D-B569-AFB17A58B051"), UserName = "Batman42"},
+                new Member () { Id = Guid.Parse("C4423797-979C-4A72-A7F8-53499AAB5469"), UserName = "Catwoman"},
+                new Member () { Id = Guid.Parse("{28E44613-4ACE-474B-965F-E589E72AAF46}"), UserName = "Randy"},
+                new Member () { Id = Guid.Parse("{E36D119F-F8E3-4BD1-A3F1-0845F8CBE529}"), UserName = "Bandy"},
+                new Member () { Id = Guid.Parse("{95A471EE-E8A7-44D4-BB13-C5090FB1A5CE}"), UserName = "Silvio"},
 			};
 
-            modelBuilder.Entity<User>().HasData(users);
+            modelBuilder.Entity<Member>().HasData(members);
         }
         private void SeedMessages(ModelBuilder modelBuilder)
         {
