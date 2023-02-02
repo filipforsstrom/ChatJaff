@@ -11,17 +11,23 @@ describe('Homepage', () => {
     cy.visit(`${baseUrl}account/register`)
   })
 
-  // it('can navigate to about page', () => {
-  //   cy.visit(`${baseUrl}about`)
+  it('can navigate to about page', () => {
+    cy.visit(`${baseUrl}about`)
+  })
+
+  // it('can kill the application', () => {
+  //   cy.request({
+  //     method: 'DELETE',
+  //     url: `${baseUrl}api/identity/kill`,
+  //     failOnStatusCode: false,
+  //     failsOnNetworkCode: false
+  //   })
+  //   // cy.request('delete', `${baseUrl}api/identity/kill`, failOnStatusCode: true)
   // })
 
-  it('can kill the application', () => {
-    cy.request({
-      method: 'DELETE',
-      url: `${baseUrl}api/identity/kill`,
-      failOnStatusCode: false,
-      failsOnNetworkCode: false
+  after(() => {
+    fetch(`${baseUrl}api/identity/kill`, {
+      method: 'DELETE'
     })
-    // cy.request('delete', `${baseUrl}api/identity/kill`, failOnStatusCode: true)
   })
 })
