@@ -16,6 +16,11 @@ describe('Homepage', () => {
   // })
 
   it('can kill the application', () => {
-    cy.request('delete', `${baseUrl}api/identity/kill`,)
+    cy.request({
+      method: 'DELETE',
+      url: `${baseUrl}api/identity/kill`,
+      failOnStatusCode: true
+    })
+    // cy.request('delete', `${baseUrl}api/identity/kill`, failOnStatusCode: true)
   })
 })
