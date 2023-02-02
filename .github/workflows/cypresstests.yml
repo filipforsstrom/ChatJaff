@@ -20,4 +20,4 @@ jobs:
     - name: move dir and run npm
       run: cd ChatJaffApp && npm install
     - name: Test
-      run: npm run test-cypress
+      run: cd ChatJaffApp && npm run test-cypress
