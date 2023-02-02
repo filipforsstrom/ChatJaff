@@ -17,13 +17,7 @@ jobs:
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: 7.0.x
-    - name: list dir
-      run: ls
-    - name: Restore dependencies
-      run: dotnet restore
-    - name: Build
-      run: dotnet build --no-restore
-    - name: install npm
-      run: npm install .
+    - name: move dir and run npm
+      run: cd ChatJaffApp && npm install
     - name: Test
       run: npm run test-cypress
