@@ -17,9 +17,9 @@ jobs:
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: 7.0.x
-    - name: change directory
-      run: cd ChatJaffApp
+    - name: build dotnet
+      run: dotnet build ChatJaffApp/ChatJaffApp.Server/ChatJaffApp.Server.csproj
     - name: install npm
-      run: npm install
+      run: npm install .
     - name: Test
       run: npm run test-cypress
