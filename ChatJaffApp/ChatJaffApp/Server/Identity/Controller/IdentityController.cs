@@ -7,6 +7,8 @@ using System.Security.Authentication;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using AutoMapper;
+using ChatJaffApp.Server.ChatRoom.Member.Contracts;
+using ChatJaffApp.Server.ChatRoom.Member.Repositories;
 
 namespace ChatJaffApp.Server.Identity.Controller
 {
@@ -18,15 +20,15 @@ namespace ChatJaffApp.Server.Identity.Controller
         private readonly IIdentityService _identityService;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IMapper _mapper;
+        private readonly IMemberRepository _memberRepository;
 
-
-        public IdentityController(SignInManager<ApplicationUser> signInManager, IIdentityService identityService, IHttpContextAccessor httpContextAccessor, IMapper mapper)
+        public IdentityController(SignInManager<ApplicationUser> signInManager, IIdentityService identityService, IHttpContextAccessor httpContextAccessor, IMapper mapper, IMemberRepository memberRepository)
         {
             _signInManager = signInManager;
             _identityService = identityService;
             _httpContextAccessor = httpContextAccessor;
             _mapper = mapper;
-
+            _memberRepository = memberRepository;
         }
 
         [HttpPost]
@@ -43,10 +45,14 @@ namespace ChatJaffApp.Server.Identity.Controller
             try
             {
                 var registerResult = await _signInManager.UserManager.CreateAsync(newUser, request.Password);
+                //create get method for user
 
                 if (registerResult.Succeeded)
                 {
+
+                    //await _memberRepository.AddMemberToDb() 
                     return StatusCode(StatusCodes.Status201Created);
+
                 }
 
                 return BadRequest(registerResult.Errors);
