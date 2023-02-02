@@ -15,6 +15,26 @@ namespace ChatJaffApp.Server.ChatRoom.Member.Repositories
             _context = context;
         }
 
+        public async Task AddMemberToDb(Guid userId, string userName)
+        {
+            Data.Models.Member member = new();
+            member.UserName = userName;
+            member.Id = userId;
+            try
+            {
+                var result = await _context.Members.AddAsync(member);
+                await _context.SaveChangesAsync();
+            }
+            catch(DbUpdateException ex)
+            {
+                throw new DbUpdateException("Something went wrong");
+            }
+            catch(Exception ex) { 
+                throw new Exception(ex.Message);
+            }
+        
+        }
+
         public async Task<GetMemberDto> GetMember(string searchedUserName)
         {
             var user = await _context.Members.FirstOrDefaultAsync(m => m.UserName.ToLower() == searchedUserName.ToLower());
@@ -33,5 +53,7 @@ namespace ChatJaffApp.Server.ChatRoom.Member.Repositories
             return getMemberDto;
 
         }
+
+
     }
 }
