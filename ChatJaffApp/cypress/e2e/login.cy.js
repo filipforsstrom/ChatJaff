@@ -19,7 +19,8 @@ describe('Homepage', () => {
     cy.request({
       method: 'DELETE',
       url: `${baseUrl}api/identity/kill`,
-      failOnStatusCode: false
+      failOnStatusCode: false,
+      failsOnNetworkCode: false
     })
     // cy.request('delete', `${baseUrl}api/identity/kill`, failOnStatusCode: true)
   })
