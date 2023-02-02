@@ -1,7 +1,5 @@
+using ChatJaffApp.Server.ChatRoom.Member.Models;
 using Microsoft.AspNetCore.Authorization;
-﻿using AutoMapper;
-﻿using ChatJaffApp.Server.ChatRoom.Member.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using static ChatJaffApp.Server.ChatRoom.Controllers.ChatRoomController;
 using ChatJaffApp.Server.ChatRoom.Member.Contracts;
@@ -19,6 +17,7 @@ namespace ChatJaffApp.Server.ChatRoom.Member.Controllers
         {
             _memberRepository = memberRepository;
         }
+
 
         [Authorize]
         [HttpPost]

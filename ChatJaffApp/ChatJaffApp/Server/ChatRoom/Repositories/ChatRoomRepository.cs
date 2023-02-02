@@ -29,6 +29,10 @@ namespace ChatJaffApp.Server.ChatRoom.Repositories
         {
             return _context.ChatRooms.ToList();
         }
+        public IEnumerable<IChat> GetMyChatRooms(Guid memberId)
+        {
+            return ChatRooms.Where(x => x.ChatMembersIds.Contains(memberId));
+        }
 
         public bool AddMemberToChat(AddMemberToChatDto addMemberToChatDto)
         {

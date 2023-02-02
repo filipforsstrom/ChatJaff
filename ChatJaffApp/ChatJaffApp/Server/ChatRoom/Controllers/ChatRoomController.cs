@@ -24,6 +24,27 @@ namespace ChatJaffApp.Server.ChatRoom.Controllers
             return tempList;
         }
 
+        [Authorize]
+        [HttpGet]
+        [Route("[action]/{id}")]
+        public async Task<IActionResult> GetMyChats(Guid id)
+        {
+            try
+            {
+                await Task.Delay(1000);
+                var memberChatRooms = _chatRoomRepository.GetMyChatRooms(id);
+                return Ok(memberChatRooms);
+            }
+            catch
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+
+
+
+
         [HttpPost]
         [Route("[action]")]
         public async Task<IActionResult> CreateChat(CreateChatDTO chatRequest)
