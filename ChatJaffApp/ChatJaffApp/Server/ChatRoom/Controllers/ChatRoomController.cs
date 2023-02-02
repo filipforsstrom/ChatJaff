@@ -34,7 +34,7 @@ namespace ChatJaffApp.Server.ChatRoom.Controllers
                 ChatName = chatRequest.ChatName,
             };
 
-            foreach(var members in chatRequest.ChatMembersIds)
+            foreach (var members in chatRequest.ChatMembersIds)
             {
                 newChat.AddMember(members);
             }
