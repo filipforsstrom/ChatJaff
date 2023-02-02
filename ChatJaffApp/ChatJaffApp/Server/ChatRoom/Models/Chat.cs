@@ -8,7 +8,7 @@ namespace ChatJaffApp.Server.ChatRoom.Models
     public class Chat : IChat
     {
         public Guid Id { get; set; }
-        public List<ChatMember> ChatMembersIds { get; } = new();
+        public List<User> ChatMembers { get; } = new();
         public string? Creator { get; set; }
         public bool Encrypted { get; set; }
         public string? ChatName { get; set; }
@@ -16,15 +16,15 @@ namespace ChatJaffApp.Server.ChatRoom.Models
 
         public void AddMember(Guid userId)
         {
-            ChatMembersIds.Add(new ChatMember { Id = userId});
+            ChatMembers.Add(new User {Id = userId});
         }
 
     }
 
     public class ChatMember
     {
-        public Guid Id { get; set; }
-        public string? UserName { get; set; }
+        public Guid UserId { get; set; }
+        public Guid? ChatId { get; set; }
 
     }
 }
