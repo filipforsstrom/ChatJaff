@@ -41,7 +41,6 @@
     <None Remove="Hubs\" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Data\" />
     <Folder Include="Hubs\" />
   </ItemGroup>
 </Project>

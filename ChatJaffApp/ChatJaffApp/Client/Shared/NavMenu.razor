@@ -15,32 +15,32 @@
             </NavLink>
         </div>
         <div class="nav-item px-3">
-            <NavLink class="nav-link" href="about">
+            <NavLink data-testid="about-link" class="nav-link" href="about">
                 <span class="oi oi-list-rich" aria-hidden="true"></span> About
             </NavLink>
         </div>
         <AuthorizeView>
             <Authorized>
                 <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="profile">
+                    <NavLink data-testid="profile-link" class="nav-link" href="profile">
                         <span class="oi oi-person" aria-hidden="true"></span> Profile
                     </NavLink>
                 </div>
                 <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="chatrooms">
+                    <NavLink data-testid="chatrooms-link"  class="nav-link" href="chatrooms">
                         <span class="oi oi-chat" aria-hidden="true"></span> Chat Rooms
                     </NavLink>
                 </div>
 
                 <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="account/logout">
+                    <NavLink data-testid="logout-link" class="nav-link" href="account/logout">
                         <span class="oi oi-list-rich" aria-hidden="true"></span> Logout
                     </NavLink>
                 </div>
             </Authorized>
             <NotAuthorized>
                 <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="account/login">
+                    <NavLink data-testid="login-link" class="nav-link" href="account/login">
                         <span class="oi oi-list-rich" aria-hidden="true"></span> Login
                     </NavLink>
                 </div>

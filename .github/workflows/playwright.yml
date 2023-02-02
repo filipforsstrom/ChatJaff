@@ -1,0 +1,29 @@
+# This workflow will build a .NET project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
+
+name: test
+
+on:
+  push:
+    branches: ["development"]
+  pull_request:
+    branches: ["development"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 7.0.x
+      - name: Restore dependencies
+        run: dotnet restore ChatJaffApp/ChatJaffApp.UITest/ChatJaffApp.UITest.csproj
+      - name: Build
+        run: dotnet build ChatJaffApp/ChatJaffApp.UITest/ChatJaffApp.UITest.csproj  --no-restore
+      - name: Install playwright dependencies
+        run: pwsh ChatJaffApp/ChatJaffApp.UITest/bin/Debug/net7.0/playwright.ps1 install
+      - name: Test
+        run: dotnet test ChatJaffApp/ChatJaffApp.UITest/ChatJaffApp.UITest.csproj

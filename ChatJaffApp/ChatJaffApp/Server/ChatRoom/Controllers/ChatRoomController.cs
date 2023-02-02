@@ -61,5 +61,14 @@ namespace ChatJaffApp.Server.ChatRoom.Controllers
             return Ok(result);
         }
 
+        [Authorize]
+        [HttpPost]
+        [Route("[action]")]
+        public async Task<IActionResult> AddMemberToChat(AddMemberToChatDto addMemberDto)
+        {
+            var result = _chatRoomRepository.AddMemberToChat(addMemberDto);
+            
+            return result ? Ok("Member added") : BadRequest();
+        }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using ChatJaffApp.Server.ChatRoom.Contracts;
+using ChatJaffApp.Server.Data.Models;
 
 namespace ChatJaffApp.Server.ChatRoom.Models
 {
@@ -9,6 +10,6 @@ namespace ChatJaffApp.Server.ChatRoom.Models
         public string Creator { get; set; }
         public bool Encrypted { get; set; }
         public string ChatName { get; set; }
-        public List<string> Messages { get; set; }
+        public ICollection<Message> Messages { get; set; }
     }
 }
