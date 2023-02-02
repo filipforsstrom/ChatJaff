@@ -1,10 +1,8 @@
 const baseUrl = 'http://localhost:5172/'
-
+before(done => setTimeout(done, 10000))
 describe('Homepage', () => {
   it('can be visited', () => {
-    setTimeout(() => {
-      cy.visit(baseUrl)
-    }, 20000);
+    cy.visit(baseUrl)
   })
 
   it('can navigate to register page', () => {
