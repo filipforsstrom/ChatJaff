@@ -10,7 +10,7 @@ namespace ChatJaffApp.Server.Data.Models
         [ForeignKey(nameof(User))]
         public Guid UserId { get; set; }
         public string? Content { get; set; }
-        public DateTime Sent { get; } = DateTime.UtcNow;
+        public DateTime Sent { get; set; } = DateTime.UtcNow;
         [ForeignKey(nameof(Chat))]
         public Guid ChatId { get; set; }
 
