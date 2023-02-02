@@ -6,6 +6,7 @@ namespace ChatJaffApp.Server.ChatRoom.Contracts
     {
         Task<Guid> CreateChatRoomAsync(IChat chatRoom);
         IEnumerable<IChat> GetAllChatRooms();
+        IEnumerable<IChat> GetMyChatRooms(Guid memberId);
         bool AddMemberToChat(AddMemberToChatDto member);
     }
 }

@@ -1,9 +1,6 @@
+using ChatJaffApp.Server.ChatRoom.Member.Models;
 using Microsoft.AspNetCore.Authorization;
-﻿using AutoMapper;
-﻿using ChatJaffApp.Server.ChatRoom.Member.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using static ChatJaffApp.Server.ChatRoom.Controllers.ChatRoomController;
 
 namespace ChatJaffApp.Server.ChatRoom.Member.Controllers
 {
@@ -16,7 +13,7 @@ namespace ChatJaffApp.Server.ChatRoom.Member.Controllers
             {
                 new GetMemberResponse
                 {
-                    UserId = Guid.NewGuid(),
+                    UserId = Guid.Parse("5C6B3F8A-4495-4080-BB33-AD6E6BD2B3E9"),
                     Username = "Batman42"
                 },
                 new GetMemberResponse
@@ -38,8 +35,9 @@ namespace ChatJaffApp.Server.ChatRoom.Member.Controllers
                 {
                     UserId = Guid.NewGuid(),
                     Username = "Wolverine"
-                }
+                },
             };
+
 
         [Authorize]
         [HttpPost]

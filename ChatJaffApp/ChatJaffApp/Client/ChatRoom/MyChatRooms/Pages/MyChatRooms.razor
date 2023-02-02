@@ -1,7 +1,11 @@
 ﻿@page "/chatrooms"
 @using ChatJaffApp.Client.ChatRoom.MyChatRooms.Contracts;
 @using ChatJaffApp.Client.ChatRoom.MyChatRooms.Models;
+@using System.Security.Claims;
+@using Microsoft.AspNetCore.Authorization;
+@inject AuthenticationStateProvider authenticationStateProvider;
 @inject IChatRoomsService _chatRoomsService
+@attribute [Authorize]
 
 <h3>
     <label>
@@ -9,28 +13,63 @@
         <a href="/chatRooms/createchat"><button class="btn btn-primary">+</button></a>
     </label>
 </h3>
-<div class="list-group rounded-0">
-    @foreach (var chatRoom in ChatRoomList)
-    {
-        <a href="/chatrooms/chat/@chatRoom.Id" class="list-group-item list-group-item-action list-group-item-light rounded-0">
-            <div class="media">
-                <div class="media-body ml-4">
-                    <tr>
-                        <td>
-                            <p class="font-italic text-muted mb-0 text-small">@chatRoom.ChatName</p>
-                        </td>
-                    </tr>
-                </div>
-            </div>
-        </a>
-    }
+<div style="display: flex;">
+    <div style="flex: 1;">
+        <ul>
+            <h3 style="text-align: center; margin: 0;">All Chat Rooms</h3>
+            @foreach (var chatRoom in ChatRoomList)
+            {
+                <a href="/chatrooms/chat/@chatRoom.Id" class="list-group-item list-group-item-action list-group-item-light rounded-0">
+                    <div class="media">
+                        <div class="media-body ml-4">
+                            <tr>
+                                <td>
+                                    <p class="font-italic text-muted mb-0 text-small">@chatRoom.ChatName</p>
+                                </td>
+                            </tr>
+                        </div>
+                    </div>
+                </a>
+            }
+        </ul>
+    </div>
+    <div style="flex: 1;">
+        <ul>
+            <h3 style="text-align: center; margin: 0;">My Chat Rooms</h3>
+            @foreach (var chatRoom in MyChats)
+            {
+                <a href="/chatrooms/chat/@chatRoom.Id" class="list-group-item list-group-item-action list-group-item-light rounded-0">
+                    <div class="media">
+                        <div class="media-body ml-4">
+                            <tr>
+                                <td>
+                                    <p class="font-italic text-muted mb-0 text-small">@chatRoom.ChatName</p>
+                                </td>
+                            </tr>
+                        </div>
+                    </div>
+                </a>
+            }
+        </ul>
+    </div>
 </div>
 @code {
     public List<ChatRoomsViewModel> ChatRoomList { get; set; } = new();
+    public List<ChatRoomsViewModel> MyChats { get; set; } = new();
+
+
 
     protected override async Task OnInitializedAsync()
     {
+        var state = await authenticationStateProvider.GetAuthenticationStateAsync();
+        var userId = state.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+        if (Guid.TryParse(userId, out Guid parsedId))
+        {
+            MyChats = await _chatRoomsService.GetMyChats(parsedId);
+        }
+
         //Get user specific chats with Id from token later
-        ChatRoomList = await _chatRoomsService.GetAllChats();
+        //ChatRoomList = await _chatRoomsService.GetAllChats();
     }
 }
