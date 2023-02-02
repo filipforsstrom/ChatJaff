@@ -1,6 +1,7 @@
 const baseUrl = 'http://localhost:5172/'
-before(done => setTimeout(done, 10000))
+
 describe('Homepage', () => {
+  cy.wait(20000)
   it('can be visited', () => {
     cy.visit(baseUrl)
   })
