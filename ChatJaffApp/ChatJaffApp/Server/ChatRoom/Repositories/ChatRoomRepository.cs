@@ -46,7 +46,7 @@ namespace ChatJaffApp.Server.ChatRoom.Repositories
 
         public async Task<Chat> GetChatRoomAsync(Guid chatId)
         {
-            var chatRoom = await _context.ChatRooms.Include(c => c.ChatMembersIds).FirstOrDefaultAsync(c => c.Id == chatId);
+            var chatRoom = await _context.ChatRooms.FirstOrDefaultAsync(c => c.Id == chatId);
             if(chatRoom == null)
             {
                 return new Chat();

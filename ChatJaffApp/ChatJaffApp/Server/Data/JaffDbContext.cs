@@ -18,6 +18,8 @@ namespace ChatJaffApp.Server.Data
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
 			SeedChatRooms(modelBuilder);
+
+			modelBuilder.Entity<ChatMember>().HasKey(cm => new { cm.ChatId, cm.UserId });
 		}
 
         private void SeedChatRooms(ModelBuilder modelBuilder)
