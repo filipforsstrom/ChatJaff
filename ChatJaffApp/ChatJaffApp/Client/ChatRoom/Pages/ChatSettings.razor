@@ -1,7 +1,9 @@
 ﻿@page "/chatrooms/{id:guid}/settings/"
 @using ChatJaffApp.Client.ChatRoom.Components
 @using ChatJaffApp.Client.ChatRoom.Member.Models;
+@using ChatJaffApp.Client.ChatRoom.MyChatRooms.Contracts;
 @inject IMemberService memberService
+@inject IChatRoomsService chatRoomService
 
 <div>
     <container>
@@ -35,6 +37,11 @@
     public Guid Id { get; set; }
     public List<ChatMember> ChatMembers = new List<ChatMember>();
     public string? ErrorMessage { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        ChatMembers = await chatRoomService.GetChatMembers(Id);
+    }
 
     public async Task HandleFoundMember(ChatMember memberToAddToChat)
     {
