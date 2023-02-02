@@ -4,5 +4,6 @@
     {
         Task<Guid> CreateChatRoomAsync(IChat chatRoom);
         IEnumerable<IChat> GetAllChatRooms();
+        IEnumerable<IChat> GetMyChatRooms(Guid memberId);
     }
 }

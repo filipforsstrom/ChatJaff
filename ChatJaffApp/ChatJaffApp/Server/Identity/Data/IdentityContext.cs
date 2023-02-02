@@ -33,7 +33,7 @@ namespace ChatJaffApp.Server.Identity.Data
                 EmailConfirmed = true,
             };
             member1.PasswordHash = passwordHasher.HashPassword(member1, "member1");
-            
+
             ApplicationUser member2 = new ApplicationUser()
             {
                 Id = "b8381d75-d110-42f9-85e5-9c92a062fbc8",

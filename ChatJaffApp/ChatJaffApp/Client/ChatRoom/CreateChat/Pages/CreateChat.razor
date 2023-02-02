@@ -104,7 +104,6 @@
             createChatRequest.ChatMembersIds = tempIds;
 
             // lägg till inloggad användare till payload
-            //createChatRequest.Chatmembers?.Add(mockedCurrentUser);
 
             // skapa chattrum
             var response = await createChatservice.CreateChat(createChatRequest);

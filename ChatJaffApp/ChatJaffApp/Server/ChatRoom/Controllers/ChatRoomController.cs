@@ -1,5 +1,6 @@
 ﻿using ChatJaffApp.Server.ChatRoom.Contracts;
 using ChatJaffApp.Server.ChatRoom.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ChatJaffApp.Server.ChatRoom.Controllers
@@ -22,6 +23,27 @@ namespace ChatJaffApp.Server.ChatRoom.Controllers
             var tempList = _chatRoomRepository.GetAllChatRooms();
             return tempList;
         }
+
+        [Authorize]
+        [HttpGet]
+        [Route("[action]/{id}")]
+        public async Task<IActionResult> GetMyChats(Guid id)
+        {
+            try
+            {
+                await Task.Delay(1000);
+                var memberChatRooms = _chatRoomRepository.GetMyChatRooms(id);
+                return Ok(memberChatRooms);
+            }
+            catch
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+
+
+
 
         [HttpPost]
         [Route("[action]")]

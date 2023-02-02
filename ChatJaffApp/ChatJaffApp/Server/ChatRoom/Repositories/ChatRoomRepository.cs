@@ -24,7 +24,12 @@ namespace ChatJaffApp.Server.ChatRoom.Repositories
         }
         public IEnumerable<IChat> GetAllChatRooms()
         {
+
             return ChatRooms;
+        }
+        public IEnumerable<IChat> GetMyChatRooms(Guid memberId)
+        {
+            return ChatRooms.Where(x => x.ChatMembersIds.Contains(memberId));
         }
     }
 }
