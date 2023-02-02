@@ -1,0 +1,21 @@
+{
+  "name": "chatjaffapp",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "test-ui": "cypress open --browser chrome",
+    "test-cl": "cypress run --browser chrome",
+    "test-cypress": "concurrently \"dotnet run --project .\/ChatJaffApp\/Server\" \"cypress run --browser chrome\"" 
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "cypress": "^12.5.0"
+  },
+  "dependencies": {
+    "concurrently": "^7.6.0"
+  }
+}

@@ -1,0 +1,15 @@
+const baseUrl = 'http://localhost:5172/'
+
+describe('Homepage', () => {
+  it('can be visited', () => {
+    cy.visit(baseUrl)
+  })
+
+  it('can navigate to register page', () => {
+    cy.visit(`${baseUrl}account/register`)
+  })
+
+  it('can kill the application', () => {
+    cy.request('delete', `${baseUrl}api/identity/kill`,)
+  })
+})

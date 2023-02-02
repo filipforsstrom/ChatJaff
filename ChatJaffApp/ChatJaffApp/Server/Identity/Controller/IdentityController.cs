@@ -7,6 +7,7 @@ using System.Security.Authentication;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using AutoMapper;
+using System.Diagnostics;
 
 namespace ChatJaffApp.Server.Identity.Controller
 {
@@ -141,6 +142,12 @@ namespace ChatJaffApp.Server.Identity.Controller
             {
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
+        }
+
+        [HttpDelete("kill")]
+        public async Task Kill()
+        {
+            Environment.Exit(0);
         }
     }
 }
