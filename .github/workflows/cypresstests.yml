@@ -19,5 +19,7 @@ jobs:
         dotnet-version: 7.0.x
     - name: move dir and run npm
       run: cd ChatJaffApp && npm install
+    - name: build dotnet
+      run: dotnet build ChatJaffApp
     - name: Test
       run: cd ChatJaffApp && npm run test-cypress
