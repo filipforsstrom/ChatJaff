@@ -22,7 +22,6 @@ describe('Homepage', () => {
   //     failOnStatusCode: false,
   //     failsOnNetworkCode: false
   //   })
-  //   // cy.request('delete', `${baseUrl}api/identity/kill`, failOnStatusCode: true)
   // })
 
   after(() => {
