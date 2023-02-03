@@ -40,7 +40,7 @@ namespace ChatJaffApp.Server.ChatRoom.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
-
+        [Authorize]
         [HttpGet]
         [Route("{chatId:guid}")]
         public async Task<IActionResult> GetChatMembers([FromRoute]Guid chatId)
@@ -49,7 +49,7 @@ namespace ChatJaffApp.Server.ChatRoom.Controllers
             {
                 var chatRoom = await _chatRoomRepository.GetChatRoomAsync(chatId);
 
-                var chatMembers = chatRoom.ChatMembers.Where(cm => cm.ChatId == chatId)
+                var chatMembers = chatRoom.ChatMembers
                     .Select(cm => new ChatMemberDto { UserId = cm.UserId, Username = cm.Member.UserName })
                     .ToList();
 
@@ -57,7 +57,7 @@ namespace ChatJaffApp.Server.ChatRoom.Controllers
             }
             catch (Exception ex)
             {
-               return BadRequest(ex.Message);
+               return StatusCode(500);
             }
         }
 
