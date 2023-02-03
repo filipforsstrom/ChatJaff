@@ -3,6 +3,7 @@ using ChatJaffApp.Client.ChatRoom.Member.Models;
 using ChatJaffApp.Client.ChatRoom.MyChatRooms.Contracts;
 using ChatJaffApp.Client.ChatRoom.MyChatRooms.Models;
 using System.Net.Http.Json;
+using System.Text.Json;
 
 namespace ChatJaffApp.Client.ChatRoom.MyChatRooms.Services
 {
@@ -33,7 +34,9 @@ namespace ChatJaffApp.Client.ChatRoom.MyChatRooms.Services
             {
                 return new List<ChatMember>();
             }
-            var chatRoomMembers = await response.Content.ReadFromJsonAsync<List<ChatMember>>();
+            //var content = await response.Content.ReadAsStringAsync();
+            //List<ChatMember> chatRoomMembers = JsonSerializer.Deserialize<List<ChatMember>>(content);
+            List<ChatMember> chatRoomMembers = await response.Content.ReadFromJsonAsync<List<ChatMember>>();
             return chatRoomMembers;
         }
 
