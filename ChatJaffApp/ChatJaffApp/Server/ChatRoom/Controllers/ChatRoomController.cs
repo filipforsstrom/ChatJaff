@@ -16,6 +16,7 @@ namespace ChatJaffApp.Server.ChatRoom.Controllers
             _chatRoomRepository = chatRoomRepository;
         }
 
+        [Authorize]
         [HttpGet]
         [Route("[action]")]
         public IEnumerable<IChat> GetAllChats()

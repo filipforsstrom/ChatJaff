@@ -66,8 +66,21 @@ namespace ChatJaffApp.Server.Identity.Controller
             {
                 var loginResponse = await _identityService.LoginAsync(user);
 
-                HttpContext.Response.Headers.Add("AuthToken", loginResponse.Token); // for RestClient in vscode
-                return Ok(loginResponse);
+                if (string.IsNullOrEmpty(loginResponse.Token))
+                {
+                    throw new Exception();
+                }
+
+                var cookieOptions = new CookieOptions
+                {
+                    HttpOnly = true,
+                    Expires = DateTime.Now.AddHours(1),
+                    Secure = true,
+                };
+
+                Response.Cookies.Append("AuthToken", loginResponse.Token, cookieOptions);
+
+                return Ok();
             }
             catch (AuthenticationException exception)
             {
