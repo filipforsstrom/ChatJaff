@@ -41,6 +41,18 @@ namespace ChatJaffApp.Server.Identity.Services
             };
 
         }
+
+        public async Task<ApplicationUser> GetUserFromIdentityDb(string userName)
+        {
+
+            var user = await _signInManager.UserManager.FindByEmailAsync(userName);
+            if (user is null)
+            {
+                throw new KeyNotFoundException("No user found");
+            }
+            return user;
+
+        }
         private async Task<string> CreateTokenAsync(ApplicationUser user)
         {
             var claims = await CreateUserClaimsAsync(user);
@@ -81,5 +93,7 @@ namespace ChatJaffApp.Server.Identity.Services
 
             return claims;
         }
+
+        
     }
 }
