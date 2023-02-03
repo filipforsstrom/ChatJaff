@@ -36,21 +36,15 @@ namespace ChatJaffApp.Server.Identity.Controller
         public async Task<IActionResult> Register(RegisterRequest request)
         {
             var newUser = _mapper.Map<ApplicationUser>(request);
-            //ApplicationUser newUser = new()
-            //{
-            //    Email = request.Email,
-            //    UserName = request.Username,
-            //};
 
             try
             {
                 var registerResult = await _signInManager.UserManager.CreateAsync(newUser, request.Password);
-                //create get method for user
-
+                
                 if (registerResult.Succeeded)
                 {
-
-                    //await _memberRepository.AddMemberToDb() 
+                    var user = await _identityService.GetUserFromIdentityDb(newUser.Email);
+                    await _memberRepository.AddMemberToDb(Guid.Parse(newUser.Id), newUser.UserName);
                     return StatusCode(StatusCodes.Status201Created);
 
                 }
