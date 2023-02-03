@@ -34,10 +34,9 @@ namespace ChatJaffApp.Client.ChatRoom.MyChatRooms.Services
             {
                 return new List<ChatMember>();
             }
-            //var content = await response.Content.ReadAsStringAsync();
-            //List<ChatMember> chatRoomMembers = JsonSerializer.Deserialize<List<ChatMember>>(content);
-            List<ChatMember> chatRoomMembers = await response.Content.ReadFromJsonAsync<List<ChatMember>>();
-            return chatRoomMembers;
+
+            var chatMembers = await response.Content.ReadFromJsonAsync<List<ChatMember>>();
+            return chatMembers;
         }
 
         public async Task<List<ChatRoomsViewModel>> GetMyChats(Guid memberId)

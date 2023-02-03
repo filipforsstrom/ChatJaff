@@ -41,7 +41,6 @@ namespace ChatJaffApp.Server.ChatRoom.Controllers
             }
         }
 
-        [Authorize]
         [HttpGet]
         [Route("{chatId:guid}")]
         public async Task<IActionResult> GetChatMembers([FromRoute]Guid chatId)
@@ -51,16 +50,10 @@ namespace ChatJaffApp.Server.ChatRoom.Controllers
                 var chatRoom = await _chatRoomRepository.GetChatRoomAsync(chatId);
 
                 var chatMembers = chatRoom.ChatMembers.Where(cm => cm.ChatId == chatId)
-                    .Select(cm => new ChatMemberDto { UserId = cm.UserId, UserName = cm.Member.UserName })
+                    .Select(cm => new ChatMemberDto { UserId = cm.UserId, Username = cm.Member.UserName })
                     .ToList();
 
-                List<ChatMemberDto> tempChatMembers = new()
-                {
-                    new ChatMemberDto{ UserId = Guid.Parse("{853E628B-CADE-4792-BCA9-203D91514CBF}"), UserName = "BollSport"},
-                    new ChatMemberDto{ UserId = Guid.Parse("{3259FD0A-A32C-4CC8-BA3F-5FF2C2F5A103}"), UserName = "Ny"}
-                };
-
-                return Ok(tempChatMembers);
+                return Ok(chatMembers);
             }
             catch (Exception ex)
             {
@@ -112,6 +105,6 @@ namespace ChatJaffApp.Server.ChatRoom.Controllers
     public class ChatMemberDto
     {
         public Guid UserId { get; set; }
-        public string? UserName { get; set; }
+        public string? Username { get; set; }
     }
 }
