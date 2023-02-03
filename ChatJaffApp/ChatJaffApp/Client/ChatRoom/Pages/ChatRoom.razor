@@ -7,7 +7,46 @@
 @inject NavigationManager navigation
 <h3>Welcome</h3>
 
-<div>
+<section style="background-color: #eee;">
+    <div class="container py-5">
+        <div class="row d-flex justify-content-center">
+            <div class="col-md-10 col-lg-8 col-xl-6">
+                <div class="card" id="chat2">
+                    <div class="card-header d-flex justify-content-between align-items-center p-3">
+                        <h5 class="mb-0">Chat</h5>
+                    </div>
+                    <div class="card-body" data-mdb-perfect-scrollbar="true" style="position: relative; height: 400px">
+                    @if (Messages != null)
+                    {
+                            <div class="d-flex flex-row justify-content-end mb-4 pt-1">
+                                <div>
+                                    @foreach (var message in Messages)
+                                    {
+                                        <p class="small p-2 me-3 mb-1 text-white rounded-3 bg-primary">@message.Content</p>
+                                        <h4 data-testid="messagecontent" style="font-size: 15px;">@message.UserName</h4>
+                                        <p data-testid="messagetimestamp" style="font-size: 10px;">Sent: @message.Sent</p>
+                                    }
+                                </div>
+                            </div>
+                    }
+                    </div>
+                    <div class="card-footer text-muted d-flex justify-content-start align-items-center p-3">
+                        <InputTextArea data-testid="messageinputarea" class="form-control form-control-lg"
+                                       placeholder="Type message" @bind-Value="MessageDto.Content" />
+                        <a class="ms-1 text-muted" href="#!"><i class="fas fa-paperclip"></i></a>
+                        <a class="ms-3 text-muted" href="#!"><i class="fas fa-smile"></i></a>
+                        <a class="ms-3" href="#!"><i class="fas fa-paper-plane"></i></a>
+                        <button data-testid="sendmessagebtn" @onclick="onSendMessageClick" class=" btn btn-primary">Send</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</section>
+
+@*<div>
     <p>Your Messages:</p>
     @if (Messages != null)
     {
@@ -26,7 +65,7 @@
 <div>
     <InputTextArea data-testid="messageinputarea" maxlength="150" @bind-Value="MessageDto.Content" />
     <button data-testid="sendmessagebtn" @onclick="onSendMessageClick" class=" btn btn-primary">Send</button>
-</div>
+</div>*@
 
 @code {
     [Parameter]
@@ -58,7 +97,7 @@
 
         hubConnection.On<string>("ReceiveMessage", (response) =>
         {
-            var deserializedResponse = JsonSerializer.Deserialize<ReceiveMessageDto>(response);          
+            var deserializedResponse = JsonSerializer.Deserialize<ReceiveMessageDto>(response);
 
             Messages.Add(deserializedResponse);
             InvokeAsync(StateHasChanged);
@@ -67,15 +106,15 @@
         hubConnection.On<string>("MemberJoined", (message) =>
         {
             ReceiveMessageDto memberJoinedResponse = new()
-            {
-                UserName = "System",
-                Content = message,
-                Sent = DateTime.UtcNow
-            };
+                {
+                    UserName = "System",
+                    Content = message,
+                    Sent = DateTime.UtcNow
+                };
 
             Messages.Add(memberJoinedResponse);
             InvokeAsync(StateHasChanged);
-        });        
+        });
         await hubConnection.StartAsync();
         await hubConnection.SendAsync("AddToGroup", Id);
     }
@@ -88,7 +127,8 @@
             ErrorMessage = "Message can not be empty";
             //ta bort meddelande efteråt
         }
-        else {
+        else
+        {
             var messageModelToJson = JsonSerializer.Serialize(MessageDto);
             await hubConnection.SendAsync("SendMessageAsync", messageModelToJson, Id);
 
@@ -112,5 +152,5 @@
         public DateTime Sent { get; set; }
     }
 
-    
+
 }
