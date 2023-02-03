@@ -11,7 +11,7 @@ namespace ChatJaffApp.Server.ChatRoom.Models
         [ForeignKey(nameof(Chat))]
         public Guid? ChatId { get; set; }
 
-        public Data.Models.Member User { get; set; }
+        public Data.Models.Member Member { get; set; }
         public Chat Chat { get; set; }
     }
 }

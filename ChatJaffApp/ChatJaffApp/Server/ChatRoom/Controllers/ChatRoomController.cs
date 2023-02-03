@@ -40,10 +40,26 @@ namespace ChatJaffApp.Server.ChatRoom.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
+        [Authorize]
+        [HttpGet]
+        [Route("{chatId:guid}")]
+        public async Task<IActionResult> GetChatMembers([FromRoute]Guid chatId)
+        {
+            try
+            {
+                var chatRoom = await _chatRoomRepository.GetChatRoomAsync(chatId);
 
+                var chatMembers = chatRoom.ChatMembers
+                    .Select(cm => new ChatMemberDto { UserId = cm.UserId, Username = cm.Member.UserName })
+                    .ToList();
 
-
-
+                return Ok(chatMembers);
+            }
+            catch (Exception ex)
+            {
+               return StatusCode(500);
+            }
+        }
 
         [HttpPost]
         [Route("[action]")]
@@ -68,7 +84,7 @@ namespace ChatJaffApp.Server.ChatRoom.Controllers
         [Authorize]
         [HttpPatch]
         [Route("{chatId:guid}")]
-        public async Task<IActionResult> AddMemberToChat([FromRoute]Guid chatId, [FromBody]Guid userId)
+        public async Task<IActionResult> AddMemberToChat([FromRoute] Guid chatId, [FromBody] Guid userId)
         {
             var addMemberToChatDto = new AddMemberToChatDto
             {
@@ -84,5 +100,11 @@ namespace ChatJaffApp.Server.ChatRoom.Controllers
 
             return Ok("Member added");
         }
+    }
+
+    public class ChatMemberDto
+    {
+        public Guid UserId { get; set; }
+        public string? Username { get; set; }
     }
 }
