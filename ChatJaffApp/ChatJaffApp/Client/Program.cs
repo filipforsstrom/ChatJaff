@@ -21,7 +21,10 @@ builder.Services.AddScoped<ICreateChatService, CreateChatService>();
 builder.Services.AddScoped<IMemberService, MemberService>();
 builder.Services.AddScoped<IChatRoomsService, ChatRoomsService>();
 
-builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
+//builder.Services.AddOptions();
+
+builder.Services.AddScoped<CustomAuthStateProvider>();
+builder.Services.AddScoped<AuthenticationStateProvider>(s => s.GetRequiredService<CustomAuthStateProvider>());  
 
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 

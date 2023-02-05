@@ -15,32 +15,13 @@ public static class ServiceExtensions
 {
     public static void ConfigureAuthentication(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddAuthentication(options =>
+        services.ConfigureApplicationCookie(options =>
         {
-            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-        }).AddCookie(options =>
-        {
-            options.Cookie.Name = "AuthToken";
-        }).AddJwtBearer(options =>
-        {
-            options.RequireHttpsMetadata= false;
-            options.SaveToken = true;
-            options.TokenValidationParameters = new TokenValidationParameters
+            options.Cookie.HttpOnly = true;
+            options.Events.OnRedirectToLogin = context =>
             {
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
-                    configuration.GetSection("JWTSettings:SecretForKey").Value)),
-                ValidateIssuer = false,
-                ValidateAudience = false
-            };
-            options.Events = new JwtBearerEvents
-            {
-                OnMessageReceived = context =>
-                {
-                    context.Token = context.Request.Cookies["AuthToken"];
-                    return Task.CompletedTask;
-                }
+                context.Response.StatusCode = 401;
+                return Task.CompletedTask;
             };
         });
     }

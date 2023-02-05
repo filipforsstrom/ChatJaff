@@ -10,6 +10,7 @@ using AutoMapper;
 using System.Diagnostics;
 using ChatJaffApp.Server.ChatRoom.Member.Contracts;
 using ChatJaffApp.Server.ChatRoom.Member.Repositories;
+using Microsoft.AspNetCore.Authentication;
 
 namespace ChatJaffApp.Server.Identity.Controller
 {
@@ -64,21 +65,19 @@ namespace ChatJaffApp.Server.Identity.Controller
         {
             try
             {
-                var loginResponse = await _identityService.LoginAsync(user);
+                var userInDb = await _signInManager.UserManager.FindByEmailAsync(user.Email);
 
-                if (string.IsNullOrEmpty(loginResponse.Token))
+                if (userInDb == null) return BadRequest("Invalid Credentials");
+                
+                var signInResult = await _signInManager.CheckPasswordSignInAsync(userInDb, user.Password, false);
+
+                if (!signInResult.Succeeded) return BadRequest("Invalid Credentials");
+
+                await _signInManager.SignInAsync(userInDb, new AuthenticationProperties
                 {
-                    throw new Exception();
-                }
-
-                var cookieOptions = new CookieOptions
-                {
-                    HttpOnly = true,
-                    Expires = DateTime.Now.AddHours(1),
-                    Secure = true,
-                };
-
-                Response.Cookies.Append("AuthToken", loginResponse.Token, cookieOptions);
+                    ExpiresUtc= DateTimeOffset.UtcNow.AddMinutes(30),
+                    IsPersistent = true
+                });
 
                 return Ok();
             }
@@ -96,6 +95,34 @@ namespace ChatJaffApp.Server.Identity.Controller
             }
         }
 
+        [HttpGet("[action]")]
+        public async Task<IActionResult> CurrentUserInfo()
+        {
+            if (User.Identity == null || !User.Identity.IsAuthenticated)
+            {
+                return BadRequest();
+            }
+            else
+            {
+                return Ok(new CurrentUserDto
+                {
+                    IsAuthenticated = User.Identity.IsAuthenticated,
+                    UserName = User.Identity.Name,
+                    Claims = User.Claims
+                .ToDictionary(c => c.Type, c => c.Value)
+                });
+            }
+        }
+
+        [Authorize]
+        [HttpPost("logout")]
+        public async Task<IActionResult> Logout()
+        {
+            await _signInManager.SignOutAsync();
+            return Ok();
+        }
+
+        [Authorize]
         [HttpPost]
         [Route("[action]")]
         public async Task<IActionResult> ChangePassword(ChangePasswordRequest request)
