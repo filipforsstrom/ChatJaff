@@ -75,7 +75,7 @@ namespace ChatJaffApp.Server.Identity.Controller
 
                 await _signInManager.SignInAsync(userInDb, new AuthenticationProperties
                 {
-                    ExpiresUtc= DateTimeOffset.UtcNow.AddMinutes(30),
+                    ExpiresUtc = DateTimeOffset.UtcNow.AddHours(1),
                     IsPersistent = true
                 });
 
@@ -93,6 +93,23 @@ namespace ChatJaffApp.Server.Identity.Controller
             {
                 return StatusCode(500);
             }
+        }
+
+        [HttpGet("refresh")]
+        public async Task<IActionResult> Refresh()
+        {
+            var userInContext = await _signInManager.UserManager.GetUserAsync(HttpContext.User);
+            if (userInContext == null) return Unauthorized();
+
+            await Logout();
+
+            await _signInManager.SignInAsync(userInContext, new AuthenticationProperties
+            {
+                ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(1),
+                IsPersistent = true
+            });
+
+            return Ok();
         }
 
         [HttpGet("[action]")]

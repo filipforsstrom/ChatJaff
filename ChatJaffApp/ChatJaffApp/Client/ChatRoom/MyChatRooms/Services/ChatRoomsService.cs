@@ -23,7 +23,7 @@ namespace ChatJaffApp.Client.ChatRoom.MyChatRooms.Services
             return chatRoomList;
         }
         public async Task<List<ChatRoomsViewModel>> GetMyChats(Guid memberId)
-        {
+        {            
             var response = await _httpClient.GetAsync($"/api/chatroom/getmychats/{memberId}");
             if (!response.IsSuccessStatusCode)
             {
