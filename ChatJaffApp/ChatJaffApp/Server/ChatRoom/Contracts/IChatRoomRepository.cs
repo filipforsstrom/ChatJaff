@@ -1,4 +1,5 @@
-﻿using ChatJaffApp.Server.ChatRoom.Models;
+﻿using ChatJaffApp.Server.ChatRoom.Controllers;
+using ChatJaffApp.Server.ChatRoom.Models;
 
 namespace ChatJaffApp.Server.ChatRoom.Contracts
 {
@@ -7,9 +8,8 @@ namespace ChatJaffApp.Server.ChatRoom.Contracts
         Task<Guid> CreateChatRoomAsync(Chat chatRoom);
         IEnumerable<IChat> GetAllChatRooms();
         IEnumerable<IChat> GetMyChatRooms(Guid memberId);
-        bool AddMemberToChat(AddMemberToChatDto member);
         Task<Chat> GetChatRoomAsync(Guid chatId);
         Task UpdateChatRoomAsync(Chat chatRoomToUpdate);
-        Task<List<Data.Models.Member>> GetChatMembers(Guid chatId);
+        ChatRoomDto ConvertChatToDto(Chat chatRoom);
     }
 }
