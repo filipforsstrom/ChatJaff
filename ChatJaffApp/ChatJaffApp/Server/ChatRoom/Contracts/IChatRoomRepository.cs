@@ -10,5 +10,6 @@ namespace ChatJaffApp.Server.ChatRoom.Contracts
         bool AddMemberToChat(AddMemberToChatDto member);
         Task<Chat> GetChatRoomAsync(Guid chatId);
         Task UpdateChatRoomAsync(Chat chatRoomToUpdate);
+        Task<List<Data.Models.Member>> GetChatMembers(Guid chatId);
     }
 }

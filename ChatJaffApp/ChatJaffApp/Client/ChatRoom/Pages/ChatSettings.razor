@@ -1,21 +1,34 @@
-﻿@page "/chatrooms/chat/settings/{id:guid}"
+﻿@page "/chatrooms/{id:guid}/settings/"
 @using ChatJaffApp.Client.ChatRoom.Components
 @using ChatJaffApp.Client.ChatRoom.Member.Models;
+@using ChatJaffApp.Client.ChatRoom.MyChatRooms.Contracts;
 @inject IMemberService memberService
+@inject IChatRoomsService chatRoomService
 
 <div>
     <container>
         <h2>
             Members
         </h2>
-        @foreach (var member in ChatMembers)
-        {
-            <tr>
-                <td>
-                    <p class="font-italic text-muted mb-0 text-small">@member.Username</p>
-                </td>
-            </tr>
-        }
+        <div class="card" style="width: 18rem; ">
+        <div class="card-header">
+            Chat members
+        </div>
+        <ul class="list-group list-group-flush">
+            @if (ChatMembers != null || ChatMembers?.Count < 1)
+            {
+                @foreach (var member in ChatMembers)
+                {
+                    <li class="list-group-item"><p>@member.Username</p><button class="btn btn-danger btn-sm" @onclick="() => DeleteMemberFromChat(member)">Remove</button> </li>
+                }
+            }
+            else
+            {
+                <p>No users</p>
+            }
+        </ul>
+</div>
+        
         <br><br>
         <h2>Change chat name</h2>
         <input type="text" />
@@ -33,8 +46,18 @@
 @code {
     [Parameter]
     public Guid Id { get; set; }
-    public List<ChatMember> ChatMembers = new List<ChatMember>();
+    public List<ChatMember> ChatMembers = new();
     public string? ErrorMessage { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        ChatMembers = await chatRoomService.GetChatMembers(Id);
+    }
+
+    public async Task DeleteMemberFromChat(ChatMember memberToDeleteFromChat)
+    {
+        
+    }
 
     public async Task HandleFoundMember(ChatMember memberToAddToChat)
     {
