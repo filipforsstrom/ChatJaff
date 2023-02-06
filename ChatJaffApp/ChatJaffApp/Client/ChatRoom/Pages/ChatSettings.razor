@@ -8,6 +8,7 @@
 @inject IMemberService memberService
 @inject IChatRoomsService chatRoomService
 @inject AuthenticationStateProvider authenticationStateProvider;
+@inject NavigationManager navManager;
 
 <div>
     <container>
@@ -47,7 +48,7 @@
 
         @if (IsModerator)
         {
-            <p>You are moderator</p>
+            <button class="btn btn-danger" @onclick="() => OnDeleteChat()">Delete Chat</button>
         }
     </container>
 </div>
@@ -66,13 +67,29 @@
         var user = await authenticationStateProvider.GetAuthenticationStateAsync();
         UserId = Guid.Parse(user.User.FindFirst(ClaimTypes.NameIdentifier).Value);
         ChatMembers = chatRoom.ChatMembers;
-
         IsModerator = UserId == chatRoom.CreatorId;
     }
 
     public async Task DeleteMemberFromChat(ChatMemberViewModel memberToDeleteFromChat)
     {
-        
+
+    }
+
+    public async Task OnDeleteChat()
+    {
+        if (!IsModerator)
+        {
+            ErrorMessage = "Not allowed";
+        }
+
+        var result = await chatRoomService.DeleteChat(Id);
+
+        if (!result)
+        {
+            ErrorMessage = "Something went wrong";
+        }
+
+        navManager.NavigateTo("/chatrooms");
     }
 
     public async Task HandleFoundMember(ChatMemberViewModel memberToAddToChat)
