@@ -1,8 +1,8 @@
 ﻿@page "/account/register"
 @using ChatJaffApp.Client.Account.Models;
 @using ChatJaffApp.Client.Account.Contracts;
-@inject IIdentityService IdentityService;
-@inject NavigationManager NavigationManager;
+@inject CustomAuthStateProvider authStateProvider
+@inject NavigationManager navigationManager;
 
 <div class="card">
     <h4 class="card-header">Register</h4>
@@ -42,16 +42,14 @@
 
     private async Task HandleSubmit()
     {
-        var response = await IdentityService.Register(register);
-        if (response.Success)
+        try
         {
-            NavigationManager.NavigateTo("/");
+            await authStateProvider.Register(register);
+            navigationManager.NavigateTo("account/login");
         }
-        else
+        catch (Exception)
         {
-            errorMessage = response.Data;
+            errorMessage = "Failed to register.";
         }
-
-
     }
 }

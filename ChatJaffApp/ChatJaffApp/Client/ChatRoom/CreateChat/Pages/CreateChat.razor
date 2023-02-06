@@ -56,9 +56,9 @@
 </div>
 
 @code {
-    List<ChatMember>? ChatMembers { get; set; } = new();
+    List<ChatMemberViewModel>? ChatMembers { get; set; } = new();
     string? ErrorMessage { get; set; } = string.Empty;
-    private ChatMember mockedCurrentUser { get; set; } = new();
+    private ChatMemberViewModel mockedCurrentUser { get; set; } = new();
     public CreateChatDto createChatRequest { get; set; } = new();
 
     protected override async Task OnInitializedAsync()
@@ -68,13 +68,13 @@
         mockedCurrentUser.Username = "Brady666";
     }
 
-    private void HandleFoundMember(ChatMember memberToAddToChat)
+    private void HandleFoundMember(ChatMemberViewModel memberToAddToChat)
     {
         ChatMembers.Add(memberToAddToChat);
     }
 
 
-    private async Task onDeleteMember(ChatMember member)
+    private async Task onDeleteMember(ChatMemberViewModel member)
     {
         var memberToDelete = ChatMembers.Find(m => m.Username.Equals(member.Username, StringComparison.OrdinalIgnoreCase));
 

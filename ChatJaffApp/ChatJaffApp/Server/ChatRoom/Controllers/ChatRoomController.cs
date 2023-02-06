@@ -1,7 +1,10 @@
-﻿using ChatJaffApp.Server.ChatRoom.Contracts;
+﻿using AutoMapper;
+using ChatJaffApp.Server.ChatRoom.Contracts;
 using ChatJaffApp.Server.ChatRoom.Models;
+using ChatJaffApp.Server.Data.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ChatJaffApp.Server.ChatRoom.Controllers
 {
@@ -10,12 +13,15 @@ namespace ChatJaffApp.Server.ChatRoom.Controllers
     public class ChatRoomController : ControllerBase
     {
         private readonly IChatRoomRepository _chatRoomRepository;
+        private readonly IMapper _mapper;
 
-        public ChatRoomController(IChatRoomRepository chatRoomRepository)
+        public ChatRoomController(IChatRoomRepository chatRoomRepository, IMapper mapper)
         {
             _chatRoomRepository = chatRoomRepository;
+            _mapper = mapper;
         }
 
+        [Authorize]
         [HttpGet]
         [Route("[action]")]
         public IEnumerable<IChat> GetAllChats()
@@ -31,7 +37,6 @@ namespace ChatJaffApp.Server.ChatRoom.Controllers
         {
             try
             {
-                await Task.Delay(1000);
                 var memberChatRooms = _chatRoomRepository.GetMyChatRooms(id);
                 return Ok(memberChatRooms);
             }
@@ -40,29 +45,26 @@ namespace ChatJaffApp.Server.ChatRoom.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
+
         [Authorize]
         [HttpGet]
         [Route("{chatId:guid}")]
-        public async Task<IActionResult> GetChatMembers([FromRoute]Guid chatId)
+        public async Task<IActionResult> GetChatRoom([FromRoute] Guid chatId)
         {
             try
             {
                 var chatRoom = await _chatRoomRepository.GetChatRoomAsync(chatId);
-
-                var chatMembers = chatRoom.ChatMembers
-                    .Select(cm => new ChatMemberDto { UserId = cm.UserId, Username = cm.Member.UserName })
-                    .ToList();
-
-                return Ok(chatMembers);
+                var chatRoomDto = _chatRoomRepository.ConvertChatToDto(chatRoom);
+                return Ok(chatRoomDto);
             }
             catch (Exception ex)
             {
-               return StatusCode(500);
+                return StatusCode(500);
             }
         }
 
+        [Authorize]
         [HttpPost]
-        [Route("[action]")]
         public async Task<IActionResult> CreateChat(CreateChatDTO chatRequest)
         {
             var newChat = new Chat()
@@ -71,9 +73,9 @@ namespace ChatJaffApp.Server.ChatRoom.Controllers
                 ChatName = chatRequest.ChatName,
             };
 
-            foreach (var members in chatRequest.ChatMembersIds)
+            foreach (var member in chatRequest.ChatMembersIds)
             {
-                newChat.AddMember(members);
+                newChat.AddMember(member);
             }
 
             var result = await _chatRoomRepository.CreateChatRoomAsync(newChat);
@@ -86,12 +88,6 @@ namespace ChatJaffApp.Server.ChatRoom.Controllers
         [Route("{chatId:guid}")]
         public async Task<IActionResult> AddMemberToChat([FromRoute] Guid chatId, [FromBody] Guid userId)
         {
-            var addMemberToChatDto = new AddMemberToChatDto
-            {
-                ChatId = chatId,
-                UserId = userId
-            };
-
             var chatRoom = await _chatRoomRepository.GetChatRoomAsync(chatId);
 
             chatRoom.AddMember(userId);
@@ -100,11 +96,5 @@ namespace ChatJaffApp.Server.ChatRoom.Controllers
 
             return Ok("Member added");
         }
-    }
-
-    public class ChatMemberDto
-    {
-        public Guid UserId { get; set; }
-        public string? Username { get; set; }
     }
 }
