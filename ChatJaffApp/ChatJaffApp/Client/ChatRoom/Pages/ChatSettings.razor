@@ -48,7 +48,7 @@
 
         @if (IsModerator)
         {
-            <button class="btn btn-danger" @onclick="() => OnDeleteChat()">Delete Chat</button>
+            <button class="btn btn-danger" @onclick="() => OnDeleteChatRoom()">Delete Chat</button>
         }
     </container>
 </div>
@@ -75,18 +75,18 @@
 
     }
 
-    public async Task OnDeleteChat()
+    public async Task OnDeleteChatRoom()
     {
         if (!IsModerator)
         {
             ErrorMessage = "Not allowed";
         }
 
-        var result = await chatRoomService.DeleteChat(Id);
+        var result = await chatRoomService.DeleteChatRoom(Id);
 
-        if (!result)
+        if (!result.Success)
         {
-            ErrorMessage = "Something went wrong";
+            ErrorMessage = result.Message;
         }
 
         navManager.NavigateTo("/chatrooms");
