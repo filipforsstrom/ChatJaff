@@ -359,3 +359,4 @@ MigrationBackup/
 *.sqlite-shm
 *.sqlite-wal
 **/.DS_Store
+.cypress/videos
