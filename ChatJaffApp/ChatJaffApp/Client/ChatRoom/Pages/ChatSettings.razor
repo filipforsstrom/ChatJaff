@@ -44,19 +44,30 @@
         {
             <p>@ErrorMessage</p>
         }
+
+        @if (IsModerator)
+        {
+            <p>You are moderator</p>
+        }
     </container>
 </div>
 
 @code {
     [Parameter]
     public Guid Id { get; set; }
+    public Guid UserId { get; set; }
+    public bool IsModerator { get; set; }
     public List<ChatMemberViewModel> ChatMembers = new();
     public string? ErrorMessage { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         var chatRoom = await chatRoomService.GetChatRoom(Id);
+        var user = await authenticationStateProvider.GetAuthenticationStateAsync();
+        UserId = Guid.Parse(user.User.FindFirst(ClaimTypes.NameIdentifier).Value);
         ChatMembers = chatRoom.ChatMembers;
+
+        IsModerator = UserId == chatRoom.CreatorId;
     }
 
     public async Task DeleteMemberFromChat(ChatMemberViewModel memberToDeleteFromChat)
