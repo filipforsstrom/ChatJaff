@@ -3,6 +3,7 @@
 @using ChatJaffApp.Client.ChatRoom.Member.Models;
 @using ChatJaffApp.Client.ChatRoom.MyChatRooms.Contracts;
 @using System.Security.Claims;
+@using ChatJaffApp.Client.ChatRoom.MyChatRooms.Models;
 @using static ChatJaffApp.Client.ChatRoom.MyChatRooms.Services.ChatRoomsService;
 @inject IMemberService memberService
 @inject IChatRoomsService chatRoomService
@@ -54,7 +55,8 @@
 
     protected override async Task OnInitializedAsync()
     {
-        ChatMembers = await chatRoomService.GetChatMembers(Id);
+        var chatRoom = await chatRoomService.GetChatRoom(Id);
+        ChatMembers = chatRoom.ChatMembers;
     }
 
     public async Task DeleteMemberFromChat(ChatMemberViewModel memberToDeleteFromChat)
