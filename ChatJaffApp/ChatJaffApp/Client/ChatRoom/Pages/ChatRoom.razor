@@ -44,17 +44,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var chatRoom = await chatRoomService.GetChatRoom(Id);
-        foreach (var message in chatRoom.Messages)
-        {
-            Messages.Add(new ReceiveMessageDto
-            {
-                Id = message.Id,
-                UserName = message.UserName,
-                Content = message.Content,
-                Sent = message.Sent
-            });
-        };
+        await GetStoredMessages();
 
         var state = await authStateProvider.GetAuthenticationStateAsync();
         var userId = state.User.FindFirst(ClaimTypes.NameIdentifier).Value;
@@ -92,6 +82,21 @@
         });        
         await hubConnection.StartAsync();
         await hubConnection.SendAsync("AddToGroup", Id);
+    }
+
+    private async Task GetStoredMessages()
+    {
+        var chatRoom = await chatRoomService.GetChatRoom(Id);
+        foreach (var message in chatRoom.Messages)
+        {
+            Messages.Add(new ReceiveMessageDto
+            {
+                Id = message.Id,
+                UserName = message.UserName,
+                Content = message.Content,
+                Sent = message.Sent
+            });
+        };
     }
 
     private async Task onSendMessageClick()
