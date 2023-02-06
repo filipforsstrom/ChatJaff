@@ -21,6 +21,7 @@ namespace ChatJaffApp.Server.ChatRoom.Controllers
             _mapper = mapper;
         }
 
+        [Authorize]
         [HttpGet]
         [Route("[action]")]
         public IEnumerable<IChat> GetAllChats()

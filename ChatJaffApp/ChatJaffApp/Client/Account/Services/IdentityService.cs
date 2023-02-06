@@ -13,14 +13,10 @@ namespace ChatJaffApp.Client.Account.Services
     public class IdentityService : IIdentityService
     {
         private readonly HttpClient _httpClient;
-        private readonly ILocalStorageService _localStorage;
-        private readonly AuthenticationStateProvider _authStateProvider;
 
-        public IdentityService(HttpClient httpClient, ILocalStorageService localStorage, AuthenticationStateProvider authStateProvider)
+        public IdentityService(HttpClient httpClient)
         {
             _httpClient = httpClient;
-            _localStorage = localStorage;
-            _authStateProvider = authStateProvider;
         }
 
         public async Task<ChangePasswordResponse> ChangePassword(ChangePasswordForm changePassword)
@@ -63,22 +59,14 @@ namespace ChatJaffApp.Client.Account.Services
             return deleteResponse;
         }
 
-        public async Task<IServiceResponseViewModel<RegisterResponse>> Login(LoginDto login)
-        {
-            ServiceResponseViewModel<RegisterResponse> responseViewModel = new();
-            var httpResponse = await _httpClient.PostAsJsonAsync("api/identity/login", login);
-            if (httpResponse.IsSuccessStatusCode)
+        public async Task Login(LoginDto login)
+        {            
+            var loginResponse = await _httpClient.PostAsJsonAsync("api/identity/login", login);
+            if (loginResponse.StatusCode == System.Net.HttpStatusCode.BadRequest)
             {
-                var token = await httpResponse.Content.ReadAsStringAsync();
-                await _localStorage.SetItemAsync("token", token);
-                var authState = await _authStateProvider.GetAuthenticationStateAsync();
-
-                responseViewModel.Success = true;
-                return responseViewModel;
+                throw new Exception(await loginResponse.Content.ReadAsStringAsync());
             }
-
-            responseViewModel.Message = await httpResponse.Content.ReadAsStringAsync();
-            return responseViewModel;
+            loginResponse.EnsureSuccessStatusCode();
         }
 
         public async Task<RegisterResponse> Register(RegisterForm register)
@@ -107,25 +95,15 @@ namespace ChatJaffApp.Client.Account.Services
 
         public async Task Logout()
         {
-            //RegisterResponse RegisterResponse = new();
+            var result = await _httpClient.PostAsync("api/identity/logout", null);
+            result.EnsureSuccessStatusCode();
 
-            await _localStorage.RemoveItemAsync("i18nextLng");
-            await _localStorage.RemoveItemAsync("token");
-            await _authStateProvider.GetAuthenticationStateAsync();
+        }
 
-            //var tokenCheck = await _localStorage.GetItemAsStringAsync("token");
-            //var lngCheck=await _localStorage.GetItemAsStringAsync("token");
-
-            //if(tokenCheck == null && lngCheck==null) 
-            //{
-            //    RegisterResponse.Success = true;
-            //}
-            //else
-            //{
-            //   RegisterResponse.Success = false;
-            //}
-            //return RegisterResponse;
-
+        public async Task<CurrentUserDto> CurrentUserInfo()
+        {
+            var result = await _httpClient.GetFromJsonAsync<CurrentUserDto>("api/identity/currentuserinfo");
+            return result;
         }
     }
 }

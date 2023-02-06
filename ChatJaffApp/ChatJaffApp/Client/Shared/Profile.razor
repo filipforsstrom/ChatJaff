@@ -1,7 +1,7 @@
 ﻿@page "/profile"
 @inject IIdentityService identityService;
 @inject ILocalStorageService localStorage;
-@inject AuthenticationStateProvider authenticationStateProvider;
+@inject CustomAuthStateProvider authenticationStateProvider;
 @inject NavigationManager navManager;
 @using Blazored.LocalStorage;
 @using ChatJaffApp.Client.Account.Contracts;
@@ -110,8 +110,8 @@
         if (deleteResponse.Success)
         {
             toggleDeleteDialog();
-            await identityService.Logout();
-            //navManager.NavigateTo("/");
+            await authenticationStateProvider.Logout();
+
         } else
         {
             deleteIdentityResponseMessage = deleteResponse.Data;
