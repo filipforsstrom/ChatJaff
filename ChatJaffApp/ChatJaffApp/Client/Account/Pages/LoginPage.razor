@@ -2,8 +2,8 @@
 @using ChatJaffApp.Client.Account.Contracts;
 @using ChatJaffApp.Client.Account.Models;
 @using ChatJaffApp.Client.Account.Services;
-@inject NavigationManager NavigationManager
-@inject IIdentityService IdentityService
+@inject NavigationManager navigationManager
+@inject CustomAuthStateProvider authStateProvider
 
 <div class="card">
     <h4 class="card-header">Login</h4>
@@ -32,16 +32,14 @@
 
     public async Task HandleSubmit()
     {
-        var response = await IdentityService.Login(loginModel);
-
-        if (response.Success)
+        try
         {
-            NavigationManager.NavigateTo("/");
+            await authStateProvider.Login(loginModel);
+            navigationManager.NavigateTo("");
         }
-        else
+        catch (Exception)
         {
             FailedLogin = "Login failed";
         }
-
     }
 }

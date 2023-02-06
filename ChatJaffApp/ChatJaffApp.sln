@@ -11,7 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChatJaffApp.Shared", "ChatJ
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChatJaffApp.Tests", "ChatJaffApp.Tests\ChatJaffApp.Tests.csproj", "{9DD7E63D-2033-4170-99D8-DCD77E87F98F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatJaffApp.UITest", "ChatJaffApp.UITest\ChatJaffApp.UITest.csproj", "{ACA83F2F-61CD-4E8D-98BA-69E9D8C31CA1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChatJaffApp.UITest", "ChatJaffApp.UITest\ChatJaffApp.UITest.csproj", "{ACA83F2F-61CD-4E8D-98BA-69E9D8C31CA1}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChatJaffApi.Tests", "ChatJaffApi.Tests\ChatJaffApi.Tests.csproj", "{2955B2F9-CB77-4C86-BEAF-0502D96E563C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{ACA83F2F-61CD-4E8D-98BA-69E9D8C31CA1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ACA83F2F-61CD-4E8D-98BA-69E9D8C31CA1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ACA83F2F-61CD-4E8D-98BA-69E9D8C31CA1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2955B2F9-CB77-4C86-BEAF-0502D96E563C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2955B2F9-CB77-4C86-BEAF-0502D96E563C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2955B2F9-CB77-4C86-BEAF-0502D96E563C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2955B2F9-CB77-4C86-BEAF-0502D96E563C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

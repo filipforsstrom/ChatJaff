@@ -19,7 +19,7 @@ namespace ChatJaffApp.Client.ChatRoom.Member.Services
         public async Task<ServiceResponseViewModel<ChatMemberResponse>> AddChatMember(AddMemberDto addMemberDto)
         {
             ServiceResponseViewModel<ChatMemberResponse> addMemberResponse = new();
-            var response = await _httpClient.PostAsJsonAsync("api/chatroom/addmembertochat", addMemberDto);
+            var response = await _httpClient.PatchAsJsonAsync($"api/chatroom/{addMemberDto.ChatId}", addMemberDto.UserId);
 
             if (!response.IsSuccessStatusCode)
             {
@@ -34,10 +34,10 @@ namespace ChatJaffApp.Client.ChatRoom.Member.Services
 
         }
 
-        public async Task<ServiceResponseViewModel<ChatMemberResponse>> GetChatMember(InviteMemberDto invMemberDto)
+        public async Task<ServiceResponseViewModel<ChatMemberResponse>> GetMember(GetMemberDto getMemberDto)
         {
             ServiceResponseViewModel<ChatMemberResponse> getMemberResponse = new();
-            var response = await _httpClient.PostAsJsonAsync("api/member/getchatmember", invMemberDto);
+            var response = await _httpClient.GetAsync($"api/Member/{getMemberDto.SearchedUsername}");
 
             if (!response.IsSuccessStatusCode)
             {

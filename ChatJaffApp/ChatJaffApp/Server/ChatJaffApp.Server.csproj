@@ -34,6 +34,10 @@
     <ProjectReference Include="..\Shared\ChatJaffApp.Shared.csproj" />
   </ItemGroup>
 
+	<ItemGroup>
+		<InternalsVisibleTo Include="ChatJaffApi.Tests" />
+	</ItemGroup>
+
 
   <ItemGroup>
     <None Remove="Data\" />

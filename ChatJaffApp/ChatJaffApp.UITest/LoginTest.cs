@@ -24,29 +24,29 @@ namespace ChatJaffApp.UITest
         public async Task MyFirstTest()
         {
             var url = "https://localhost:7085/";
-            // Create the host factory with the App class as parameter and the
-            // url we are going to use.
-            using var hostFactory =
-              new WebTestingHostFactory<AssemblyClassLocator>();
-            hostFactory
-              // Override host configuration to mock stuff if required.
-              .WithWebHostBuilder(builder =>
-              {
-                  // Setup the url to use.
-                  builder.UseUrls(url);
-                  // Replace or add services if needed.
-                  builder.ConfigureServices(services =>
-                  {
-                      // services.AddTransient<....>();
-                  });
-                  // Replace or add configuration if needed.
-                  builder.ConfigureAppConfiguration((app, conf) =>
-                  {
-                      // conf.AddJsonFile("appsettings.Test.json");
-                  });
-              })
+            //// Create the host factory with the App class as parameter and the
+            //// url we are going to use.
+            //using var hostFactory =
+            //  new WebTestingHostFactory<AssemblyClassLocator>();
+            //hostFactory
+            //  // Override host configuration to mock stuff if required.
+            //  .WithWebHostBuilder(builder =>
+            //  {
+            //      // Setup the url to use.
+            //      builder.UseUrls(url);
+            //      // Replace or add services if needed.
+            //      builder.ConfigureServices(services =>
+            //      {
+            //          // services.AddTransient<....>();
+            //      });
+            //      // Replace or add configuration if needed.
+            //      builder.ConfigureAppConfiguration((app, conf) =>
+            //      {
+            //          // conf.AddJsonFile("appsettings.Test.json");
+            //      });
+            //  })
               // Create the host using the CreateDefaultClient method.
-              .CreateDefaultClient();
+              //.CreateDefaultClient();
 
             
             // Open a page and run test logic.
@@ -72,27 +72,27 @@ namespace ChatJaffApp.UITest
             var url = "https://localhost:7085/";
             // Create the host factory with the App class as parameter and the
             // url we are going to use.
-            using var hostFactory =
-              new WebTestingHostFactory<AssemblyClassLocator>();
-            hostFactory
-              // Override host configuration to mock stuff if required.
-              .WithWebHostBuilder(builder =>
-              {
-                  // Setup the url to use.
-                  builder.UseUrls(url);
-                  // Replace or add services if needed.
-                  builder.ConfigureServices(services =>
-                  {
-                      // services.AddTransient<....>();
-                  });
-                  // Replace or add configuration if needed.
-                  builder.ConfigureAppConfiguration((app, conf) =>
-                  {
-                      // conf.AddJsonFile("appsettings.Test.json");
-                  });
-              })
-              // Create the host using the CreateDefaultClient method.
-              .CreateDefaultClient();
+            //using var hostFactory =
+            //  new WebTestingHostFactory<AssemblyClassLocator>();
+            //hostFactory
+            //  // Override host configuration to mock stuff if required.
+            //  .WithWebHostBuilder(builder =>
+            //  {
+            //      // Setup the url to use.
+            //      builder.UseUrls(url);
+            //      // Replace or add services if needed.
+            //      builder.ConfigureServices(services =>
+            //      {
+            //          // services.AddTransient<....>();
+            //      });
+            //      // Replace or add configuration if needed.
+            //      builder.ConfigureAppConfiguration((app, conf) =>
+            //      {
+            //          // conf.AddJsonFile("appsettings.Test.json");
+            //      });
+            //  })
+            //  // Create the host using the CreateDefaultClient method.
+            //  .CreateDefaultClient();
 
             var loginUrl = "https://localhost:7085/account/login";
 

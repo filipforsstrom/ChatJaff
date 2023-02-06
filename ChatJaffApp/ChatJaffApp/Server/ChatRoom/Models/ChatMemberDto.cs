@@ -1,8 +1,8 @@
 ﻿namespace ChatJaffApp.Server.ChatRoom.Models
 {
-    public class AddMemberToChatDto
+    public class ChatMemberDto
     {
         public Guid UserId { get; set; }
-        public Guid? ChatId { get; set; }
+        public string? Username { get; set; }
     }
 }

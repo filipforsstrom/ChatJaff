@@ -7,6 +7,10 @@ using System.Security.Authentication;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using AutoMapper;
+using System.Diagnostics;
+using ChatJaffApp.Server.ChatRoom.Member.Contracts;
+using ChatJaffApp.Server.ChatRoom.Member.Repositories;
+using Microsoft.AspNetCore.Authentication;
 
 namespace ChatJaffApp.Server.Identity.Controller
 {
@@ -18,15 +22,15 @@ namespace ChatJaffApp.Server.Identity.Controller
         private readonly IIdentityService _identityService;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IMapper _mapper;
+        private readonly IMemberRepository _memberRepository;
 
-
-        public IdentityController(SignInManager<ApplicationUser> signInManager, IIdentityService identityService, IHttpContextAccessor httpContextAccessor, IMapper mapper)
+        public IdentityController(SignInManager<ApplicationUser> signInManager, IIdentityService identityService, IHttpContextAccessor httpContextAccessor, IMapper mapper, IMemberRepository memberRepository)
         {
             _signInManager = signInManager;
             _identityService = identityService;
             _httpContextAccessor = httpContextAccessor;
             _mapper = mapper;
-
+            _memberRepository = memberRepository;
         }
 
         [HttpPost]
@@ -34,19 +38,17 @@ namespace ChatJaffApp.Server.Identity.Controller
         public async Task<IActionResult> Register(RegisterRequest request)
         {
             var newUser = _mapper.Map<ApplicationUser>(request);
-            //ApplicationUser newUser = new()
-            //{
-            //    Email = request.Email,
-            //    UserName = request.Username,
-            //};
 
             try
             {
                 var registerResult = await _signInManager.UserManager.CreateAsync(newUser, request.Password);
-
+                
                 if (registerResult.Succeeded)
                 {
+                    var user = await _identityService.GetUserFromIdentityDb(newUser.Email);
+                    await _memberRepository.AddMemberToDb(Guid.Parse(newUser.Id), newUser.UserName);
                     return StatusCode(StatusCodes.Status201Created);
+
                 }
 
                 return BadRequest(registerResult.Errors);
@@ -63,10 +65,21 @@ namespace ChatJaffApp.Server.Identity.Controller
         {
             try
             {
-                var loginResponse = await _identityService.LoginAsync(user);
+                var userInDb = await _signInManager.UserManager.FindByEmailAsync(user.Email);
 
-                HttpContext.Response.Headers.Add("AuthToken", loginResponse.Token); // for RestClient in vscode
-                return Ok(loginResponse);
+                if (userInDb == null) return BadRequest("Invalid Credentials");
+                
+                var signInResult = await _signInManager.CheckPasswordSignInAsync(userInDb, user.Password, false);
+
+                if (!signInResult.Succeeded) return BadRequest("Invalid Credentials");
+
+                await _signInManager.SignInAsync(userInDb, new AuthenticationProperties
+                {
+                    ExpiresUtc = DateTimeOffset.UtcNow.AddHours(1),
+                    IsPersistent = true
+                });
+
+                return Ok();
             }
             catch (AuthenticationException exception)
             {
@@ -82,6 +95,51 @@ namespace ChatJaffApp.Server.Identity.Controller
             }
         }
 
+        [HttpGet("refresh")]
+        public async Task<IActionResult> Refresh()
+        {
+            var userInContext = await _signInManager.UserManager.GetUserAsync(HttpContext.User);
+            if (userInContext == null) return Unauthorized();
+
+            await Logout();
+
+            await _signInManager.SignInAsync(userInContext, new AuthenticationProperties
+            {
+                ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(1),
+                IsPersistent = true
+            });
+
+            return Ok();
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> CurrentUserInfo()
+        {
+            if (User.Identity == null || !User.Identity.IsAuthenticated)
+            {
+                return BadRequest();
+            }
+            else
+            {
+                return Ok(new CurrentUserDto
+                {
+                    IsAuthenticated = User.Identity.IsAuthenticated,
+                    UserName = User.Identity.Name,
+                    Claims = User.Claims
+                .ToDictionary(c => c.Type, c => c.Value)
+                });
+            }
+        }
+
+        [Authorize]
+        [HttpPost("logout")]
+        public async Task<IActionResult> Logout()
+        {
+            await _signInManager.SignOutAsync();
+            return Ok();
+        }
+
+        [Authorize]
         [HttpPost]
         [Route("[action]")]
         public async Task<IActionResult> ChangePassword(ChangePasswordRequest request)
@@ -141,6 +199,12 @@ namespace ChatJaffApp.Server.Identity.Controller
             {
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
+        }
+
+        [HttpDelete("kill")]
+        public async Task Kill()
+        {
+            Environment.Exit(0);
         }
     }
 }

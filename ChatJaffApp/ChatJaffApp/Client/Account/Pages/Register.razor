@@ -1,8 +1,8 @@
 ﻿@page "/account/register"
 @using ChatJaffApp.Client.Account.Models;
 @using ChatJaffApp.Client.Account.Contracts;
-@inject IIdentityService IdentityService;
-@inject NavigationManager NavigationManager;
+@inject CustomAuthStateProvider authStateProvider
+@inject NavigationManager navigationManager;
 
 <div class="card">
     <h4 class="card-header">Register</h4>
@@ -32,18 +32,24 @@
             </button>
             <NavLink href="account/login" class="btn btn-link">Cancel</NavLink>
         </EditForm>
+        <p>@errorMessage</p>
     </div>
 </div>
 
 @code {
     private RegisterForm register = new();
-
+    private string errorMessage = String.Empty;
 
     private async Task HandleSubmit()
     {
-        var response = await IdentityService.Register(register);
-
-        NavigationManager.NavigateTo("index");
-
+        try
+        {
+            await authStateProvider.Register(register);
+            navigationManager.NavigateTo("account/login");
+        }
+        catch (Exception)
+        {
+            errorMessage = "Failed to register.";
+        }
     }
 }

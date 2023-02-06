@@ -1,13 +1,20 @@
-﻿using ChatJaffApp.Server.Data.Contracts;
+﻿using ChatJaffApp.Server.ChatRoom.Models;
+using ChatJaffApp.Server.Data.Contracts;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ChatJaffApp.Server.Data.Models
 {
     public class Message : IMessage
     {
         public Guid Id { get; set; }
+        [ForeignKey(nameof(Member))]
         public Guid UserId { get; set; }
         public string? Content { get; set; }
-        public DateTime Sent { get; } = DateTime.UtcNow;
+        public DateTime Sent { get; set; } = DateTime.UtcNow;
+        [ForeignKey(nameof(Chat))]
         public Guid ChatId { get; set; }
+
+        public Chat Chat { get; set; }
+        public Server.Data.Models.Member Member { get; set; }
     }
 }

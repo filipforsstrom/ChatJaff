@@ -1,37 +1,14 @@
 ﻿@page "/account/logout"
 @using ChatJaffApp.Client.Account.Contracts;
 @inject NavigationManager NavigationManager
-@inject IIdentityService IdentityService
+@inject CustomAuthStateProvider CustomAuthStateProvider
 <h4>Du loggas ut...</h4>
 
 @code {
 
     protected override async Task OnInitializedAsync()
     {
-
-        await IdentityService.Logout();
-
-        //if (!response.Success)
-        //{
-        //    NavigationManager.NavigateTo("/counter");
-        //}
-       
+        await CustomAuthStateProvider.Logout();       
         NavigationManager.NavigateTo("/account/login");
-
-        //OnAfterRender(response.Success);
-         
-        
-
     }
-    //protected override void OnAfterRender(bool firstRender)
-    //{
-    //    if (firstRender)
-    //    {
-    //        var timer = new Timer(new TimerCallback(_ =>
-    //        {
-    //            NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);
-    //        }), null, 10, 10);
-    //    }
-    //}
-
 }

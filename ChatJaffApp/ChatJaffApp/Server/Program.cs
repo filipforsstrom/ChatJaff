@@ -17,8 +17,6 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
-
-builder.Services.ConfigureAuthentication(builder.Configuration);
 builder.Services.AddServiceInjections();
 
 builder.Services.AddDbContext<IdentityContext>(options => options.UseSqlite(
@@ -26,6 +24,8 @@ builder.Services.AddDbContext<IdentityContext>(options => options.UseSqlite(
     ));
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddEntityFrameworkStores<IdentityContext>();
+
+builder.Services.ConfigureAuthentication(builder.Configuration);
 
 builder.Services.AddSwaggerGen(setupAction =>
 {
@@ -107,7 +107,18 @@ using (var scope = app.Services.CreateScope())
     context.Database.EnsureCreated();
 }
 
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+
+    var context = services.GetRequiredService<JaffDbContext>();
+    context.Database.EnsureDeleted();
+    context.Database.EnsureCreated();
+}
+
 app.Run();
 
-public class AssemblyClassLocator
-{ }
+public partial class Program
+{
+
+}

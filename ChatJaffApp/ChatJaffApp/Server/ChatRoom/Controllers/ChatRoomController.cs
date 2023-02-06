@@ -1,7 +1,10 @@
-﻿using ChatJaffApp.Server.ChatRoom.Contracts;
+﻿using AutoMapper;
+using ChatJaffApp.Server.ChatRoom.Contracts;
 using ChatJaffApp.Server.ChatRoom.Models;
+using ChatJaffApp.Server.Data.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ChatJaffApp.Server.ChatRoom.Controllers
 {
@@ -10,12 +13,15 @@ namespace ChatJaffApp.Server.ChatRoom.Controllers
     public class ChatRoomController : ControllerBase
     {
         private readonly IChatRoomRepository _chatRoomRepository;
+        private readonly IMapper _mapper;
 
-        public ChatRoomController(IChatRoomRepository chatRoomRepository)
+        public ChatRoomController(IChatRoomRepository chatRoomRepository, IMapper mapper)
         {
             _chatRoomRepository = chatRoomRepository;
+            _mapper = mapper;
         }
 
+        [Authorize]
         [HttpGet]
         [Route("[action]")]
         public IEnumerable<IChat> GetAllChats()
@@ -31,7 +37,6 @@ namespace ChatJaffApp.Server.ChatRoom.Controllers
         {
             try
             {
-                await Task.Delay(1000);
                 var memberChatRooms = _chatRoomRepository.GetMyChatRooms(id);
                 return Ok(memberChatRooms);
             }
@@ -41,20 +46,37 @@ namespace ChatJaffApp.Server.ChatRoom.Controllers
             }
         }
 
+        [Authorize]
+        [HttpGet]
+        [Route("{chatId:guid}")]
+        public async Task<IActionResult> GetChatRoom([FromRoute] Guid chatId)
+        {
+            try
+            {
+                var chatRoom = await _chatRoomRepository.GetChatRoomAsync(chatId);
+                var chatRoomDto = _chatRoomRepository.ConvertChatToDto(chatRoom);
+                return Ok(chatRoomDto);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500);
+            }
+        }
 
-
-
-
+        [Authorize]
         [HttpPost]
-        [Route("[action]")]
         public async Task<IActionResult> CreateChat(CreateChatDTO chatRequest)
         {
             var newChat = new Chat()
             {
                 Encrypted = chatRequest.Encrypted,
                 ChatName = chatRequest.ChatName,
-                ChatMembersIds = chatRequest.ChatMembersIds
             };
+
+            foreach (var member in chatRequest.ChatMembersIds)
+            {
+                newChat.AddMember(member);
+            }
 
             var result = await _chatRoomRepository.CreateChatRoomAsync(newChat);
 
@@ -62,13 +84,17 @@ namespace ChatJaffApp.Server.ChatRoom.Controllers
         }
 
         [Authorize]
-        [HttpPost]
-        [Route("[action]")]
-        public async Task<IActionResult> AddMemberToChat(AddMemberToChatDto addMemberDto)
+        [HttpPatch]
+        [Route("{chatId:guid}")]
+        public async Task<IActionResult> AddMemberToChat([FromRoute] Guid chatId, [FromBody] Guid userId)
         {
-            var result = _chatRoomRepository.AddMemberToChat(addMemberDto);
-            
-            return result ? Ok("Member added") : BadRequest();
+            var chatRoom = await _chatRoomRepository.GetChatRoomAsync(chatId);
+
+            chatRoom.AddMember(userId);
+
+            await _chatRoomRepository.UpdateChatRoomAsync(chatRoom);
+
+            return Ok("Member added");
         }
     }
 }
