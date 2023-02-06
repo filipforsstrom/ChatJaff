@@ -38,7 +38,7 @@ namespace ChatJaffApp.Client.ChatRoom.MyChatRooms.Services
         }
 
         public async Task<List<ChatRoomsViewModel>> GetMyChats(Guid memberId)
-        {            
+        {
             var response = await _httpClient.GetAsync($"/api/chatroom/getmychats/{memberId}");
             if (!response.IsSuccessStatusCode)
             {
@@ -47,6 +47,18 @@ namespace ChatJaffApp.Client.ChatRoom.MyChatRooms.Services
             var MyChats = await response.Content.ReadFromJsonAsync<List<ChatRoomsViewModel>>();
             return MyChats;
         }
-        
+
+        public async Task<GetChatRoomDto> GetChatRoom(Guid chatId)
+        {
+            var response = await _httpClient.GetAsync($"/api/chatroom/{chatId}");
+
+            if (!response.IsSuccessStatusCode)
+            {
+                return new GetChatRoomDto();
+            }
+
+            var chatRoom = await response.Content.ReadFromJsonAsync<GetChatRoomDto>();
+            return chatRoom;
+        }
     }
 }

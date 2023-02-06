@@ -40,7 +40,7 @@ namespace ChatJaffApp.Server.ChatRoom.Repositories
         {
             var chatRoom = await _context.ChatRooms.Include(c => c.ChatMembers)
                 .ThenInclude(m => m.Member)
-                .Include(c => c.Messages)
+                .Include(c => c.Messages.OrderBy(m => m.Sent))
                 .ThenInclude(m => m.Member)
                 .FirstOrDefaultAsync(c => c.Id == chatId);
 
