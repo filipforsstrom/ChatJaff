@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using ChatJaffApp.Server.ChatRoom.Contracts;
 using ChatJaffApp.Server.ChatRoom.Models;
+using ChatJaffApp.Server.ChatRoom.Repositories;
 using ChatJaffApp.Server.Data.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -96,6 +97,33 @@ namespace ChatJaffApp.Server.ChatRoom.Controllers
             await _chatRoomRepository.UpdateChatRoomAsync(chatRoom);
 
             return Ok("Member added");
+        }
+
+        [Authorize]
+        [HttpDelete]
+        [Route("{chatId:guid}")]
+        public async Task<IActionResult> DeleteChat([FromRoute] Guid chatId)
+        {
+            try
+            {
+                var chatRoom = await _chatRoomRepository.GetChatRoomAsync(chatId);
+                var result = await _chatRoomRepository.DeleteChatRoom(chatRoom);
+
+                if (!result)
+                {
+                    return BadRequest();
+                }
+                return NoContent();
+
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
         }
     }
 }
