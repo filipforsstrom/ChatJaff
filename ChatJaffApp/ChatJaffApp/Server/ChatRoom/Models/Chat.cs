@@ -10,12 +10,11 @@ namespace ChatJaffApp.Server.ChatRoom.Models
     {
         public Guid Id { get; set; }
         public List<ChatMember> ChatMembers { get; set; } = new();
-        public string? Creator { get; set; }
         public bool Encrypted { get; set; }
         public string? ChatName { get; set; }
         public ICollection<Message> Messages { get; set; }
         [ForeignKey(nameof(Member))]
-        public Guid UserId { get;  set; }
+        public Guid CreatorId { get;  set; }
 
         public Data.Models.Member Member { get; set; }
 

@@ -64,9 +64,9 @@ namespace ChatJaffApp.Server.ChatRoom.Repositories
             chatRoomDto.ChatMembers = chatRoom.ChatMembers.Select(cm => new ChatMemberDto { UserId = cm.UserId, Username = cm.Member.UserName }).ToList();
             chatRoomDto.Messages = chatRoom.Messages.Select(m => new MessageDto { Id = m.Id, Content = m.Content, Sent = m.Sent, UserName = m.Member.UserName, UserId = m.Member.Id }).ToList();
             chatRoomDto.Encrypted = chatRoom.Encrypted;
-            chatRoomDto.Creator = chatRoom.Creator;
             chatRoomDto.ChatName = chatRoom.ChatName;
             chatRoomDto.Id = chatRoom.Id;
+            chatRoomDto.CreatorId = chatRoom.CreatorId;
 
             return chatRoomDto;
         }
