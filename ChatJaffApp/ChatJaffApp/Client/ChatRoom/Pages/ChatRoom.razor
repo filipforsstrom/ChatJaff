@@ -1,10 +1,14 @@
 ﻿@page "/chatrooms/{id:guid}"
 @using System.Security.Claims;
+@using Microsoft.AspNetCore.Authorization;
 @using Microsoft.AspNetCore.SignalR.Client;
 @using System.Text.Json;
+@using Blazor.SubtleCrypto;
 @inject AuthenticationStateProvider authStateProvider
 @inject HttpClient httpClient;
 @inject NavigationManager navigation
+@inject ICryptoService Crypto;
+@attribute [Authorize]
 <h3>Welcome</h3>
 
 <div>
@@ -38,6 +42,9 @@
     public SendMessageDto MessageDto { get; set; } = new();
     private string ErrorMessage { get; set; } = string.Empty;
     private List<ReceiveMessageDto> Messages { get; set; } = new();
+    private bool Encrypted { get; set; } = true;
+
+    private EncryptionManager keeperOfSecrets = new();
 
     private HubConnection? hubConnection;
     public bool IsConnected => hubConnection.State == HubConnectionState.Connected;
@@ -60,12 +67,17 @@
             .WithAutomaticReconnect()
             .Build();
 
-        hubConnection.On<string>("ReceiveMessage", (response) =>
+        hubConnection.On<string>("ReceiveMessage", async (response) =>
         {
-            var deserializedResponse = JsonSerializer.Deserialize<ReceiveMessageDto>(response);          
+            var deserializedResponse = JsonSerializer.Deserialize<ReceiveMessageDto>(response);
+
+            if (!Encrypted)
+            {
+                deserializedResponse.Content = await Crypto.DecryptAsync(deserializedResponse.Content);
+            }
 
             Messages.Add(deserializedResponse);
-            InvokeAsync(StateHasChanged);
+            await InvokeAsync(StateHasChanged);
         });
 
         hubConnection.On<string>("MemberJoined", (message) =>
@@ -93,6 +105,13 @@
             //ta bort meddelande efteråt
         }
         else {
+            if (Encrypted)
+            {
+                
+                var cryptoResult = await Crypto.EncryptAsync(MessageDto.Content);
+                MessageDto.Content = cryptoResult.Value;
+                var secret = cryptoResult.Secret;
+            }
             var messageModelToJson = JsonSerializer.Serialize(MessageDto);
             await hubConnection.SendAsync("SendMessageAsync", messageModelToJson, Id);
 
