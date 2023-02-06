@@ -4,6 +4,7 @@ using ChatJaffApp.Server.ChatRoom.Member.Repositories;
 using ChatJaffApp.Server.ChatRoom.Repositories;
 using ChatJaffApp.Server.Hubs;
 using ChatJaffApp.Server.Identity.Services;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.IdentityModel.Tokens;
@@ -15,24 +16,13 @@ public static class ServiceExtensions
 {
     public static void ConfigureAuthentication(this IServiceCollection services, IConfiguration configuration)
     {
-        var jwtSettings = configuration.GetSection("JWTSettings");
-        services.AddAuthentication(options =>
+        services.ConfigureApplicationCookie(options =>
         {
-            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-        }).AddJwtBearer(options =>
-        {
-            options.TokenValidationParameters = new TokenValidationParameters
+            options.Cookie.HttpOnly = true;
+            options.Events.OnRedirectToLogin = context =>
             {
-                ValidateIssuer = true,
-                ValidateAudience = true,
-                ValidateLifetime = true,
-                ValidateIssuerSigningKey = true,
-                ClockSkew = TimeSpan.FromSeconds(0),
-
-                ValidIssuer = jwtSettings["Issuer"],
-                ValidAudience = jwtSettings["Audience"],
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["SecretForKey"]))
+                context.Response.StatusCode = 401;
+                return Task.CompletedTask;
             };
         });
     }

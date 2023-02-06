@@ -6,7 +6,7 @@ namespace ChatJaffApp.Client.ChatRoom.Member.Contracts
 {
     public interface IMemberService
     {
-        Task<ServiceResponseViewModel<ChatMemberResponse>> GetChatMember(InviteMemberDto invMemberDto);
+        Task<ServiceResponseViewModel<ChatMemberResponse>> GetMember(GetMemberDto invMemberDto);
         Task<ServiceResponseViewModel<ChatMemberResponse>> AddChatMember(AddMemberDto invMemberDto);
     }
 }
