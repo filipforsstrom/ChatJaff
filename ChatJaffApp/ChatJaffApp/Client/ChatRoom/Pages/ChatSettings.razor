@@ -4,7 +4,6 @@
 @using ChatJaffApp.Client.ChatRoom.MyChatRooms.Contracts;
 @using System.Security.Claims;
 @using ChatJaffApp.Client.ChatRoom.MyChatRooms.Models;
-@using static ChatJaffApp.Client.ChatRoom.MyChatRooms.Services.ChatRoomsService;
 @inject IMemberService memberService
 @inject IChatRoomsService chatRoomService
 @inject AuthenticationStateProvider authenticationStateProvider;
@@ -16,24 +15,30 @@
             Members
         </h2>
         <div class="card" style="width: 18rem; ">
-        <div class="card-header">
-            Chat members
-        </div>
-        <ul class="list-group list-group-flush">
-            @if (ChatMembers != null || ChatMembers?.Count < 1)
-            {
-                @foreach (var member in ChatMembers)
+            <div class="card-header">
+                Chat members
+            </div>
+            <ul class="list-group list-group-flush">
+                @if (ChatMembers != null || ChatMembers?.Count < 1)
                 {
-                    <li class="list-group-item"><p>@member.Username</p><button class="btn btn-danger btn-sm" @onclick="() => DeleteMemberFromChat(member)">Remove</button> </li>
+                    @foreach (var member in ChatMembers)
+                    {
+                        <li class="list-group-item">
+                            <p>@member.Username</p>
+                            @if (IsModerator)
+                            {
+                                <button class="btn btn-danger btn-sm" @onclick="() => DeleteMemberFromChat(member)">Remove</button>
+                            }
+                        </li>
+                    }
                 }
-            }
-            else
-            {
-                <p>No users</p>
-            }
-        </ul>
-</div>
-        
+                else
+                {
+                    <p>No users</p>
+                }
+            </ul>
+        </div>
+
         <br><br>
         <h2>Change chat name</h2>
         <input type="text" />
@@ -59,20 +64,25 @@
     public Guid UserId { get; set; }
     public bool IsModerator { get; set; }
     public List<ChatMemberViewModel> ChatMembers = new();
+    public GetChatRoomDto ChatRoom { get; set; } = new();
     public string? ErrorMessage { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        var chatRoom = await chatRoomService.GetChatRoom(Id);
+        ChatRoom = await chatRoomService.GetChatRoom(Id);
         var user = await authenticationStateProvider.GetAuthenticationStateAsync();
         UserId = Guid.Parse(user.User.FindFirst(ClaimTypes.NameIdentifier).Value);
-        ChatMembers = chatRoom.ChatMembers;
-        IsModerator = UserId == chatRoom.CreatorId;
+        ChatMembers = ChatRoom.ChatMembers;
+        IsModerator = UserId == ChatRoom.CreatorId;
     }
 
     public async Task DeleteMemberFromChat(ChatMemberViewModel memberToDeleteFromChat)
     {
-
+        if(memberToDeleteFromChat is null)
+        {
+            return;
+        }
+        ChatRoom.ChatMembers.Remove(memberToDeleteFromChat);
     }
 
     public async Task OnDeleteChatRoom()
@@ -95,10 +105,10 @@
     public async Task HandleFoundMember(ChatMemberViewModel memberToAddToChat)
     {
         AddMemberDto addMemberDto = new()
-        {
-            UserId = memberToAddToChat.UserId,
-            ChatId = Id
-        };
+            {
+                UserId = memberToAddToChat.UserId,
+                ChatId = Id
+            };
 
         var memberResponse = await memberService.AddChatMember(addMemberDto);
 
@@ -107,7 +117,7 @@
             ErrorMessage = memberResponse.Message;
             return;
         }
-        
+
         ChatMembers.Add(memberToAddToChat);
     }
 }
