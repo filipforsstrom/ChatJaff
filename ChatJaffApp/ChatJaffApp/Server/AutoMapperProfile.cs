@@ -6,7 +6,6 @@ using ChatJaffApp.Server.ChatRoom.Member.Models;
 using ChatJaffApp.Server.Identity.Models;
 using static ChatJaffApp.Server.ChatRoom.Controllers.ChatRoomController;
 using ChatJaffApp.Server.Data.Models;
-using ChatJaffApp.Server.Hubs;
 
 namespace ChatJaffApp.Server
 {
@@ -15,7 +14,6 @@ namespace ChatJaffApp.Server
         public AutoMapperProfile()
         {
             CreateMap<RegisterRequest, ApplicationUser>();
-            CreateMap<GetMemberResponse, GetMemberDto>();
             CreateMap<MessageDto, Message>();
         }
     }

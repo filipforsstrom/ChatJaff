@@ -61,8 +61,6 @@ namespace ChatJaffApp.Server.Data
                 new Member () { Id = Guid.Parse("{28E44613-4ACE-474B-965F-E589E72AAF46}"), UserName = "Randy"},
                 new Member () { Id = Guid.Parse("{E36D119F-F8E3-4BD1-A3F1-0845F8CBE529}"), UserName = "Bandy"},
                 new Member () { Id = Guid.Parse("{95A471EE-E8A7-44D4-BB13-C5090FB1A5CE}"), UserName = "Silvio"},
-                new Member () { Id = Guid.Parse("9CEAA7AB-1C67-4ED4-A86A-6BD01DF6C310"), UserName = "member1"},
-                new Member () { Id = Guid.Parse("b8381d75-d110-42f9-85e5-9c92a062fbc8") , UserName = "member2"}
             };
 
             modelBuilder.Entity<Member>().HasData(members);

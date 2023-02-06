@@ -6,10 +6,10 @@ namespace ChatJaffApp.Client.ChatRoom.MyChatRooms.Models
     public class GetChatRoomDto
     {
         public Guid Id { get; set; }
-        public List<ChatMemberViewModel>? ChatMembers { get; set; }
+        public List<ChatMemberViewModel>? ChatMembers { get; set; } = new();
         public string? Creator { get; set; }
         public bool Encrypted { get; set; }
         public string? ChatName { get; set; }
-        public List<GetMessageDto>? Messages { get; set; }
+        public List<GetMessageDto>? Messages { get; set; } = new();
     }
 }

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using ChatJaffApp.Client.ChatRoom.Pages;
+using ChatJaffApp.Server.ChatRoom.Models;
 using ChatJaffApp.Server.Data.Models;
 using Microsoft.AspNetCore.SignalR;
 using System;
