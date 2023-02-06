@@ -27,13 +27,16 @@
     <InputTextArea data-testid="messageinputarea" maxlength="150" @bind-Value="MessageDto.Content" />
     <button data-testid="sendmessagebtn" @onclick="onSendMessageClick" class=" btn btn-primary">Send</button>
 </div>
+<div>
+    <button style="margin-top: 5px" class="btn btn-primary" @onclick="onSettingsClick">Settings</button>
+</div>
+
 
 @code {
     [Parameter]
     public Guid Id { get; set; }
     public SendMessageDto MessageDto { get; set; } = new();
     private string ErrorMessage { get; set; } = string.Empty;
-
     private List<ReceiveMessageDto> Messages { get; set; } = new();
 
     private HubConnection? hubConnection;
@@ -42,6 +45,7 @@
 
     protected override async Task OnInitializedAsync()
     {
+
         var state = await authStateProvider.GetAuthenticationStateAsync();
         var userId = state.User.FindFirst(ClaimTypes.NameIdentifier).Value;
         var username = state.User.FindFirst(ClaimTypes.Name).Value;
@@ -95,6 +99,11 @@
             MessageDto.Content = string.Empty;
         }
 
+    }
+
+    private void onSettingsClick()
+    {
+        navigation.NavigateTo($"/chatrooms/chat/settings/{Id}");
     }
 
     public class SendMessageDto
