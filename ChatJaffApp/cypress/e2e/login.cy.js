@@ -32,7 +32,7 @@ describe("ChattJaff app", function () {
   it("front page can be opened", function () {
     cy.visit("https://localhost:7085/");
     cy.contains("Welcome to your new app.");
-    cy.contains("Hello, world!");
+    cy.contains("Hello, wpppooorld!");
   });
 
   after(() => {
