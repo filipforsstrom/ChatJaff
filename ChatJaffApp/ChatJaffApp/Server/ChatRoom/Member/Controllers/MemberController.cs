@@ -19,10 +19,9 @@ namespace ChatJaffApp.Server.ChatRoom.Member.Controllers
         }
 
 
-        [Authorize]
-        [HttpPost]
-        [Route("[action]")]
-        public async Task<IActionResult> GetMember([FromBody]string searchedUsername)
+        [HttpGet]
+        [Route("{searchedUsername}")]
+        public async Task<IActionResult> GetMember([FromRoute]string searchedUsername)
         {
             try
             {
