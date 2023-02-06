@@ -46,7 +46,7 @@ namespace ChatJaffApp.Server.ChatRoom.Repositories
 
             if(chatRoom == null)
             {
-                return new Chat();
+                throw new KeyNotFoundException();
             }
 
             return chatRoom;
@@ -69,6 +69,13 @@ namespace ChatJaffApp.Server.ChatRoom.Repositories
             chatRoomDto.CreatorId = chatRoom.CreatorId;
 
             return chatRoomDto;
+        }
+
+        public async Task<bool> DeleteChatRoom(Chat chatRoom)
+        {
+            _context.ChatRooms.Remove(chatRoom);
+            var result = await _context.SaveChangesAsync();
+            return result > 0;
         }
     }
 }
