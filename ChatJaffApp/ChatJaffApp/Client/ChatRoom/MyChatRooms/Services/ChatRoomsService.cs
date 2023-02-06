@@ -1,6 +1,7 @@
 ﻿using ChatJaffApp.Client.ChatRoom.CreateChat.Models;
 using ChatJaffApp.Client.ChatRoom.MyChatRooms.Contracts;
 using ChatJaffApp.Client.ChatRoom.MyChatRooms.Models;
+using ChatJaffApp.Client.Shared.Models;
 using System.Net.Http.Json;
 
 namespace ChatJaffApp.Client.ChatRoom.MyChatRooms.Services
@@ -61,5 +62,21 @@ namespace ChatJaffApp.Client.ChatRoom.MyChatRooms.Services
             return chatRoom;
         }
 
+        public async Task<ServiceResponseViewModel<string>> DeleteChatRoom(Guid chatId)
+        {
+            ServiceResponseViewModel<string> responseViewModel = new();
+            var response = await _httpClient.DeleteAsync($"api/chatroom/{chatId}");
+
+            if (!response.IsSuccessStatusCode)
+            {
+                responseViewModel.Message = "Something went wrong.";
+                return responseViewModel;
+            }
+
+            responseViewModel.Message = await response.Content.ReadAsStringAsync();
+            responseViewModel.Success = true;
+            return responseViewModel;
+
+        }
     }
 }
