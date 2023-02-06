@@ -5,6 +5,7 @@ using ChatJaffApp.Server.Data.Models;
 using Microsoft.AspNetCore.SignalR;
 using System;
 using System.Text.Json;
+using ChatJaffApp.Server.ChatRoom.Contracts;
 
 namespace ChatJaffApp.Server.Hubs
 {

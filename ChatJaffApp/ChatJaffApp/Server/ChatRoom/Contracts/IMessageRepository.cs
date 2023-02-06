@@ -1,6 +1,6 @@
 using ChatJaffApp.Server.Data.Models;
 
-namespace ChatJaffApp.Server.Hubs;
+namespace ChatJaffApp.Server.ChatRoom.Contracts;
 
 public interface IMessageRepository
 {
