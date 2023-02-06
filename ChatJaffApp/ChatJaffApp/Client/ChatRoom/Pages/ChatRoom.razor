@@ -18,16 +18,16 @@
         {
             <li style="padding: 5px; background-color: @(MessageDto.UserName == message.UserName ? "green" : "cornflowerblue"); color: whitesmoke; margin-bottom: 5px; max-width: 300px;display: flex;
                     justify-content: center; align-items: center; flex-direction: column;">
-                <h4 data-testid="messagecontent" style="font-size: 15px;">@message.UserName says @message.Content</h4>
-                <p data-testid="messagetimestamp" style="font-size: 10px;">Sent: @message.Sent</p>
+                <h4 id="messagecontent" style="font-size: 15px;">@message.UserName says @message.Content</h4>
+                <p id="messagetimestamp" style="font-size: 10px;">Sent: @message.Sent</p>
             </li>
         }
         </ul>
     }
 </div>
 <div>
-    <InputTextArea data-testid="messageinputarea" maxlength="150" @bind-Value="MessageDto.Content" />
-    <button data-testid="sendmessagebtn" @onclick="onSendMessageClick" class=" btn btn-primary">Send</button>
+    <InputTextArea id="messageinputarea" maxlength="150" @bind-Value="MessageDto.Content" />
+    <button id="sendmessagebtn" @onclick="onSendMessageClick" class=" btn btn-primary">Send</button>
 </div>
 <div>
     <button style="margin-top: 5px" class="btn btn-primary" @onclick="onSettingsClick">Settings</button>
