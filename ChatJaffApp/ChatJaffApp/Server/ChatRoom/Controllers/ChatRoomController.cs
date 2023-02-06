@@ -3,9 +3,12 @@ using ChatJaffApp.Server.ChatRoom.Contracts;
 using ChatJaffApp.Server.ChatRoom.Models;
 using ChatJaffApp.Server.ChatRoom.Repositories;
 using ChatJaffApp.Server.Data.Models;
+using ChatJaffApp.Server.Identity.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Reflection.Metadata.Ecma335;
 
 namespace ChatJaffApp.Server.ChatRoom.Controllers
 {
@@ -15,11 +18,13 @@ namespace ChatJaffApp.Server.ChatRoom.Controllers
     {
         private readonly IChatRoomRepository _chatRoomRepository;
         private readonly IMapper _mapper;
+        private readonly SignInManager<ApplicationUser> _signInManager;
 
-        public ChatRoomController(IChatRoomRepository chatRoomRepository, IMapper mapper)
+        public ChatRoomController(IChatRoomRepository chatRoomRepository, IMapper mapper, SignInManager<ApplicationUser> signInManager)
         {
             _chatRoomRepository = chatRoomRepository;
             _mapper = mapper;
+            _signInManager = signInManager;
         }
 
         [Authorize]
@@ -33,12 +38,14 @@ namespace ChatJaffApp.Server.ChatRoom.Controllers
 
         [Authorize]
         [HttpGet]
-        [Route("[action]/{id}")]
-        public async Task<IActionResult> GetMyChats(Guid id)
+        public async Task<IActionResult> GetMyChats()
         {
+            var userInContext = await _signInManager.UserManager.GetUserAsync(HttpContext.User);
+            if(userInContext == null) { return NotFound(); }
+
             try
             {
-                var memberChatRooms = _chatRoomRepository.GetMyChatRooms(id);
+                var memberChatRooms = _chatRoomRepository.GetMyChatRooms(Guid.Parse(userInContext.Id));
                 return Ok(memberChatRooms);
             }
             catch
