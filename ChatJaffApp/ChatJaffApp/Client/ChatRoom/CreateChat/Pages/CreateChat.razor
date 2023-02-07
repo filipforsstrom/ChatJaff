@@ -36,16 +36,16 @@
             <p>
             <label>
                 Chat name:
-                <InputText @bind-Value="createChatRequest.ChatName" />
+                <InputText id="chat-name" @bind-Value="createChatRequest.ChatName" />
             </label>
             </p>
             <p>
             <label>
                 Encrypted chat:
-                <InputCheckbox @bind-Value="createChatRequest.Encrypted" />
+                <InputCheckbox id="encrypted-chat-checkbox" @bind-Value="createChatRequest.Encrypted" />
             </label>
             </p>
-            <button @onclick="onCreateChatClick">Create Chat</button>
+            <button id="create-chat-button" @onclick="onCreateChatClick">Create Chat</button>
         </div>
     </div>
 

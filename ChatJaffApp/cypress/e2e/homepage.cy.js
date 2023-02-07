@@ -7,6 +7,6 @@ describe("Homepage", () => {
 
   it("front page can be opened", function () {
     cy.visit(baseUrl);
-    cy.contains("Hello, world!");
-  });
+    cy.get("#page-name").contains("ChatJaffApp");
+  })
 });
