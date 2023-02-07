@@ -42,7 +42,7 @@ namespace ChatJaffApp.Server.Identity.Controller
             try
             {
                 var registerResult = await _signInManager.UserManager.CreateAsync(newUser, request.Password);
-                
+
                 if (registerResult.Succeeded)
                 {
                     var user = await _identityService.GetUserFromIdentityDb(newUser.Email);
@@ -68,7 +68,9 @@ namespace ChatJaffApp.Server.Identity.Controller
                 var userInDb = await _signInManager.UserManager.FindByEmailAsync(user.Email);
 
                 if (userInDb == null) return BadRequest("Invalid Credentials");
-                
+
+                if (userInDb.IsBanned) return BadRequest("User is banned");
+
                 var signInResult = await _signInManager.CheckPasswordSignInAsync(userInDb, user.Password, false);
 
                 if (!signInResult.Succeeded) return BadRequest("Invalid Credentials");
@@ -175,10 +177,10 @@ namespace ChatJaffApp.Server.Identity.Controller
         public async Task<IActionResult> DeleteIdentity(Guid id)
         {
             var userId = _httpContextAccessor?.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            
+
             try
             {
-                if ( userId == id.ToString())
+                if (userId == id.ToString())
                 {
                     var userToDelete = await _signInManager.UserManager.FindByIdAsync(userId);
                     if (userToDelete != null)
