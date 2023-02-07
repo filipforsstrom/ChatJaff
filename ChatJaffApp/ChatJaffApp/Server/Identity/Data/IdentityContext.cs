@@ -47,9 +47,23 @@ namespace ChatJaffApp.Server.Identity.Data
 
             member2.PasswordHash = passwordHasher.HashPassword(member2, "member2");
 
+            ApplicationUser banned1 = new ApplicationUser()
+            {
+                Id = "b8381d75-d110-42f9-85e5-9c92a062abc1",
+                UserName = "banned1",
+                NormalizedUserName = "BANNED1",
+                Email = "banned1@gmail.com",
+                NormalizedEmail = "BANNED1@GMAIL.COM",
+                LockoutEnabled = false,
+                EmailConfirmed = true,
+                IsBanned = true
+            };
+
+            banned1.PasswordHash = passwordHasher.HashPassword(banned1, "banned1");
+
             var listOfInitialUsers = new List<ApplicationUser>()
             {
-                member1, member2
+                member1, member2, banned1
             };
             builder.Entity<ApplicationUser>().HasData(listOfInitialUsers);
         }
