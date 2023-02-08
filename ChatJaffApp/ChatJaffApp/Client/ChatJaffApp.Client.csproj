@@ -31,6 +31,7 @@
     <None Remove="ChatRoom\Components\" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Admin\" />
     <Folder Include="ChatRoom\Messages\Models\" />
   </ItemGroup>
 </Project>
