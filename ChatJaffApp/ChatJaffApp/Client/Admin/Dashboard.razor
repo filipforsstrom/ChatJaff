@@ -1,0 +1,57 @@
+﻿@page "/dashboard"
+@inject IIdentityService identityService;
+@inject ILocalStorageService localStorage;
+@inject CustomAuthStateProvider authenticationStateProvider;
+@inject NavigationManager navManager;
+@inject IMemberService _memberService;
+@using Blazored.LocalStorage;
+@using ChatJaffApp.Client.Account.Contracts;
+@using ChatJaffApp.Client.Account.Models;
+@using System.Security.Claims;
+@using ChatJaffApp.Client.ChatRoom.Member.Models;
+@using Microsoft.AspNetCore.Authorization;
+@attribute [Authorize];
+
+<h3>Members</h3>
+
+@if (Members != null || Members?.Count < 1)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th></th>
+                <th>Username</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var member in Members)
+            {
+                <tr>
+                    <td>
+                        <a class="btn btn-success">Show more info</a>
+                        <a class="btn btn-delate">Ban user</a>
+                    </td>
+                    <td>@member.Username</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+@*<div>
+
+    <div class="searchForMember">
+        
+    </div>
+    
+</div>*@
+
+@code {
+
+    public List<ChatMemberResponse>? Members { get; set; } = new();
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        Members = await _memberService.GetAllMembers();
+    }
+}
