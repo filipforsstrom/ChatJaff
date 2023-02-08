@@ -13,6 +13,7 @@ namespace ChatJaffApp.Server.Data
         public DbSet<ChatMember> ChatMembers { get; set; }
 
         public DbSet<Member> Members { get; set; }
+        public DbSet<ChatKey> ChatKeys { get; set; }
 
         public JaffDbContext(DbContextOptions<JaffDbContext> options) : base(options)
         {

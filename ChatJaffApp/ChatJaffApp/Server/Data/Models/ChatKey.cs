@@ -7,7 +7,8 @@ namespace ChatJaffApp.Server.Data.Models
     {
         [Key]
         public Guid ChatRoomId { get; set; }
-        [Required]
-        public string? Key { get; set; }
+        
+        public required string Key { get; set; }
+
     }
 }
