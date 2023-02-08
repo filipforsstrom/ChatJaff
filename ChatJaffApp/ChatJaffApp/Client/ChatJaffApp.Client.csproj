@@ -1,11 +1,9 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
-
+<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
-
   <PropertyGroup Condition=" '$(RunConfiguration)' == 'https' ">
     <ExternalConsole>true</ExternalConsole>
   </PropertyGroup>
@@ -13,25 +11,24 @@
     <ExternalConsole>true</ExternalConsole>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.0" />
-    <PackageReference Include="Blazor.SubtleCrypto" Version="6.0.1" />
-    <PackageReference Include="Blazored.LocalStorage" Version="4.3.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="7.0.2" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="7.0.2" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="7.0.2" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="7.0.2" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Shared\ChatJaffApp.Shared.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Remove="Chat\Pages\" />
-    <None Remove="Microsoft.AspNetCore.SignalR.Client" />
-    <None Remove="ChatRoom\Components\" />
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.0"/>
+    <PackageReference Include="Blazor.SubtleCrypto" Version="6.0.1"/>
+    <PackageReference Include="Blazored.LocalStorage" Version="4.3.0"/>
+    <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="7.0.2"/>
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="7.0.2"/>
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="7.0.2" PrivateAssets="all"/>
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="7.0.2"/>
+    <PackageReference Include="Microsoft.AspNetCore.Authorization" Version="7.0.2"/>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="ChatRoom\Messages\Models\" />
+    <ProjectReference Include="..\Shared\ChatJaffApp.Shared.csproj"/>
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Chat\Pages\"/>
+    <None Remove="Microsoft.AspNetCore.SignalR.Client"/>
+    <None Remove="ChatRoom\Components\"/>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="ChatRoom\Messages\Models\"/>
   </ItemGroup>
 </Project>
