@@ -43,13 +43,7 @@ namespace ChatJaffApp.Server.Hubs
                 try
                 {
                     var chatkey = await _chatKeyRepository.GetChatKeyAsync(chatroomId);
-                    var keyStringArray = chatkey.Split(".");
-                    string key = keyStringArray[0];
-
-                    // skapa salt
-                    byte[] salt = Encoding.Unicode.GetBytes(keyStringArray[1]);
-
-                    messageToStore.Content = AesEncryptManager.Encrypt(messageToStore.Content, key, salt);
+                    messageToStore.Content = EncryptMessage(messageToStore.Content, chatkey);
                 }
                 catch (Exception)
                 {
@@ -85,5 +79,17 @@ namespace ChatJaffApp.Server.Hubs
         //{
         //    await Clients.All.SendAsync("ReceiveChatNotification", message, receiverUserId, senderUserId);
         //}
+
+        private string EncryptMessage(string message, string chatKey)
+        {
+            
+            var keyStringArray = chatKey.Split(".");
+            string key = keyStringArray[0];
+
+            // skapa salt
+            byte[] salt = Encoding.Unicode.GetBytes(keyStringArray[1]);
+
+            return AesEncryptManager.Encrypt(message, key, salt);
+        }
     }
 }
