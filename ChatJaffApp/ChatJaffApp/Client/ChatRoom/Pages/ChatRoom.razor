@@ -1,12 +1,16 @@
 ﻿@page "/chatrooms/{id:guid}"
 @using System.Security.Claims;
+@using ChatJaffApp.Client.ChatRoom.MyChatRooms.Contracts;
+@using Microsoft.AspNetCore.Authorization;
 @using Microsoft.AspNetCore.SignalR.Client;
 @using System.Text.Json;
-@using ChatJaffApp.Client.ChatRoom.MyChatRooms.Contracts;
+@using Blazor.SubtleCrypto;
 @inject AuthenticationStateProvider authStateProvider
 @inject HttpClient httpClient;
 @inject NavigationManager navigation
-@inject IChatRoomsService chatRoomService
+@inject ICryptoService Crypto;
+@inject IChatRoomsService chatRoomsService
+@attribute [Authorize]
 <h3>Welcome</h3>
 
 <div>
@@ -40,6 +44,9 @@
     public SendMessageDto MessageDto { get; set; } = new();
     private string ErrorMessage { get; set; } = string.Empty;
     private List<ReceiveMessageDto> Messages { get; set; } = new();
+    private bool Encrypted { get; set; } = false;
+
+    private EncryptionManager keeperOfSecrets = new();
 
     private HubConnection? hubConnection;
     public bool IsConnected => hubConnection.State == HubConnectionState.Connected;
@@ -58,17 +65,24 @@
 
         var url = navigation.ToAbsoluteUri("/chathub");
 
+        //Get specific chat
+
+        var currentChat= await chatRoomsService.GetCurrentChatRoom(Id);
+        Encrypted = currentChat.Encrypted;
+
+        //
+
         hubConnection = new HubConnectionBuilder()
             .WithUrl(url)
             .WithAutomaticReconnect()
             .Build();
 
-        hubConnection.On<string>("ReceiveMessage", (response) =>
+        hubConnection.On<string>("ReceiveMessage", async (response) =>
         {
-            var deserializedResponse = JsonSerializer.Deserialize<ReceiveMessageDto>(response);          
+            var deserializedResponse = JsonSerializer.Deserialize<ReceiveMessageDto>(response);
 
             Messages.Add(deserializedResponse);
-            InvokeAsync(StateHasChanged);
+            await InvokeAsync(StateHasChanged);
         });
 
         hubConnection.On<string>("MemberJoined", (message) =>
@@ -89,7 +103,7 @@
 
     private async Task GetStoredMessages()
     {
-        var chatRoom = await chatRoomService.GetChatRoom(Id);
+        var chatRoom = await chatRoomsService.GetChatRoom(Id);
         foreach (var message in chatRoom.Messages)
         {
             Messages.Add(new ReceiveMessageDto
@@ -111,6 +125,14 @@
             //ta bort meddelande efteråt
         }
         else {
+            if (Encrypted)
+            {
+
+                var cryptoResult = await Crypto.EncryptAsync(MessageDto.Content);
+                MessageDto.Content = cryptoResult.Value;
+                var secret = cryptoResult.Secret;
+            }
+            //MessageDto.Encrypted = Encrypted;
             var messageModelToJson = JsonSerializer.Serialize(MessageDto);
             await hubConnection.SendAsync("SendMessageAsync", messageModelToJson, Id);
 
@@ -121,7 +143,7 @@
 
     private void onSettingsClick()
     {
-        navigation.NavigateTo($"/chatrooms/{Id}/settings");
+        navigation.NavigateTo($"/chatrooms/{Id}/settings/");
     }
 
     public class SendMessageDto
@@ -129,6 +151,7 @@
         public Guid UserId { get; set; }
         public string Content { get; set; }
         public string UserName { get; set; }
+        //public bool Encrypted { get; set; }
     }
 
     public class ReceiveMessageDto

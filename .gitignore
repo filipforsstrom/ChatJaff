@@ -360,3 +360,4 @@ MigrationBackup/
 *.sqlite-wal
 **/.DS_Store
 .cypress/videos
+*.mp4

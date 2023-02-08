@@ -64,7 +64,7 @@
 
         if (Guid.TryParse(userId, out Guid parsedId))
         {
-            MyChats = await _chatRoomsService.GetMyChats(parsedId);
+            MyChats = await _chatRoomsService.GetMyChats();
         }
 
         //Get user specific chats with Id from token later

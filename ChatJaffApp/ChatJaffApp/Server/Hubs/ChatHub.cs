@@ -1,8 +1,11 @@
+﻿using ChatJaffApp.Client.ChatRoom.Pages;
+using Microsoft.AspNetCore.Authorization;
 ﻿using AutoMapper;
 using ChatJaffApp.Server.ChatRoom.Models;
 using ChatJaffApp.Server.Data.Models;
 using Microsoft.AspNetCore.SignalR;
 using System;
+using System.Security.Claims;
 using System.Text.Json;
 using ChatJaffApp.Server.ChatRoom.Contracts;
 using System.Text;
@@ -10,8 +13,9 @@ using ChatJaffApp.Server.ChatRoom.Encryption;
 
 namespace ChatJaffApp.Server.Hubs
 {
-    public class ChatHub : Hub
-    {
+    [Authorize]
+	public class ChatHub : Hub
+	{
         private readonly IMessageRepository _messageRepository;
         private readonly IChatKeyRepository _chatKeyRepository;
         private readonly IMapper _mapper;
@@ -28,6 +32,7 @@ namespace ChatJaffApp.Server.Hubs
             var deserializedMessage = JsonSerializer.Deserialize<MessageDto>(message);
             deserializedMessage.Sent = DateTime.UtcNow;
             deserializedMessage.ChatroomId = chatroomId;
+            
 
             var messageToStore = _mapper.Map<Message>(deserializedMessage);
             messageToStore.ChatId = chatroomId;
@@ -65,7 +70,9 @@ namespace ChatJaffApp.Server.Hubs
 
             var group = Groups;
 
-            await Clients.Group(chatRoomId).SendAsync("MemberJoined", $"{Context.ConnectionId} has joined the group.");
+            var userName = Context.User.Claims.Where(c => c.Type == ClaimTypes.Name).FirstOrDefault().Value;
+
+            await Clients.Group(chatRoomId).SendAsync("MemberJoined", $"{userName} has joined the group.");
         }
 
         public async Task RemoveFromGroup(string groupName)
