@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using System;
+using System.Security.Claims;
 using System.Text.Json;
 
 namespace ChatJaffApp.Server.Hubs
@@ -16,6 +17,7 @@ namespace ChatJaffApp.Server.Hubs
             var deserializedMessage = JsonSerializer.Deserialize<MessageDto>(message);
             deserializedMessage.Sent = DateTime.UtcNow;
             deserializedMessage.ChatroomId = chatroomId;
+            
 
             //save to db?
 
@@ -30,7 +32,9 @@ namespace ChatJaffApp.Server.Hubs
 
             var group = Groups;
 
-            await Clients.Group(chatRoomId).SendAsync("MemberJoined", $"{Context.ConnectionId} has joined the group.");
+            var userName = Context.User.Claims.Where(c => c.Type == ClaimTypes.Name).FirstOrDefault().Value;
+
+            await Clients.Group(chatRoomId).SendAsync("MemberJoined", $"{userName} has joined the group.");
         }
 
         public async Task RemoveFromGroup(string groupName)

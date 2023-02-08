@@ -11,5 +11,6 @@ namespace ChatJaffApp.Server.ChatRoom.Contracts
         Task<Chat> GetChatRoomAsync(Guid chatId);
         Task UpdateChatRoomAsync(Chat chatRoomToUpdate);
         ChatRoomDto ConvertChatToDto(Chat chatRoom);
+        Task<Chat> GetCurrentChatRoom(Guid chatId);
     }
 }

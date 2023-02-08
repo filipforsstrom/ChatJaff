@@ -47,6 +47,18 @@ namespace ChatJaffApp.Client.ChatRoom.MyChatRooms.Services
             var MyChats = await response.Content.ReadFromJsonAsync<List<ChatRoomsViewModel>>();
             return MyChats;
         }
+        public async Task<ChatRoomsViewModel> GetCurrentChatRoom(Guid chatId)
+        {
+            var response = await _httpClient.GetAsync($"/api/chatroom/getcurrentchatroom/{chatId}");
+            if (!response.IsSuccessStatusCode)
+            {
+                return new ChatRoomsViewModel();
+            }
+            var currentChat = await response.Content.ReadFromJsonAsync<ChatRoomsViewModel>();
+            
+            return currentChat;
+
+        }
         
     }
 }

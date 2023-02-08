@@ -10,6 +10,7 @@ namespace ChatJaffApp.Client.ChatRoom.MyChatRooms.Contracts
         Task<List<ChatRoomsViewModel>> GetAllChats();
         Task<List<ChatRoomsViewModel>> GetMyChats(Guid userId);
         Task<List<ChatMemberViewModel>> GetChatMembers(Guid chatId);
+        Task<ChatRoomsViewModel> GetCurrentChatRoom(Guid chatId);
 
     }
 }
