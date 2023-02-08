@@ -3,6 +3,7 @@
 @using ChatJaffApp.Client.ChatRoom.MyChatRooms.Contracts;
 @using Microsoft.AspNetCore.Authorization;
 @using Microsoft.AspNetCore.SignalR.Client;
+@using ChatJaffApp.Client.ChatRoom.MyChatRooms.Models
 @using System.Text.Json;
 @using Blazor.SubtleCrypto;
 @inject AuthenticationStateProvider authStateProvider
@@ -45,7 +46,7 @@
     private string ErrorMessage { get; set; } = string.Empty;
     private List<ReceiveMessageDto> Messages { get; set; } = new();
     private bool Encrypted { get; set; } = false;
-
+    public GetChatRoomDto CurrentChatRoom { get; set; }
     private EncryptionManager keeperOfSecrets = new();
 
     private HubConnection? hubConnection;
@@ -54,7 +55,8 @@
 
     protected override async Task OnInitializedAsync()
     {
-        await GetStoredMessages();
+        CurrentChatRoom = await chatRoomsService.GetChatRoom(Id);
+        GetStoredMessages();
 
         var state = await authStateProvider.GetAuthenticationStateAsync();
         var userId = state.User.FindFirst(ClaimTypes.NameIdentifier).Value;
@@ -62,15 +64,9 @@
 
         MessageDto.UserId = Guid.Parse(userId);
         MessageDto.UserName = username;
+        MessageDto.Encrypted = CurrentChatRoom.Encrypted;
 
         var url = navigation.ToAbsoluteUri("/chathub");
-
-        //Get specific chat
-
-        var currentChat= await chatRoomsService.GetCurrentChatRoom(Id);
-        Encrypted = currentChat.Encrypted;
-
-        //
 
         hubConnection = new HubConnectionBuilder()
             .WithUrl(url)
@@ -101,10 +97,10 @@
         await hubConnection.SendAsync("AddToGroup", Id);
     }
 
-    private async Task GetStoredMessages()
+    private void GetStoredMessages()
     {
-        var chatRoom = await chatRoomsService.GetChatRoom(Id);
-        foreach (var message in chatRoom.Messages)
+        
+        foreach (var message in CurrentChatRoom.Messages)
         {
             Messages.Add(new ReceiveMessageDto
             {
@@ -125,14 +121,7 @@
             //ta bort meddelande efteråt
         }
         else {
-            if (Encrypted)
-            {
-
-                var cryptoResult = await Crypto.EncryptAsync(MessageDto.Content);
-                MessageDto.Content = cryptoResult.Value;
-                var secret = cryptoResult.Secret;
-            }
-            MessageDto.Encrypted = Encrypted;
+           
             var messageModelToJson = JsonSerializer.Serialize(MessageDto);
             await hubConnection.SendAsync("SendMessageAsync", messageModelToJson, Id);
 
