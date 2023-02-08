@@ -2,6 +2,7 @@
 @inject AuthenticationStateProvider authenticationStateProvider;
 @inject NavigationManager navManager;
 @inject HttpClient http;
+@attribute [Authorize(Roles = "Admin")]
 
 @* <div class="card">
     <h4 class="card-header">Ban user</h4>
