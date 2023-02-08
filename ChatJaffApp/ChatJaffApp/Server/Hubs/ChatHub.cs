@@ -38,7 +38,7 @@ namespace ChatJaffApp.Server.Hubs
             messageToStore.ChatId = chatroomId;
 
             // if encrypted chat, encrypt message
-            if (true)
+            if (deserializedMessage.Encrypted)
             {                
                 try
                 {
@@ -54,8 +54,8 @@ namespace ChatJaffApp.Server.Hubs
 
             var serializedResponse = JsonSerializer.Serialize(deserializedMessage);
             await Clients.Groups(chatroomId.ToString()).SendAsync("ReceiveMessage", serializedResponse);
+            
             await _messageRepository.AddMessageAsync(messageToStore);
-            deserializedMessage.Content = messageToStore.Content;
         }
 
         public async Task AddToGroup(string chatRoomId)
