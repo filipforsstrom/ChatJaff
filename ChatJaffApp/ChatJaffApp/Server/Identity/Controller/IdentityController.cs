@@ -203,6 +203,21 @@ namespace ChatJaffApp.Server.Identity.Controller
             }
         }
 
+        [Authorize]
+        [HttpPut("banUser")]
+        public async Task<IActionResult> BanUser([FromBody] string userName)
+        {
+            try
+            {
+                await _identityService.BanUserAsync(userName);
+                return Ok();
+            }
+            catch (System.Exception)
+            {
+                return BadRequest("Something went wrong.");
+            }
+        }
+
         [HttpDelete("kill")]
         public async Task Kill()
         {
