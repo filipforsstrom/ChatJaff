@@ -12,5 +12,6 @@ namespace ChatJaffApp.Server.ChatRoom.Contracts
         Task UpdateChatRoomAsync(Chat chatRoomToUpdate);
         Task<bool> DeleteChatRoom(Chat chatRoom);
         ChatRoomDto ConvertChatToDto(Chat chatRoom);
+        Task<Chat> GetCurrentChatRoom(Guid chatId);
     }
 }
