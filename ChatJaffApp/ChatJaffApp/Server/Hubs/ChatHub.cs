@@ -30,7 +30,8 @@ namespace ChatJaffApp.Server.Hubs
             var messageToStore = _mapper.Map<Message>(deserializedMessage);
             messageToStore.ChatId = chatroomId;
 
-            await _messageRepository.AddMessageAsync(messageToStore);
+            var messageId = await _messageRepository.AddMessageAsync(messageToStore);
+            deserializedMessage.Id = messageId;
 
             var serializedResponse = JsonSerializer.Serialize(deserializedMessage);
             await Clients.Groups(chatroomId.ToString()).SendAsync("ReceiveMessage", serializedResponse);
