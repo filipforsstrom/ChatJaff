@@ -100,13 +100,6 @@ namespace ChatJaffApp.Server.Identity.Data
                     ConcurrencyStamp = "1",
                     NormalizedName = "MODERATOR"
                 },
-                new IdentityRole()
-                {
-                    Id = "BannedId",
-                    Name = "Banned",
-                    ConcurrencyStamp = "1",
-                    NormalizedName = "BANNED"
-                }
                 );
         }
         private void SeedUserRoles(ModelBuilder builder)
@@ -122,11 +115,6 @@ namespace ChatJaffApp.Server.Identity.Data
                     RoleId = "MemberId",
                     UserId = "b8381d75-d110-42f9-85e5-9c92a062fbc8"
                 },
-                new IdentityUserRole<string>()
-                {
-                    RoleId = "BannedId",
-                    UserId = "b8381d75-d110-42f9-85e5-9c92a062abc1"
-                }
                 );
         }
     }
