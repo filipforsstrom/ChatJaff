@@ -36,8 +36,7 @@ namespace ChatJaffApp.Server.Hubs
 
             var messageToStore = _mapper.Map<Message>(deserializedMessage);
             messageToStore.ChatId = chatroomId;
-
-            // if encrypted chat, encrypt message
+            
             if (deserializedMessage.Encrypted)
             {                
                 try

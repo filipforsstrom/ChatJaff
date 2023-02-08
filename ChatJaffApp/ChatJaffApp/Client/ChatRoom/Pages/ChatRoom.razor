@@ -44,7 +44,6 @@
     public SendMessageDto MessageDto { get; set; } = new();
     private string ErrorMessage { get; set; } = string.Empty;
     private List<ReceiveMessageDto> Messages { get; set; } = new();
-    private bool Encrypted { get; set; } = false;
 
     private EncryptionManager keeperOfSecrets = new();
 
@@ -61,16 +60,14 @@
         var username = state.User.FindFirst(ClaimTypes.Name).Value;
 
         MessageDto.UserId = Guid.Parse(userId);
-        MessageDto.UserName = username;
+        MessageDto.UserName = username;        
 
         var url = navigation.ToAbsoluteUri("/chathub");
 
         //Get specific chat
 
         var currentChat= await chatRoomsService.GetCurrentChatRoom(Id);
-        Encrypted = currentChat.Encrypted;
-
-        //
+        MessageDto.Encrypted = currentChat.Encrypted;
 
         hubConnection = new HubConnectionBuilder()
             .WithUrl(url)
@@ -124,15 +121,7 @@
             ErrorMessage = "Message can not be empty";
             //ta bort meddelande efteråt
         }
-        else {
-            if (Encrypted)
-            {
-
-                var cryptoResult = await Crypto.EncryptAsync(MessageDto.Content);
-                MessageDto.Content = cryptoResult.Value;
-                var secret = cryptoResult.Secret;
-            }
-            MessageDto.Encrypted = Encrypted;
+        else {            
             var messageModelToJson = JsonSerializer.Serialize(MessageDto);
             await hubConnection.SendAsync("SendMessageAsync", messageModelToJson, Id);
 
