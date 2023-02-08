@@ -1,4 +1,5 @@
 ﻿using ChatJaffApp.Server.ChatRoom.Contracts;
+using ChatJaffApp.Server.ChatRoom.Encryption;
 using ChatJaffApp.Server.ChatRoom.Member.Contracts;
 using ChatJaffApp.Server.ChatRoom.Member.Repositories;
 using ChatJaffApp.Server.ChatRoom.Repositories;
@@ -32,5 +33,6 @@ public static class ServiceExtensions
         services.AddScoped<IChatRoomRepository, ChatRoomRepository>();
         services.AddScoped<IMemberRepository, MemberRepository>();
         services.AddScoped<IMessageRepository, MessageRepository>();
+        services.AddScoped<IChatKeyRepository, ChatKeyRepository>();
     }
 }
