@@ -36,13 +36,6 @@ namespace ChatJaffApp.Server.ChatRoom.Repositories
             var chatRooms = _context.ChatRooms.Where(x => x.ChatMembers.Any(cm => cm.UserId == memberId)).ToList();
             return chatRooms;
         }
-
-        public async Task<Chat> GetCurrentChatRoom(Guid chatId)
-        {
-            var currentChatRoom = _context.ChatRooms.FirstOrDefault(x=>x.Id== chatId);
-            return currentChatRoom;
-        }
-
         public async Task<Chat> GetChatRoomAsync(Guid chatId)
         {
             var chatRoom = await _context.ChatRooms.Include(c => c.ChatMembers)

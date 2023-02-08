@@ -56,23 +56,6 @@ namespace ChatJaffApp.Server.ChatRoom.Controllers
 
         [Authorize]
         [HttpGet]
-        [Route("[action]/{id}")]
-        public async Task<IActionResult> GetCurrentChatRoom(Guid id)
-        {
-            try
-            {
-                var currentChatRoom = await _chatRoomRepository.GetCurrentChatRoom(id);
-                return Ok(currentChatRoom);
-            }
-            catch (Exception)
-            {
-
-                return StatusCode(StatusCodes.Status500InternalServerError);
-            }
-        }
-
-        [Authorize]
-        [HttpGet]
         [Route("{chatId:guid}")]
         public async Task<IActionResult> GetChatRoom([FromRoute] Guid chatId)
         {
