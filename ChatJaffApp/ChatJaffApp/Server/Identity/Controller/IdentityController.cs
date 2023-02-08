@@ -203,7 +203,7 @@ namespace ChatJaffApp.Server.Identity.Controller
             }
         }
 
-        [Authorize]
+        [Authorize (Roles = "Admin")]
         [HttpPut("banUser")]
         public async Task<IActionResult> BanUser([FromBody] string userName)
         {
