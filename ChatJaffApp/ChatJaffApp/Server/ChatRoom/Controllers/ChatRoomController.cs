@@ -98,7 +98,6 @@ namespace ChatJaffApp.Server.ChatRoom.Controllers
             {
                 Encrypted = chatRequest.Encrypted,
                 ChatName = chatRequest.ChatName,
-                Creator= chatRequest.Creator,
                 CreatorId=chatRequest.CreatorId,
 
             };

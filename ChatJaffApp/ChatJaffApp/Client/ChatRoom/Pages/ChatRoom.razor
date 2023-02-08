@@ -103,7 +103,7 @@
 
     private async Task GetStoredMessages()
     {
-        var chatRoom = await chatRoomService.GetChatRoom(Id);
+        var chatRoom = await chatRoomsService.GetChatRoom(Id);
         foreach (var message in chatRoom.Messages)
         {
             Messages.Add(new ReceiveMessageDto
