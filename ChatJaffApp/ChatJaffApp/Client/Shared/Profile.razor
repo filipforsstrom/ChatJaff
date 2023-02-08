@@ -25,15 +25,15 @@
             <ValidationSummary />
             <div class="form-group">
                 <label>Old password</label>
-                <InputText class="form-control" type="@(showOldPassword ? "text" : "password")" @bind-Value="changePasswordForm.OldPassword" />
+                <InputText id="old-password-field" class="form-control" type="@(showOldPassword ? "text" : "password")" @bind-Value="changePasswordForm.OldPassword" />
                 Show <InputCheckbox @bind-Value="showOldPassword" />
             </div>
             <div class="form-group">
                 <label>New password</label>
-                <InputText class="form-control" type="@(showNewPassword ? "text" : "password")" @bind-Value="changePasswordForm.NewPassword" />
+                <InputText id="new-password-field" class="form-control" type="@(showNewPassword ? "text" : "password")" @bind-Value="changePasswordForm.NewPassword" />
                 Show <InputCheckbox @bind-Value="showNewPassword" />
             </div>
-            <button class="btn btn-sm btn-success">Confirm</button>
+            <button id="change-password-button" class="btn btn-sm btn-success">Confirm</button>
         </EditForm>
         <div>
             <p>@changePasswordResponseMessage</p>
@@ -41,7 +41,7 @@
     </div>
 
     <div>
-        <button @onclick="toggleDeleteDialog" class="btn btn-danger btn-sm">Delete Account</button>
+        <button id="delete-account-button" @onclick="toggleDeleteDialog" class="btn btn-danger btn-sm">Delete Account</button>
     </div>
 </div>
 
@@ -57,8 +57,8 @@
                 <div class="modal-body">
                     <p>This will remove you from our database.</p>
                     <p>@deleteIdentityResponseMessage</p>
-                    <button type="button" class="btn btn-sm btn-primary" @onclick="toggleDeleteDialog">Cancel</button>
-                    <button type="button" class="btn btn-sm btn-danger" @onclick="onDeleteClick">Confirm</button>
+                    <button id="cancel-delete-button" type="button" class="btn btn-sm btn-primary" @onclick="toggleDeleteDialog">Cancel</button>
+                    <button id="confirm-delete-button" type="button" class="btn btn-sm btn-danger" @onclick="onDeleteClick">Confirm</button>
                 </div>                
             </div>
         </div>
@@ -111,6 +111,7 @@
         {
             toggleDeleteDialog();
             await authenticationStateProvider.Logout();
+            navManager.NavigateTo("/account/login");
 
         } else
         {

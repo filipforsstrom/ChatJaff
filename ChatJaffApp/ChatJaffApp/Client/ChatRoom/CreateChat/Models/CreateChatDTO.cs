@@ -6,5 +6,6 @@
         public string? ChatName { get; set; }
         public string? Creator { get; set; }
         public List<Guid>? ChatMembersIds { get; set; }
+        public Guid CreatorId { get; set; }
     }
 }

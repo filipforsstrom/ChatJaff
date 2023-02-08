@@ -33,6 +33,5 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="ChatRoom\Messages\Models\" />
-    <Folder Include="ChatRoom\Components\" />
   </ItemGroup>
 </Project>

@@ -9,7 +9,7 @@
 @inject HttpClient httpClient;
 @inject NavigationManager navigation
 @inject ICryptoService Crypto;
-@inject IChatRoomsService _chatRoomsService
+@inject IChatRoomsService chatRoomsService
 @attribute [Authorize]
 <h3>Welcome</h3>
 
@@ -22,16 +22,16 @@
         {
             <li style="padding: 5px; background-color: @(MessageDto.UserName == message.UserName ? "green" : "cornflowerblue"); color: whitesmoke; margin-bottom: 5px; max-width: 300px;display: flex;
                     justify-content: center; align-items: center; flex-direction: column;">
-                <h4 data-testid="messagecontent" style="font-size: 15px;">@message.UserName says @message.Content</h4>
-                <p data-testid="messagetimestamp" style="font-size: 10px;">Sent: @message.Sent</p>
+                <h4 id="messagecontent" style="font-size: 15px;">@message.UserName says @message.Content</h4>
+                <p id="messagetimestamp" style="font-size: 10px;">Sent: @message.Sent</p>
             </li>
         }
         </ul>
     }
 </div>
 <div>
-    <InputTextArea data-testid="messageinputarea" maxlength="150" @bind-Value="MessageDto.Content" />
-    <button data-testid="sendmessagebtn" @onclick="onSendMessageClick" class=" btn btn-primary">Send</button>
+    <InputTextArea id="messageinputarea" maxlength="150" @bind-Value="MessageDto.Content" />
+    <button id="sendmessagebtn" @onclick="onSendMessageClick" class=" btn btn-primary">Send</button>
 </div>
 <div>
     <button style="margin-top: 5px" class="btn btn-primary" @onclick="onSettingsClick">Settings</button>
@@ -54,6 +54,7 @@
 
     protected override async Task OnInitializedAsync()
     {
+        await GetStoredMessages();
 
         var state = await authStateProvider.GetAuthenticationStateAsync();
         var userId = state.User.FindFirst(ClaimTypes.NameIdentifier).Value;
@@ -64,22 +65,13 @@
 
         var url = navigation.ToAbsoluteUri("/chathub");
 
-        //get current chatroom for encryption bool check
-
-        //if (Guid.TryParse(userId, out Guid parsedId))
-        //{
-        //    var userChats = await _chatRoomsService.GetMyChats(parsedId);
-        //    var currentChat = userChats.Find(x => x.Id == Id);
-        //    Encrypted = currentChat.Encrypted;
-
-        //}
-        ///
         //Get specific chat
 
-        var currentChat= await _chatRoomsService.GetCurrentChatRoom(Id);
+        var currentChat= await chatRoomsService.GetCurrentChatRoom(Id);
         Encrypted = currentChat.Encrypted;
 
         //
+
         hubConnection = new HubConnectionBuilder()
             .WithUrl(url)
             .WithAutomaticReconnect()
@@ -88,11 +80,6 @@
         hubConnection.On<string>("ReceiveMessage", async (response) =>
         {
             var deserializedResponse = JsonSerializer.Deserialize<ReceiveMessageDto>(response);
-
-            //if (!Encrypted)
-            //{
-            //    deserializedResponse.Content = await Crypto.DecryptAsync(deserializedResponse.Content);
-            //}
 
             Messages.Add(deserializedResponse);
             await InvokeAsync(StateHasChanged);
@@ -112,6 +99,21 @@
         });        
         await hubConnection.StartAsync();
         await hubConnection.SendAsync("AddToGroup", Id);
+    }
+
+    private async Task GetStoredMessages()
+    {
+        var chatRoom = await chatRoomService.GetChatRoom(Id);
+        foreach (var message in chatRoom.Messages)
+        {
+            Messages.Add(new ReceiveMessageDto
+            {
+                Id = message.Id,
+                UserName = message.UserName,
+                Content = message.Content,
+                Sent = message.Sent
+            });
+        };
     }
 
     private async Task onSendMessageClick()
@@ -141,7 +143,7 @@
 
     private void onSettingsClick()
     {
-        navigation.NavigateTo($"/chatrooms/chat/settings/{Id}");
+        navigation.NavigateTo($"/chatrooms/{Id}/settings/");
     }
 
     public class SendMessageDto
