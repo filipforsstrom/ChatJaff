@@ -3,7 +3,7 @@
 @inject NavigationManager navManager;
 @inject HttpClient http;
 
-<div class="card">
+@* <div class="card">
     <h4 class="card-header">Ban user</h4>
     <div class="card-body">
         <EditForm Model="@banUser" OnValidSubmit="@HandleSubmit">
@@ -17,14 +17,14 @@
             <NavLink id="register-link" href="account/register" class="btn btn-link">Register</NavLink>
         </EditForm>
     </div>
-</div>
+</div> *@
 
 @code {
     private BanUser banUser = new BanUser();
 
     protected override async Task OnInitializedAsync()
     {
-        var member = await http.GetFromJsonAsync<Member>("/api/member/B8381D75-D110-42F9-85E5-9C92A062A111");
+        var member = await http.PutAsJsonAsync("/api/identity/banUser", "member1");
     }
     
     public class BanUser
@@ -32,4 +32,3 @@
         public string UserName { get; set; }
     }
 }
-
