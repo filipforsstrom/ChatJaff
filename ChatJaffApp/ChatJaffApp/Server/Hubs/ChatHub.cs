@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using ChatJaffApp.Client.ChatRoom.Pages;
 using ChatJaffApp.Server.ChatRoom.Models;
 using ChatJaffApp.Server.Data.Models;
 using Microsoft.AspNetCore.SignalR;
@@ -14,11 +13,13 @@ namespace ChatJaffApp.Server.Hubs
     public class ChatHub : Hub
     {
         private readonly IMessageRepository _messageRepository;
+        private readonly IChatKeyRepository _chatKeyRepository;
         private readonly IMapper _mapper;
 
-        public ChatHub(IMessageRepository messageRepository, IMapper mapper)
+        public ChatHub(IMessageRepository messageRepository, IChatKeyRepository chatKeyRepository, IMapper mapper)
         {
             _messageRepository = messageRepository;
+            _chatKeyRepository = chatKeyRepository;
             _mapper = mapper;
         }
 
@@ -32,17 +33,17 @@ namespace ChatJaffApp.Server.Hubs
             messageToStore.ChatId = chatroomId;
 
             // if encrypted chat, encrypt message
-            if (false)
-            {
-                // skapa nyckel
-                string key = "123";
-                // skapa salt
-                byte[] salt = Encoding.Unicode.GetBytes("MULLVAD");
-                // spara nyckel + iv
-                string keyToSaveInDb = $"{key}.{Convert.ToBase64String(salt)}";
-                // kryptera med aes
+            if (true)
+            {                
                 try
                 {
+                    var chatkey = await _chatKeyRepository.GetChatKeyAsync(chatroomId);
+                    var keyStringArray = chatkey.Split(".");
+                    string key = keyStringArray[0];
+
+                    // skapa salt
+                    byte[] salt = Encoding.Unicode.GetBytes(keyStringArray[1]);
+
                     messageToStore.Content = AesEncryptManager.Encrypt(messageToStore.Content, key, salt);
                 }
                 catch (Exception)
