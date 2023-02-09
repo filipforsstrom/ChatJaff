@@ -5,10 +5,10 @@ using ChatJaffApp.Client.Account.Contracts;
 using ChatJaffApp.Client.Account.Services;
 using ChatJaffApp.Client.ChatRoom.CreateChat.Contracts;
 using ChatJaffApp.Client.ChatRoom.CreateChat.Services;
-using ChatJaffApp.Client.ChatRoom.Member.Contracts;
-using ChatJaffApp.Client.ChatRoom.Member.Services;
 using ChatJaffApp.Client.ChatRoom.MyChatRooms.Contracts;
 using ChatJaffApp.Client.ChatRoom.MyChatRooms.Services;
+using ChatJaffApp.Client.Member.Contracts;
+using ChatJaffApp.Client.Member.Services;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
@@ -27,7 +27,7 @@ builder.Services.AddSubtleCrypto(options =>
 //builder.Services.AddOptions();
 
 builder.Services.AddScoped<CustomAuthStateProvider>();
-builder.Services.AddScoped<AuthenticationStateProvider>(s => s.GetRequiredService<CustomAuthStateProvider>());  
+builder.Services.AddScoped<AuthenticationStateProvider>(s => s.GetRequiredService<CustomAuthStateProvider>());
 
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
