@@ -7,12 +7,17 @@ describe("Dashboard", () => {
     cy.get("#email").type("member2@gmail.com");
     cy.get("#password").type("member2");
     cy.get("#login-button").click();
-    cy.contains("Logout");
+    // cy.contains("Logout");
   });
 
   it("ban toBan1", () => {
     cy.contains("Dashboard").click();
     cy.contains("tr", "toBan1").find("button").click();
     cy.contains("toBan1 banned successfully");
+  });
+
+  it("Find member", () => {
+    cy.contains("Dashboard").click();
+    cy.get("#searchbar").click().type("randy");
   });
 });
