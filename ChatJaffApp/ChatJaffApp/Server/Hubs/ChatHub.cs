@@ -51,10 +51,13 @@ namespace ChatJaffApp.Server.Hubs
                 }
             }
 
+            var messageId = await _messageRepository.AddMessageAsync(messageToStore);
+            deserializedMessage.Id = messageId;
+
             var serializedResponse = JsonSerializer.Serialize(deserializedMessage);
             await Clients.Groups(chatroomId.ToString()).SendAsync("ReceiveMessage", serializedResponse);
             
-            await _messageRepository.AddMessageAsync(messageToStore);
+            
         }
 
         public async Task AddToGroup(string chatRoomId)
