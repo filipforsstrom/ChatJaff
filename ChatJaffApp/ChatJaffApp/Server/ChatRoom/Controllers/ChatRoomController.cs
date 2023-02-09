@@ -1,10 +1,8 @@
 ﻿using AutoMapper;
 using ChatJaffApp.Server.ChatRoom.Contracts;
 using ChatJaffApp.Server.ChatRoom.Models;
-using ChatJaffApp.Server.Data.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ChatJaffApp.Server.ChatRoom.Controllers
 {
@@ -56,6 +54,22 @@ namespace ChatJaffApp.Server.ChatRoom.Controllers
                 var chatRoom = await _chatRoomRepository.GetChatRoomAsync(chatId);
                 var chatRoomDto = _chatRoomRepository.ConvertChatToDto(chatRoom);
                 return Ok(chatRoomDto);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500);
+            }
+        }
+
+        [Authorize]
+        [HttpGet]
+        [Route("{chatId:guid}/members")]
+        public async Task<IActionResult> GetChatRoomMembers([FromRoute] Guid chatId)
+        {
+            try
+            {
+                var chatRoomMembers = await _chatRoomRepository.GetChatRoomMembersAsync(chatId);
+                return Ok(chatRoomMembers);
             }
             catch (Exception ex)
             {

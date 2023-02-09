@@ -1,10 +1,12 @@
 ﻿@page "/chatrooms/{id:guid}"
 @using System.Security.Claims;
+@using ChatJaffApp.Client.ChatRoom.MyChatRooms.Contracts;
 @using Microsoft.AspNetCore.SignalR.Client;
 @using System.Text.Json;
 @inject AuthenticationStateProvider authStateProvider
 @inject HttpClient httpClient;
 @inject NavigationManager navigation
+@inject IChatRoomsService chatRoomService
 <h3>Welcome</h3>
 
 <div>
@@ -12,14 +14,14 @@
     @if (Messages != null)
     {
         <ul data-testid="messagesinchatlist" style="list-style-type: none;">
-        @foreach (var message in Messages)
-        {
-            <li style="padding: 5px; background-color: @(MessageDto.UserName == message.UserName ? "green" : "cornflowerblue"); color: whitesmoke; margin-bottom: 5px; max-width: 300px;display: flex;
+            @foreach (var message in Messages)
+            {
+                <li style="padding: 5px; background-color: @(MessageDto.UserName == message.UserName ? "green" : "cornflowerblue"); color: whitesmoke; margin-bottom: 5px; max-width: 300px;display: flex;
                     justify-content: center; align-items: center; flex-direction: column;">
-                <h4 data-testid="messagecontent" style="font-size: 15px;">@message.UserName says @message.Content</h4>
-                <p data-testid="messagetimestamp" style="font-size: 10px;">Sent: @message.Sent</p>
-            </li>
-        }
+                    <h4 data-testid="messagecontent" style="font-size: 15px;">@message.UserName says @message.Content</h4>
+                    <p data-testid="messagetimestamp" style="font-size: 10px;">Sent: @message.Sent</p>
+                </li>
+            }
         </ul>
     }
 </div>
@@ -39,49 +41,57 @@
     private string ErrorMessage { get; set; } = string.Empty;
     private List<ReceiveMessageDto> Messages { get; set; } = new();
 
+
     private HubConnection? hubConnection;
     public bool IsConnected => hubConnection.State == HubConnectionState.Connected;
 
-
     protected override async Task OnInitializedAsync()
     {
-
         var state = await authStateProvider.GetAuthenticationStateAsync();
-        var userId = state.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+        var userIdValue = state.User.FindFirst(ClaimTypes.NameIdentifier).Value;
         var username = state.User.FindFirst(ClaimTypes.Name).Value;
+        var chatMembers = await chatRoomService.GetChatMembers(Id);
+        Guid userId = Guid.Parse(userIdValue);
 
-        MessageDto.UserId = Guid.Parse(userId);
-        MessageDto.UserName = username;
-
-        var url = navigation.ToAbsoluteUri("/chathub");
-
-        hubConnection = new HubConnectionBuilder()
-            .WithUrl(url)
-            .WithAutomaticReconnect()
-            .Build();
-
-        hubConnection.On<string>("ReceiveMessage", (response) =>
+        if (chatMembers.Any(x => x.UserId == userId))
         {
-            var deserializedResponse = JsonSerializer.Deserialize<ReceiveMessageDto>(response);          
+            MessageDto.UserId = Guid.Parse(userIdValue);
+            MessageDto.UserName = username;
 
-            Messages.Add(deserializedResponse);
-            InvokeAsync(StateHasChanged);
-        });
+            var url = navigation.ToAbsoluteUri("/chathub");
 
-        hubConnection.On<string>("MemberJoined", (message) =>
-        {
-            ReceiveMessageDto memberJoinedResponse = new()
+            hubConnection = new HubConnectionBuilder()
+                .WithUrl(url)
+                .WithAutomaticReconnect()
+                .Build();
+
+            hubConnection.On<string>("ReceiveMessage", (response) =>
             {
-                UserName = "System",
-                Content = message,
-                Sent = DateTime.UtcNow
-            };
+                var deserializedResponse = JsonSerializer.Deserialize<ReceiveMessageDto>(response);
 
-            Messages.Add(memberJoinedResponse);
-            InvokeAsync(StateHasChanged);
-        });        
-        await hubConnection.StartAsync();
-        await hubConnection.SendAsync("AddToGroup", Id);
+                Messages.Add(deserializedResponse);
+                InvokeAsync(StateHasChanged);
+            });
+
+            hubConnection.On<string>("MemberJoined", (message) =>
+            {
+                ReceiveMessageDto memberJoinedResponse = new()
+                    {
+                        UserName = "System",
+                        Content = message,
+                        Sent = DateTime.UtcNow
+                    };
+
+                Messages.Add(memberJoinedResponse);
+                InvokeAsync(StateHasChanged);
+            });
+            await hubConnection.StartAsync();
+            await hubConnection.SendAsync("AddToGroup", Id);
+        }
+        else
+        {
+            navigation.NavigateTo("/login");
+        }
     }
 
     private async Task onSendMessageClick()
@@ -92,7 +102,8 @@
             ErrorMessage = "Message can not be empty";
             //ta bort meddelande efteråt
         }
-        else {
+        else
+        {
             var messageModelToJson = JsonSerializer.Serialize(MessageDto);
             await hubConnection.SendAsync("SendMessageAsync", messageModelToJson, Id);
 
@@ -121,5 +132,5 @@
         public DateTime Sent { get; set; }
     }
 
-    
+
 }
