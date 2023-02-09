@@ -133,6 +133,21 @@ namespace ChatJaffApp.Server.ChatRoom.Controllers
                 {
                     return BadRequest();
                 }
+
+                if (chatRoom.Encrypted)
+                {
+                    try
+                    {
+                        // Ensure related messages are deleted
+                        // Run after x days
+                        await _chatKeyRepository.DeleteChatKey(chatRoom.Id);
+                    }
+                    catch (Exception)
+                    {
+                        // log error
+                    }
+                }
+
                 return NoContent();
 
             }
