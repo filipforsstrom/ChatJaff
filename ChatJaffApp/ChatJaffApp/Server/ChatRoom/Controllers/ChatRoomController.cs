@@ -70,7 +70,6 @@ namespace ChatJaffApp.Server.ChatRoom.Controllers
                 return StatusCode(500);
             }
         }
-
         
 
         [Authorize]
@@ -96,8 +95,8 @@ namespace ChatJaffApp.Server.ChatRoom.Controllers
         }
 
         [Authorize]
-        [HttpPatch]
-        [Route("{chatId:guid}")]
+        [HttpPost]
+        [Route("{chatId:guid}/members")]
         public async Task<IActionResult> AddMemberToChat([FromRoute] Guid chatId, [FromBody] Guid userId)
         {
             var chatRoom = await _chatRoomRepository.GetChatRoomAsync(chatId);
@@ -107,6 +106,20 @@ namespace ChatJaffApp.Server.ChatRoom.Controllers
             await _chatRoomRepository.UpdateChatRoomAsync(chatRoom);
 
             return Ok("Member added");
+        }
+
+        [Authorize]
+        [HttpDelete]
+        [Route("{chatId:guid}/members/{userId:guid}")]
+        public async Task<IActionResult> RemoveMemberFromChat([FromRoute] Guid chatId, [FromRoute] Guid userId)
+        {
+            var chatRoom = await _chatRoomRepository.GetChatRoomAsync(chatId);
+
+            chatRoom.RemoveMember(userId);
+
+            await _chatRoomRepository.UpdateChatRoomAsync(chatRoom);
+
+            return NotFound("Member Removed");
         }
 
         [Authorize]
