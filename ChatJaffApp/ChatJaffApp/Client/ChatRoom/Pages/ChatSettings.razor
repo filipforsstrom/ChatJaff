@@ -87,15 +87,16 @@
         {
             return;
         }
-        var result = ChatRoom.ChatMembers.Remove(member);
 
-        if (!result)
+        var result = await chatRoomService.RemoveChatMember(Id, member.UserId);
+
+        if (!result.Success)
         {
-            Message = "Something went wrong";
+            Message = result.Message;
             return;
         }
 
-        Message = await chatRoomService.RemoveChatMember(Id, member.UserId);
+        ChatMembers.Remove(member);
 
     }
 
