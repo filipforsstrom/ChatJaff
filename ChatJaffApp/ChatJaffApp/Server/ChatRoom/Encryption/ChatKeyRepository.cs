@@ -16,9 +16,19 @@ namespace ChatJaffApp.Server.ChatRoom.Encryption
             throw new NotImplementedException();
         }
 
-        public Task DeleteChatKey(Guid chatRoomId)
+        public async Task DeleteChatKey(Guid chatRoomId)
         {
-            throw new NotImplementedException();
+            var chatKey = await _context.ChatKeys.FindAsync(chatRoomId);
+
+            if (chatKey != null)
+            {
+                _context.ChatKeys.Remove(chatKey);
+                await _context.SaveChangesAsync();
+            } else
+            {
+                throw new NullReferenceException();
+            }
+
         }
 
         public async Task<string> GetChatKeyAsync(Guid chatRoomId)

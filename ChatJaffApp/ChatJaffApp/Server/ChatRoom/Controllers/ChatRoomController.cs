@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using ChatJaffApp.Server.ChatRoom.Contracts;
+using ChatJaffApp.Server.ChatRoom.Encryption;
 using ChatJaffApp.Server.ChatRoom.Models;
 using ChatJaffApp.Server.ChatRoom.Repositories;
 using ChatJaffApp.Server.Data.Models;
@@ -19,12 +20,14 @@ namespace ChatJaffApp.Server.ChatRoom.Controllers
         private readonly IChatRoomRepository _chatRoomRepository;
         private readonly IMapper _mapper;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly IChatKeyRepository _chatKeyRepository;
 
-        public ChatRoomController(IChatRoomRepository chatRoomRepository, IMapper mapper, SignInManager<ApplicationUser> signInManager)
+        public ChatRoomController(IChatRoomRepository chatRoomRepository, IMapper mapper, SignInManager<ApplicationUser> signInManager, IChatKeyRepository chatKeyRepository)
         {
             _chatRoomRepository = chatRoomRepository;
             _mapper = mapper;
             _signInManager = signInManager;
+            _chatKeyRepository = chatKeyRepository;
         }
 
         [Authorize]
@@ -123,6 +126,21 @@ namespace ChatJaffApp.Server.ChatRoom.Controllers
                 {
                     return BadRequest();
                 }
+
+                if (chatRoom.Encrypted)
+                {
+                    try
+                    {
+                        // Ensure related messages are deleted
+                        // Run after x days
+                        // await _chatKeyRepository.DeleteChatKey(chatRoom.Id);
+                    }
+                    catch (Exception)
+                    {
+                        // log error
+                    }
+                }
+
                 return NoContent();
 
             }
