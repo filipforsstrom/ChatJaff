@@ -1,9 +1,4 @@
-﻿using ChatJaffApp.Client.ChatRoom.CreateChat.Models;
-using ChatJaffApp.Client.ChatRoom.MyChatRooms.Contracts;
-using ChatJaffApp.Client.ChatRoom.MyChatRooms.Models;
-using System.Net.Http.Json;
-
-namespace ChatJaffApp.Client.ChatRoom.MyChatRooms.Services
+﻿namespace ChatJaffApp.Client.ChatRoom.MyChatRooms.Services
 {
     public class ChatRoomsService : IChatRoomsService
     {
@@ -37,9 +32,9 @@ namespace ChatJaffApp.Client.ChatRoom.MyChatRooms.Services
             return chatRoom.ChatMembers;
         }
 
-        public async Task<List<ChatRoomsViewModel>> GetMyChats(Guid memberId)
+        public async Task<List<ChatRoomsViewModel>> GetMyChats()
         {
-            var response = await _httpClient.GetAsync($"/api/chatroom/getmychats/{memberId}");
+            var response = await _httpClient.GetAsync($"/api/chatroom");
             if (!response.IsSuccessStatusCode)
             {
                 return new List<ChatRoomsViewModel>();
@@ -48,5 +43,36 @@ namespace ChatJaffApp.Client.ChatRoom.MyChatRooms.Services
             return MyChats;
         }
 
+
+
+        public async Task<GetChatRoomDto> GetChatRoom(Guid chatId)
+        {
+            var response = await _httpClient.GetAsync($"/api/chatroom/{chatId}");
+
+            if (!response.IsSuccessStatusCode)
+            {
+                return new GetChatRoomDto();
+            }
+
+            var chatRoom = await response.Content.ReadFromJsonAsync<GetChatRoomDto>();
+            return chatRoom;
+        }
+
+        public async Task<ServiceResponseViewModel<string>> DeleteChatRoom(Guid chatId)
+        {
+            ServiceResponseViewModel<string> responseViewModel = new();
+            var response = await _httpClient.DeleteAsync($"api/chatroom/{chatId}");
+
+            if (!response.IsSuccessStatusCode)
+            {
+                responseViewModel.Message = "Something went wrong.";
+                return responseViewModel;
+            }
+
+            responseViewModel.Message = await response.Content.ReadAsStringAsync();
+            responseViewModel.Success = true;
+            return responseViewModel;
+
+        }
     }
 }

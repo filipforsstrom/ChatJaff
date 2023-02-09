@@ -1,33 +1,48 @@
 ﻿@page "/chatrooms/{id:guid}"
 @using System.Security.Claims;
-@using ChatJaffApp.Client.ChatRoom.MyChatRooms.Contracts;
+@using ChatJaffApp.Client.ChatRoom.Messages.Contracts;
 @using Microsoft.AspNetCore.SignalR.Client;
 @using System.Text.Json;
+@using ChatJaffApp.Client.ChatRoom.MyChatRooms.Contracts;
+@using Microsoft.AspNetCore.Authorization;
+@using Microsoft.AspNetCore.SignalR.Client;
+@using ChatJaffApp.Client.ChatRoom.MyChatRooms.Models
+@using System.Text.Json;
+@using Blazor.SubtleCrypto;
 @inject AuthenticationStateProvider authStateProvider
 @inject HttpClient httpClient;
 @inject NavigationManager navigation
-@inject IChatRoomsService chatRoomService
+@inject ICryptoService Crypto;
+@inject IChatRoomsService chatRoomsService
+@attribute [Authorize]
+@inject IMessageService messageService
 <h3>Welcome</h3>
 
 <div>
     <p>Your Messages:</p>
     @if (Messages != null)
     {
-        <ul data-testid="messagesinchatlist" style="list-style-type: none;">
-            @foreach (var message in Messages)
-            {
+        <ul id="messagesinchatlist" style="list-style-type: none;">
+        @foreach (var message in Messages)
+        {
+               
                 <li style="padding: 5px; background-color: @(MessageDto.UserName == message.UserName ? "green" : "cornflowerblue"); color: whitesmoke; margin-bottom: 5px; max-width: 300px;display: flex;
                     justify-content: center; align-items: center; flex-direction: column;">
-                    <h4 data-testid="messagecontent" style="font-size: 15px;">@message.UserName says @message.Content</h4>
-                    <p data-testid="messagetimestamp" style="font-size: 10px;">Sent: @message.Sent</p>
-                </li>
-            }
+                <h4 id="messagecontent" style="font-size: 15px;">@message.UserName says @message.Content</h4>
+                <p id="messagetimestamp" style="font-size: 10px;">Sent: @message.Sent</p>
+                    @if(message.UserName == username)
+                    {
+                        <button data-cy="delete-message-button" class="btn btn-primary btn-sm" @onclick="() => deleteMessage(message.Id)">delete</button>
+                    }
+                    
+            </li>
+        }
         </ul>
     }
 </div>
 <div>
-    <InputTextArea data-testid="messageinputarea" maxlength="150" @bind-Value="MessageDto.Content" />
-    <button data-testid="sendmessagebtn" @onclick="onSendMessageClick" class=" btn btn-primary">Send</button>
+    <InputTextArea id="messageinputarea" maxlength="150" @bind-Value="MessageDto.Content" />
+    <button id="sendmessagebtn" @onclick="onSendMessageClick" class=" btn btn-primary">Send</button>
 </div>
 <div>
     <button style="margin-top: 5px" class="btn btn-primary" @onclick="onSettingsClick">Settings</button>
@@ -40,13 +55,19 @@
     public SendMessageDto MessageDto { get; set; } = new();
     private string ErrorMessage { get; set; } = string.Empty;
     private List<ReceiveMessageDto> Messages { get; set; } = new();
+    private bool Encrypted { get; set; } = false;
+    public GetChatRoomDto CurrentChatRoom { get; set; }
+    private EncryptionManager keeperOfSecrets = new();
 
-
+    private string? CurrentUserName { get; set; } = string.Empty;
     private HubConnection? hubConnection;
     public bool IsConnected => hubConnection.State == HubConnectionState.Connected;
 
     protected override async Task OnInitializedAsync()
     {
+        CurrentChatRoom = await chatRoomsService.GetChatRoom(Id);
+        GetStoredMessages();
+
         var state = await authStateProvider.GetAuthenticationStateAsync();
         var userIdValue = state.User.FindFirst(ClaimTypes.NameIdentifier).Value;
         var username = state.User.FindFirst(ClaimTypes.Name).Value;
@@ -57,6 +78,7 @@
         {
             MessageDto.UserId = Guid.Parse(userIdValue);
             MessageDto.UserName = username;
+            MessageDto.Encrypted = CurrentChatRoom.Encrypted;
 
             var url = navigation.ToAbsoluteUri("/chathub");
 
@@ -65,13 +87,13 @@
                 .WithAutomaticReconnect()
                 .Build();
 
-            hubConnection.On<string>("ReceiveMessage", (response) =>
-            {
-                var deserializedResponse = JsonSerializer.Deserialize<ReceiveMessageDto>(response);
+        hubConnection.On<string>("ReceiveMessage", async (response) =>
+        {
+            var deserializedResponse = JsonSerializer.Deserialize<ReceiveMessageDto>(response);
 
-                Messages.Add(deserializedResponse);
-                InvokeAsync(StateHasChanged);
-            });
+            Messages.Add(deserializedResponse);
+            await InvokeAsync(StateHasChanged);
+        });
 
             hubConnection.On<string>("MemberJoined", (message) =>
             {
@@ -94,6 +116,21 @@
         }
     }
 
+    private void GetStoredMessages()
+    {
+        
+        foreach (var message in CurrentChatRoom.Messages)
+        {
+            Messages.Add(new ReceiveMessageDto
+            {
+                Id = message.Id,
+                UserName = message.UserName,
+                Content = message.Content,
+                Sent = message.Sent
+            });
+        };
+    }
+
     private async Task onSendMessageClick()
     {
 
@@ -114,14 +151,30 @@
 
     private void onSettingsClick()
     {
-        navigation.NavigateTo($"/chatrooms/chat/settings/{Id}");
+        navigation.NavigateTo($"/chatrooms/{Id}/settings/");
     }
+
+    public async void deleteMessage(Guid id)
+    {
+
+        var response = await messageService.DeleteMessage(id);
+        if (response.Success)
+        {
+            var message = Messages.Select(m => m).Where(m => m.Id == id).FirstOrDefault();
+            Messages.Remove(message);
+            InvokeAsync(StateHasChanged);
+        }
+
+
+    }
+
 
     public class SendMessageDto
     {
-        public Guid UserId { get; set; }
+        public Guid UserId {get; set;}
         public string Content { get; set; }
         public string UserName { get; set; }
+        public bool Encrypted { get; set; }
     }
 
     public class ReceiveMessageDto
@@ -130,6 +183,7 @@
         public string? UserName { get; set; }
         public string? Content { get; set; }
         public DateTime Sent { get; set; }
+        public string IdAsString { get; set; }
     }
 
 

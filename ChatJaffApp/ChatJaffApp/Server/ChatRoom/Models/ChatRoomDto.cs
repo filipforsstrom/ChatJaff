@@ -6,7 +6,7 @@ namespace ChatJaffApp.Server.ChatRoom.Models
     {
         public Guid Id { get; set; }
         public List<ChatMemberDto> ChatMembers { get; set; }
-        public string? Creator { get; set; }
+        public Guid? CreatorId { get; set; }
         public bool Encrypted { get; set; }
         public string? ChatName { get; set; }
         public List<MessageDto> Messages { get; set; }

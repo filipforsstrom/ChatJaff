@@ -10,7 +10,7 @@
 <h3>
     <label>
         Create new chat
-        <a href="/chatRooms/createchat"><button class="btn btn-primary">+</button></a>
+        <a id="add-new-chat-button" href="/chatRooms/createchat"><button class="btn btn-primary">+</button></a>
     </label>
 </h3>
 <div style="display: flex;">
@@ -64,7 +64,7 @@
 
         if (Guid.TryParse(userId, out Guid parsedId))
         {
-            MyChats = await _chatRoomsService.GetMyChats(parsedId);
+            MyChats = await _chatRoomsService.GetMyChats();
         }
 
         //Get user specific chats with Id from token later

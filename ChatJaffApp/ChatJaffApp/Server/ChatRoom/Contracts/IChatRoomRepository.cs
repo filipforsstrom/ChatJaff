@@ -9,6 +9,7 @@ namespace ChatJaffApp.Server.ChatRoom.Contracts
         IEnumerable<IChat> GetMyChatRooms(Guid memberId);
         Task<Chat> GetChatRoomAsync(Guid chatId);
         Task UpdateChatRoomAsync(Chat chatRoomToUpdate);
+        Task<bool> DeleteChatRoom(Chat chatRoom);
         ChatRoomDto ConvertChatToDto(Chat chatRoom);
         Task<IEnumerable<ChatMember>> GetChatRoomMembersAsync(Guid chatId);
     }

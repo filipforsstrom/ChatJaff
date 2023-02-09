@@ -1,8 +1,11 @@
 ﻿@page "/chatrooms/createchat";
 @using ChatJaffApp.Client.ChatRoom.Components;
+@using ChatJaffApp.Client.Account;
+@using System.Security.Claims;
 @inject HttpClient httpClient;
 @inject NavigationManager navManager;
 @inject ICreateChatService createChatservice;
+@inject CustomAuthStateProvider authStateProvider;
 
 <div>
     <div>
@@ -36,16 +39,16 @@
             <p>
             <label>
                 Chat name:
-                <InputText @bind-Value="createChatRequest.ChatName" />
+                <InputText id="chat-name" @bind-Value="createChatRequest.ChatName" />
             </label>
             </p>
             <p>
             <label>
                 Encrypted chat:
-                <InputCheckbox @bind-Value="createChatRequest.Encrypted" />
+                <InputCheckbox id="encrypted-chat-checkbox" @bind-Value="createChatRequest.Encrypted" />
             </label>
             </p>
-            <button @onclick="onCreateChatClick">Create Chat</button>
+            <button id="create-chat-button" @onclick="onCreateChatClick">Create Chat</button>
         </div>
     </div>
 
@@ -58,14 +61,11 @@
 @code {
     List<ChatMemberViewModel>? ChatMembers { get; set; } = new();
     string? ErrorMessage { get; set; } = string.Empty;
-    private ChatMemberViewModel mockedCurrentUser { get; set; } = new();
     public CreateChatDto createChatRequest { get; set; } = new();
 
     protected override async Task OnInitializedAsync()
     {
-        //remove when we got current user logged in
-        mockedCurrentUser.UserId = Guid.NewGuid();
-        mockedCurrentUser.Username = "Brady666";
+     
     }
 
     private void HandleFoundMember(ChatMemberViewModel memberToAddToChat)

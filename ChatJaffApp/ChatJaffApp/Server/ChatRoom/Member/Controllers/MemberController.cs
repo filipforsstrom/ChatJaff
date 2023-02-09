@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using static ChatJaffApp.Server.ChatRoom.Controllers.ChatRoomController;
 using ChatJaffApp.Server.ChatRoom.Member.Contracts;
+using ChatJaffApp.Server.ChatRoom.Contracts;
+using ChatJaffApp.Client.ChatRoom.Member.Contracts;
 
 namespace ChatJaffApp.Server.ChatRoom.Member.Controllers
 {
@@ -18,6 +20,20 @@ namespace ChatJaffApp.Server.ChatRoom.Member.Controllers
             _memberRepository = memberRepository;
         }
 
+        [Authorize]
+        [HttpGet]
+        public IEnumerable<GetMemberDto> GetAllMemberss()
+        {
+            var allMembersEntities = _memberRepository.GetAllMembers();
+            var allMembersDto = new List<GetMemberDto>();
+
+            foreach(var member in allMembersEntities)
+            {
+                allMembersDto.Add(new GetMemberDto { UserId = member.Id, UserName = member.UserName});
+            }
+
+            return allMembersDto;
+        }
 
         [HttpGet]
         [Route("{searchedUsername}")]
@@ -38,7 +54,6 @@ namespace ChatJaffApp.Server.ChatRoom.Member.Controllers
             }
             
         }
-
 
     }
 }
