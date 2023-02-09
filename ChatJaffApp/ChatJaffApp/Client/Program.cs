@@ -5,6 +5,10 @@ using ChatJaffApp.Client.Account.Contracts;
 using ChatJaffApp.Client.Account.Services;
 using ChatJaffApp.Client.ChatRoom.CreateChat.Contracts;
 using ChatJaffApp.Client.ChatRoom.CreateChat.Services;
+using ChatJaffApp.Client.ChatRoom.Member.Contracts;
+using ChatJaffApp.Client.ChatRoom.Member.Services;
+using ChatJaffApp.Client.ChatRoom.Messages.Contracts;
+using ChatJaffApp.Client.ChatRoom.Messages.Services;
 using ChatJaffApp.Client.ChatRoom.MyChatRooms.Contracts;
 using ChatJaffApp.Client.ChatRoom.MyChatRooms.Services;
 using ChatJaffApp.Client.Member.Contracts;
@@ -21,9 +25,11 @@ builder.Services.AddScoped<IIdentityService, IdentityService>();
 builder.Services.AddScoped<ICreateChatService, CreateChatService>();
 builder.Services.AddScoped<IMemberService, MemberService>();
 builder.Services.AddScoped<IChatRoomsService, ChatRoomsService>();
+builder.Services.AddScoped<IMessageService, MessageService>();
+
 
 builder.Services.AddSubtleCrypto(options =>
-    options.Key = "OURSUPERDUPERSECRETKEYHIDDENINÖSTERVÄRN");
+    options.Key = "OURSUPERDUPERSECRETKEYHIDDENINï¿½STERVï¿½RN");
 //builder.Services.AddOptions();
 
 builder.Services.AddScoped<CustomAuthStateProvider>();
