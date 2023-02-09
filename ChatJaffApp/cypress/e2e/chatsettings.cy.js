@@ -7,6 +7,7 @@ describe("ChatSettings", () => {
         cy.get("#email").type("member2@gmail.com");
         cy.get("#password").type("member2");
         cy.get("#login-button").click();
+        cy.contains("Logout");
       });
 
       it("delete chat", () => {
