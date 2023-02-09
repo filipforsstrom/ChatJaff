@@ -95,6 +95,13 @@ namespace ChatJaffApp.Server.ChatRoom.Controllers
 
             var result = await _chatRoomRepository.CreateChatRoomAsync(newChat);
 
+            if (chatRequest.Encrypted)
+            {
+                EncryptionHelper encryptionHelper = new();
+                var dbKey = encryptionHelper.GenerateDbKey();
+                _chatKeyRepository.AddChatKeyAsync(result, dbKey);
+            }
+
             return Ok(result);
         }
 
