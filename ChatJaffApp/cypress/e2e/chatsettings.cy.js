@@ -1,18 +1,40 @@
 const baseUrl = "http://localhost:5172/";
 
 describe("ChatSettings", () => {
-    beforeEach(function () {
-        cy.visit(baseUrl);
-        cy.contains("Login").click();
-        cy.get("#email").type("member2@gmail.com");
-        cy.get("#password").type("member2");
-        cy.get("#login-button").click();
-      });
+  beforeEach(function () {
+    cy.visit(baseUrl);
+    cy.contains("Login").click();
+    cy.get("#email").type("member2@gmail.com");
+    cy.get("#password").type("member2");
+    cy.get("#login-button").click();
 
-      it("delete chat", () => {
-        cy.visit(`${baseUrl}chatrooms/5d728ec3-1f6b-4170-8827-bc064ae25a41`);
-        cy.contains("Settings").click();
-        cy.contains("Delete Chat").click();
-        cy.url().should("eq", baseUrl + "chatrooms");
-      })
+    cy.contains("Chat Rooms").click();
+
+    cy.contains("Create new chat");
+    cy.get("#add-new-chat-button").click();
+    //add members to chat
+    cy.url().should("include", "/chatRooms/createchat");
+    cy.get("#add-chat-member-button").click();
+    cy.contains("Search field must not be empty.");
+    cy.get("#search-user").type("catwoman");
+    cy.get("#add-chat-member-button").click();
+    cy.contains("Remove");
+    //set chat name
+    cy.get("#chat-name").type("test chat");
+    //choose encryption
+    // cy.get("#encrypted-chat-checkbox").click();
+    //create
+    cy.get("#create-chat-button").click();
+    //in chatroom
+    cy.contains("Send");
+
+
+  });
+
+  it("delete chat", () => {
+    // cy.visit(`${baseUrl}chatrooms/5d728ec3-1f6b-4170-8827-bc064ae25a41`);
+    cy.contains("Settings").click();
+    cy.contains("Delete Chat").click();
+    cy.url().should("eq", baseUrl + "chatrooms");
+  })
 })
