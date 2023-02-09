@@ -99,7 +99,7 @@ namespace ChatJaffApp.Server.Identity.Data
                     Name = "Moderator",
                     ConcurrencyStamp = "1",
                     NormalizedName = "MODERATOR"
-                },
+                }
                 );
         }
         private void SeedUserRoles(ModelBuilder builder)
@@ -114,7 +114,7 @@ namespace ChatJaffApp.Server.Identity.Data
                 {
                     RoleId = "MemberId",
                     UserId = "b8381d75-d110-42f9-85e5-9c92a062fbc8"
-                },
+                }
                 );
         }
     }
