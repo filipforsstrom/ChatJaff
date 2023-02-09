@@ -1,5 +1,7 @@
-﻿using ChatJaffApp.Server.ChatRoom.Encryption;
+﻿using ChatJaffApp.Client.ChatRoom.Pages;
+using ChatJaffApp.Server.ChatRoom.Encryption;
 using ChatJaffApp.Server.Data.Models;
+using Microsoft.EntityFrameworkCore;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -43,11 +45,18 @@ namespace ChatJaffApi.Tests.UnitTests
                 });
 
             mockChatKeyRepo.Setup(mr => mr.DeleteChatKey(
-                It.IsAny<Guid>())).Callback((Guid id) =>
+            It.IsAny<Guid>())).Callback((Guid id) =>
+            {
+                var chatKey = keys.FirstOrDefault(k => k.ChatRoomId.Equals(id));
+                if (chatKey != null)
                 {
-                    var keyToRemove = keys.First(k => k.ChatRoomId == id);
-                    keys.Remove(keyToRemove);
-                });
+                    keys.Remove(chatKey);                        
+                }
+                else
+                {
+                    throw new NullReferenceException();
+                }
+            });
 
             this.MockChatKeyRepo = mockChatKeyRepo.Object;
         }
@@ -68,6 +77,16 @@ namespace ChatJaffApi.Tests.UnitTests
                 Guid.Parse("{5D728EC3-1F6B-4170-8827-BC064AE25A41}"));
 
             Assert.Equal(string.Empty, nonExistantKey);
+        }
+        
+        [Fact]
+        public async Task DeleteChatKey_OnFail_ThrowsNullReferenceException()
+        {
+            var keyId = new Guid();
+
+            Func<Task> act = () => MockChatKeyRepo.DeleteChatKey(keyId);
+
+            await Assert.ThrowsAsync<NullReferenceException>(act);
         }
     }
 }
