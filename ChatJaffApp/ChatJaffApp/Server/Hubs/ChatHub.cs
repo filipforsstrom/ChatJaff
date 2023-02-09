@@ -8,6 +8,8 @@ using System;
 using System.Security.Claims;
 using System.Text.Json;
 using ChatJaffApp.Server.ChatRoom.Contracts;
+using System.Text;
+using ChatJaffApp.Server.ChatRoom.Encryption;
 
 namespace ChatJaffApp.Server.Hubs
 {
@@ -15,11 +17,13 @@ namespace ChatJaffApp.Server.Hubs
 	public class ChatHub : Hub
 	{
         private readonly IMessageRepository _messageRepository;
+        private readonly IChatKeyRepository _chatKeyRepository;
         private readonly IMapper _mapper;
 
-        public ChatHub(IMessageRepository messageRepository, IMapper mapper)
+        public ChatHub(IMessageRepository messageRepository, IChatKeyRepository chatKeyRepository, IMapper mapper)
         {
             _messageRepository = messageRepository;
+            _chatKeyRepository = chatKeyRepository;
             _mapper = mapper;
         }
 
@@ -30,15 +34,30 @@ namespace ChatJaffApp.Server.Hubs
             deserializedMessage.ChatroomId = chatroomId;
             
 
-            //save to db?
             var messageToStore = _mapper.Map<Message>(deserializedMessage);
             messageToStore.ChatId = chatroomId;
+            
+            if (deserializedMessage.Encrypted)
+            {                
+                try
+                {
+                    var chatkey = await _chatKeyRepository.GetChatKeyAsync(chatroomId);
+                    messageToStore.Content = EncryptMessage(messageToStore.Content, chatkey);
+                }
+                catch (Exception)
+                {
+                    await Clients.Groups(chatroomId.ToString()).SendAsync("ReceiveMessage", JsonSerializer.Serialize(deserializedMessage));
+                    return;
+                }
+            }
 
-            await _messageRepository.AddMessageAsync(messageToStore);
+            var messageId = await _messageRepository.AddMessageAsync(messageToStore);
+            deserializedMessage.Id = messageId;
 
             var serializedResponse = JsonSerializer.Serialize(deserializedMessage);
             await Clients.Groups(chatroomId.ToString()).SendAsync("ReceiveMessage", serializedResponse);
-
+            
+            
         }
 
         public async Task AddToGroup(string chatRoomId)
@@ -62,5 +81,17 @@ namespace ChatJaffApp.Server.Hubs
         //{
         //    await Clients.All.SendAsync("ReceiveChatNotification", message, receiverUserId, senderUserId);
         //}
+
+        private string EncryptMessage(string message, string chatKey)
+        {
+            
+            var keyStringArray = chatKey.Split(".");
+            string key = keyStringArray[0];
+
+            // skapa salt
+            byte[] salt = Encoding.Unicode.GetBytes(keyStringArray[1]);
+
+            return AesEncryptManager.Encrypt(message, key, salt);
+        }
     }
 }
