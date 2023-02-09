@@ -1,4 +1,5 @@
 ﻿using ChatJaffApp.Client.ChatRoom.CreateChat.Models;
+using ChatJaffApp.Client.ChatRoom.MyChatRooms.Models;
 using ChatJaffApp.Client.ChatRoom.Pages;
 using ChatJaffApp.Server.ChatRoom.Contracts;
 using ChatJaffApp.Server.ChatRoom.Controllers;
@@ -35,7 +36,6 @@ namespace ChatJaffApp.Server.ChatRoom.Repositories
             var chatRooms = _context.ChatRooms.Where(x => x.ChatMembers.Any(cm => cm.UserId == memberId)).ToList();
             return chatRooms;
         }
-
         public async Task<Chat> GetChatRoomAsync(Guid chatId)
         {
             var chatRoom = await _context.ChatRooms.Include(c => c.ChatMembers)

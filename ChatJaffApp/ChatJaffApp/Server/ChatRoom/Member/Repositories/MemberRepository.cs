@@ -35,6 +35,11 @@ namespace ChatJaffApp.Server.ChatRoom.Member.Repositories
         
         }
 
+        public IEnumerable<ChatJaffApp.Server.Data.Models.Member> GetAllMembers()
+        {
+            return _context.Members.ToList();
+        }
+
         public async Task<GetMemberDto> GetMember(string searchedUserName)
         {
             var user = await _context.Members.FirstOrDefaultAsync(m => m.UserName.ToLower() == searchedUserName.ToLower());
@@ -53,7 +58,6 @@ namespace ChatJaffApp.Server.ChatRoom.Member.Repositories
             return getMemberDto;
 
         }
-
 
     }
 }

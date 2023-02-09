@@ -4,10 +4,17 @@
 @using Microsoft.AspNetCore.SignalR.Client;
 @using System.Text.Json;
 @using ChatJaffApp.Client.ChatRoom.MyChatRooms.Contracts;
+@using Microsoft.AspNetCore.Authorization;
+@using Microsoft.AspNetCore.SignalR.Client;
+@using ChatJaffApp.Client.ChatRoom.MyChatRooms.Models
+@using System.Text.Json;
+@using Blazor.SubtleCrypto;
 @inject AuthenticationStateProvider authStateProvider
 @inject HttpClient httpClient;
 @inject NavigationManager navigation
-@inject IChatRoomsService chatRoomService
+@inject ICryptoService Crypto;
+@inject IChatRoomsService chatRoomsService
+@attribute [Authorize]
 @inject IMessageService messageService
 <h3>Welcome</h3>
 
@@ -48,6 +55,10 @@
     public SendMessageDto MessageDto { get; set; } = new();
     private string ErrorMessage { get; set; } = string.Empty;
     private List<ReceiveMessageDto> Messages { get; set; } = new();
+    private bool Encrypted { get; set; } = false;
+    public GetChatRoomDto CurrentChatRoom { get; set; }
+    private EncryptionManager keeperOfSecrets = new();
+
     private string? CurrentUserName { get; set; } = string.Empty;
     private HubConnection? hubConnection;
     public bool IsConnected => hubConnection.State == HubConnectionState.Connected;
@@ -55,7 +66,8 @@
 
     protected override async Task OnInitializedAsync()
     {
-        await GetStoredMessages();
+        CurrentChatRoom = await chatRoomsService.GetChatRoom(Id);
+        GetStoredMessages();
 
         var state = await authStateProvider.GetAuthenticationStateAsync();
         var userId = state.User.FindFirst(ClaimTypes.NameIdentifier).Value;
@@ -63,6 +75,7 @@
 
         MessageDto.UserId = Guid.Parse(userId);
         MessageDto.UserName = CurrentUserName;
+        MessageDto.Encrypted = CurrentChatRoom.Encrypted;
 
         var url = navigation.ToAbsoluteUri("/chathub");
 
@@ -71,11 +84,12 @@
             .WithAutomaticReconnect()
             .Build();
 
-        hubConnection.On<string>("ReceiveMessage", (response) =>
+        hubConnection.On<string>("ReceiveMessage", async (response) =>
         {
             var deserializedResponse = JsonSerializer.Deserialize<ReceiveMessageDto>(response);
+
             Messages.Add(deserializedResponse);
-            InvokeAsync(StateHasChanged);
+            await InvokeAsync(StateHasChanged);
         });
 
         hubConnection.On<string>("MemberJoined", (message) =>
@@ -94,10 +108,10 @@
         await hubConnection.SendAsync("AddToGroup", Id);
     }
 
-    private async Task GetStoredMessages()
+    private void GetStoredMessages()
     {
-        var chatRoom = await chatRoomService.GetChatRoom(Id);
-        foreach (var message in chatRoom.Messages)
+        
+        foreach (var message in CurrentChatRoom.Messages)
         {
             Messages.Add(new ReceiveMessageDto
             {
@@ -118,6 +132,7 @@
             //ta bort meddelande efteråt
         }
         else {
+           
             var messageModelToJson = JsonSerializer.Serialize(MessageDto);
             await hubConnection.SendAsync("SendMessageAsync", messageModelToJson, Id);
 
@@ -151,6 +166,7 @@
         public Guid UserId {get; set;}
         public string Content { get; set; }
         public string UserName { get; set; }
+        public bool Encrypted { get; set; }
     }
 
     public class ReceiveMessageDto

@@ -11,6 +11,7 @@ namespace ChatJaffApp.Client.ChatRoom.MyChatRooms.Contracts
         Task<List<ChatRoomsViewModel>> GetAllChats();
         Task<List<ChatRoomsViewModel>> GetMyChats();
         Task<List<ChatMemberViewModel>> GetChatMembers(Guid chatId);
+
         Task<GetChatRoomDto> GetChatRoom(Guid chatId);
         Task<ServiceResponseViewModel<string>> DeleteChatRoom(Guid chatId);
     }

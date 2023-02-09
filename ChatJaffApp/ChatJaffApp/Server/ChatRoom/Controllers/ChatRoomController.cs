@@ -71,6 +71,8 @@ namespace ChatJaffApp.Server.ChatRoom.Controllers
             }
         }
 
+        
+
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> CreateChat(CreateChatDTO chatRequest)
@@ -79,7 +81,8 @@ namespace ChatJaffApp.Server.ChatRoom.Controllers
             {
                 Encrypted = chatRequest.Encrypted,
                 ChatName = chatRequest.ChatName,
-                CreatorId = chatRequest.CreatorId,
+                CreatorId=chatRequest.CreatorId,
+
             };
 
             foreach (var member in chatRequest.ChatMembersIds)
