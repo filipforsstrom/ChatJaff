@@ -4,5 +4,6 @@ namespace ChatJaffApp.Server.Identity.Models
 {
     public class ApplicationUser : IdentityUser
     {
+        public bool IsBanned { get; set; }
     }
 }
