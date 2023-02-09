@@ -1,8 +1,8 @@
 ﻿@page "/account/register"
 @using ChatJaffApp.Client.Account.Models;
 @using ChatJaffApp.Client.Account.Contracts;
-@inject IIdentityService IdentityService;
-@inject NavigationManager NavigationManager;
+@inject CustomAuthStateProvider authStateProvider
+@inject NavigationManager navigationManager;
 
 <div class="card">
     <h4 class="card-header">Register</h4>
@@ -13,24 +13,24 @@
             <ValidationSummary />
             <div class="form-group">
                 <label>Email</label>
-                <InputText @bind-Value="register.Email" class="form-control" />
+                <InputText id="register-email" @bind-Value="register.Email" class="form-control" />
             </div>
             <div class="form-group">
                 <label>Username</label>
-                <InputText @bind-Value="register.Username" class="form-control" />
+                <InputText id="register-username" @bind-Value="register.Username" class="form-control" />
             </div>
             <div class="form-group">
                 <label>Password</label>
-                <InputText @bind-Value="register.Password" type="password" class="form-control" />
+                <InputText id="register-password" @bind-Value="register.Password" type="password" class="form-control" />
             </div>
             <div class="form-group">
                 <label>Validate Password</label>
-                <InputText @bind-Value="register.ValidatePassword" type="password" class="form-control" />
+                <InputText id="register-confirmed-password" @bind-Value="register.ValidatePassword" type="password" class="form-control" />
             </div>
-            <button class="btn btn-primary mt-2">
+            <button id="register-button" class="btn btn-primary mt-2">
                 Register
             </button>
-            <NavLink href="account/login" class="btn btn-link">Cancel</NavLink>
+            <NavLink id="cancel-register-link" href="account/login" class="btn btn-link">Cancel</NavLink>
         </EditForm>
         <p>@errorMessage</p>
     </div>
@@ -42,16 +42,14 @@
 
     private async Task HandleSubmit()
     {
-        var response = await IdentityService.Register(register);
-        if (response.Success)
+        try
         {
-            NavigationManager.NavigateTo("/");
+            await authStateProvider.Register(register);
+            navigationManager.NavigateTo("account/login");
         }
-        else
+        catch (Exception)
         {
-            errorMessage = response.Data;
+            errorMessage = "Failed to register.";
         }
-
-
     }
 }

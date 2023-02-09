@@ -1,7 +1,11 @@
 ﻿using ChatJaffApp.Client.ChatRoom.CreateChat.Models;
+using ChatJaffApp.Client.ChatRoom.MyChatRooms.Models;
+using ChatJaffApp.Client.ChatRoom.Pages;
 using ChatJaffApp.Server.ChatRoom.Contracts;
+using ChatJaffApp.Server.ChatRoom.Controllers;
 using ChatJaffApp.Server.ChatRoom.Models;
 using ChatJaffApp.Server.Data;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
 namespace ChatJaffApp.Server.ChatRoom.Repositories
@@ -9,8 +13,6 @@ namespace ChatJaffApp.Server.ChatRoom.Repositories
     public class ChatRoomRepository : IChatRoomRepository
     {
         private readonly JaffDbContext _context;
-
-        public static List<IChat> ChatRooms { get; set; } = new();
 
         public ChatRoomRepository(JaffDbContext context)
         {
@@ -31,32 +33,23 @@ namespace ChatJaffApp.Server.ChatRoom.Repositories
         }
         public IEnumerable<IChat> GetMyChatRooms(Guid memberId)
         {
-            return ChatRooms.Where(x => x.ChatMembers.Any(cm => cm.UserId == memberId));
+            var chatRooms = _context.ChatRooms.Where(x => x.ChatMembers.Any(cm => cm.UserId == memberId)).ToList();
+            return chatRooms;
         }
-
-        public bool AddMemberToChat(AddMemberToChatDto addMemberToChatDto)
-        {
-            var chatRoom = _context.ChatRooms.FirstOrDefault(c => c.Id == addMemberToChatDto.ChatId);
-            //chatRoom.ChatMembersIds.Add(chatMemberData.UserId);
-
-            //if(!chatRoom.ChatMembersIds.Contains(chatMemberData.UserId))
-            //{
-            //    return false;
-            //}
-
-            return true;
-        }
-
         public async Task<Chat> GetChatRoomAsync(Guid chatId)
         {
-            var chatRoom = await _context.ChatRooms.Include(c => c.ChatMembers).ThenInclude(m => m.Member).FirstOrDefaultAsync(c => c.Id == chatId);
+            var chatRoom = await _context.ChatRooms.Include(c => c.ChatMembers)
+                .ThenInclude(m => m.Member)
+                .Include(c => c.Messages.OrderBy(m => m.Sent))
+                .ThenInclude(m => m.Member)
+                .FirstOrDefaultAsync(c => c.Id == chatId);
+
             if(chatRoom == null)
             {
-                return new Chat();
+                throw new KeyNotFoundException();
             }
 
             return chatRoom;
-            
         }
 
         public async Task UpdateChatRoomAsync(Chat chatRoomToUpdate)
@@ -65,10 +58,24 @@ namespace ChatJaffApp.Server.ChatRoom.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task<List<Data.Models.Member>> GetChatMembers(Guid chatId)
+        public ChatRoomDto ConvertChatToDto(Chat chatRoom)
         {
-            var chatMembers = _context.ChatMembers.Where(cm => cm.ChatId == chatId).Select(cm => cm.Member).ToList();
-            return chatMembers;
+            ChatRoomDto chatRoomDto = new ChatRoomDto();
+            chatRoomDto.ChatMembers = chatRoom.ChatMembers.Select(cm => new ChatMemberDto { UserId = cm.UserId, Username = cm.Member.UserName }).ToList();
+            chatRoomDto.Messages = chatRoom.Messages.Select(m => new MessageDto { Id = m.Id, Content = m.Content, Sent = m.Sent, UserName = m.Member.UserName, UserId = m.Member.Id }).ToList();
+            chatRoomDto.Encrypted = chatRoom.Encrypted;
+            chatRoomDto.ChatName = chatRoom.ChatName;
+            chatRoomDto.Id = chatRoom.Id;
+            chatRoomDto.CreatorId = chatRoom.CreatorId;
+
+            return chatRoomDto;
+        }
+
+        public async Task<bool> DeleteChatRoom(Chat chatRoom)
+        {
+            _context.ChatRooms.Remove(chatRoom);
+            var result = await _context.SaveChangesAsync();
+            return result > 0;
         }
     }
 }

@@ -1,4 +1,6 @@
 ﻿using Blazored.LocalStorage;
+using ChatJaffApp.Client.Account.Contracts;
+using ChatJaffApp.Client.Account.Models;
 using Microsoft.AspNetCore.Components.Authorization;
 using System.Net.Http.Headers;
 using System.Security.Claims;
@@ -8,49 +10,56 @@ namespace ChatJaffApp.Client
 {
     public class CustomAuthStateProvider : AuthenticationStateProvider
     {
-        private readonly ILocalStorageService _localStorage;
-        private readonly HttpClient _httpClient;
+        private readonly IIdentityService _identityService;
+        private CurrentUserDto? _currentUser;
 
-        public CustomAuthStateProvider(ILocalStorageService localStorage, HttpClient httpClient)
+        public CustomAuthStateProvider(IIdentityService identityService)
         {
-            _localStorage = localStorage;
-            _httpClient = httpClient;
+            _identityService= identityService;
         }
 
-        public override async Task<AuthenticationState> GetAuthenticationStateAsync()
+        public async override Task<AuthenticationState> GetAuthenticationStateAsync()
         {
-            string token = await _localStorage.GetItemAsStringAsync("token");
             var identity = new ClaimsIdentity();
-            _httpClient.DefaultRequestHeaders.Authorization = null;
-            if (!string.IsNullOrEmpty(token))
+            try
             {
-                identity = new ClaimsIdentity(ParseClaimsFromJwt(token), "jwt");
-                _httpClient.DefaultRequestHeaders.Authorization =
-                    new AuthenticationHeaderValue("Bearer", token.Replace("\"", ""));
+                var userInfo = await GetCurrentUser();
+                if (userInfo.IsAuthenticated)
+                {
+                    var claims = new[] { new Claim(ClaimTypes.Name, _currentUser.UserName) }.Concat(_currentUser.Claims.Select(c => new Claim(c.Key, c.Value)));
+                    identity = new ClaimsIdentity(claims, "Server authentication");
+                }
             }
-            var user = new ClaimsPrincipal(identity);
-            var state = new AuthenticationState(user);
-            NotifyAuthenticationStateChanged(Task.FromResult(state));
-            return state;
-        }
-
-
-        public static IEnumerable<Claim> ParseClaimsFromJwt(string jwt)
-        {
-            var payload = jwt.Split('.')[1];
-            var jsonBytes = ParseBase64WithoutPadding(payload);
-            var keyValuePairs = JsonSerializer.Deserialize<Dictionary<string, object>>(jsonBytes);
-            return keyValuePairs.Select(kvp => new Claim(kvp.Key, kvp.Value.ToString()));
-        }
-
-        private static byte[] ParseBase64WithoutPadding(string base64)
-        {
-            switch (base64.Length % 4)
+            catch (HttpRequestException ex)
             {
-                case 2: base64 += "=="; break;
-                case 3: base64 += "="; break;
+                Console.WriteLine("Request failed:" + ex.ToString());
             }
-            return Convert.FromBase64String(base64);
+            return new AuthenticationState(new ClaimsPrincipal(identity));
         }
+
+        private async Task<CurrentUserDto> GetCurrentUser()
+        {
+            if (_currentUser != null && _currentUser.IsAuthenticated) return _currentUser;
+            _currentUser = await _identityService.CurrentUserInfo();
+            return _currentUser;
+        }
+
+        public async Task Logout()
+        {
+            await _identityService.Logout();
+            _currentUser = null;
+            NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
+        }
+        public async Task Login(LoginDto loginParameters)
+        {
+            await _identityService.Login(loginParameters);
+            NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
+        }
+        public async Task Register(RegisterForm registerParameters)
+        {
+            await _identityService.Register(registerParameters);
+            NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
+        }
+
     }
 }

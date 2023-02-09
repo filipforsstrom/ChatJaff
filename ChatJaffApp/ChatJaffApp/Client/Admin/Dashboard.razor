@@ -1,0 +1,81 @@
+﻿@page "/dashboard"
+@inject IIdentityService identityService;
+@inject ILocalStorageService localStorage;
+@inject CustomAuthStateProvider authenticationStateProvider;
+@inject NavigationManager navManager;
+@inject IMemberService _memberService;
+@inject HttpClient http;
+@using Blazored.LocalStorage;
+@using ChatJaffApp.Client.Account.Contracts;
+@using ChatJaffApp.Client.Account.Models;
+@using System.Security.Claims;
+@using ChatJaffApp.Client.ChatRoom.Member.Models;
+@using Microsoft.AspNetCore.Authorization;
+@attribute [Authorize];
+
+<h3>Members</h3>
+
+<div class="text-center bg-blue-100">
+    <input class="border-4 w-1/3 rounded m-6 p-6 h-8
+               border-blue-300" @bind-value="SearchText"
+           @bind-value:event="oninput" placeholder="Search by title" />
+
+    @if (!Members.Any())
+    {
+        <p>Loading some members...</p>
+    }
+    else
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Username</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var member in FilteredMembers)
+                {
+                    <tr>
+                        <td>@member.Username</td>
+                        <td>
+                            <a class="btn btn-success">Show more info</a>
+                            <button data-cy="banbutton" onclick="@(async () => await BanMember(member.Username))" class="btn btn-danger">Ban user</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <h4 data-cy="banresult">@BanResult</h4>
+    }
+</div>
+
+
+@code {
+
+    public List<ChatMemberResponse>? Members { get; set; } = new();
+
+    public string SearchText = "";
+    private string BanResult = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        Members = await _memberService.GetAllMembers();
+    }
+
+    private async Task BanMember(string userName)
+    {
+        var result = await http.PutAsJsonAsync("/api/identity/banUser", userName);
+
+        if (!result.IsSuccessStatusCode)
+        {
+            BanResult = "Something went wrong";
+        }
+        else
+        {
+            BanResult = $"{userName} banned successfully";
+        }
+        StateHasChanged();
+    }
+
+    List<ChatMemberResponse> FilteredMembers => Members.Where(m => m.Username.ToLower().Contains(SearchText.ToLower())).ToList();
+}

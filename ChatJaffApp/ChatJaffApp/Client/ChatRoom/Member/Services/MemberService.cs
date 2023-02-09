@@ -1,6 +1,7 @@
 ﻿using ChatJaffApp.Client.ChatRoom.CreateChat.Models;
 using ChatJaffApp.Client.ChatRoom.Member.Contracts;
 using ChatJaffApp.Client.ChatRoom.Member.Models;
+using ChatJaffApp.Client.ChatRoom.MyChatRooms.Models;
 using ChatJaffApp.Client.Shared.Models;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -34,10 +35,21 @@ namespace ChatJaffApp.Client.ChatRoom.Member.Services
 
         }
 
-        public async Task<ServiceResponseViewModel<ChatMemberResponse>> GetChatMember(InviteMemberDto invMemberDto)
+        public async Task<List<ChatMemberResponse>> GetAllMembers()
+        {
+            var response = await _httpClient.GetAsync("/api/member");
+            if (!response.IsSuccessStatusCode)
+            {
+                return new List<ChatMemberResponse>();
+            }
+            var membersList = await response.Content.ReadFromJsonAsync<List<ChatMemberResponse>>();
+            return membersList;
+        }
+
+        public async Task<ServiceResponseViewModel<ChatMemberResponse>> GetMember(GetMemberDto getMemberDto)
         {
             ServiceResponseViewModel<ChatMemberResponse> getMemberResponse = new();
-            var response = await _httpClient.PostAsJsonAsync("api/member/getmember", invMemberDto.SearchedUsername);
+            var response = await _httpClient.GetAsync($"api/Member/{getMemberDto.SearchedUsername}");
 
             if (!response.IsSuccessStatusCode)
             {
@@ -50,5 +62,6 @@ namespace ChatJaffApp.Client.ChatRoom.Member.Services
             getMemberResponse.Data = await response.Content.ReadFromJsonAsync<ChatMemberResponse>();
             return getMemberResponse;
         }
+
     }
 }
