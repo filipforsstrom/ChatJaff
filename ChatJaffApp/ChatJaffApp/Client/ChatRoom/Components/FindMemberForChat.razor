@@ -4,8 +4,8 @@
 
 <EditForm Model="@getMemberRequest" OnValidSubmit="@handleUserSearchSubmit">
     <DataAnnotationsValidator />
-    <InputText @bind-Value="getMemberRequest.SearchedUsername" />
-    <button>
+    <InputText id="search-user" @bind-Value="getMemberRequest.SearchedUsername" />
+    <button id="add-chat-member-button">
         Add
     </button>
     <ValidationMessage For="() => getMemberRequest.SearchedUsername" />

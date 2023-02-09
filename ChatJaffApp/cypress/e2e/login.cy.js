@@ -1,32 +1,25 @@
-const baseUrl = 'http://localhost:5172/'
+const baseUrl = "http://localhost:5172/";
 
-describe('Homepage', () => {
+describe("Login", () => {
+beforeEach(function () {
+  cy.visit(baseUrl);
+  
+});
+  it("logs in user successfully", function () {
+    cy.contains("Login").click();
+    cy.get("#email").type("member2@gmail.com");
+    cy.get("#password").type("member2");
+    cy.get("#login-button").click();
+    cy.contains("Logout");
+  });
 
-  it('can be visited', () => {
-    cy.wait(10000)
-    cy.visit(baseUrl)
-  })
+  it("fails login when not a member", function () {
+    cy.contains("Login").click();
+    cy.get("#email").type("member300@gmail.com");
+    cy.get("#password").type("member2");
+    cy.get("#login-button").click();
+    cy.contains("Login failed");
+  });
 
-  it('can navigate to register page', () => {
-    cy.visit(`${baseUrl}account/register`)
-  })
-
-  it('can navigate to about page', () => {
-    cy.visit(`${baseUrl}about`)
-  })
-
-  // it('can kill the application', () => {
-  //   cy.request({
-  //     method: 'DELETE',
-  //     url: `${baseUrl}api/identity/kill`,
-  //     failOnStatusCode: false,
-  //     failsOnNetworkCode: false
-  //   })
-  // })
-
-  after(() => {
-    fetch(`${baseUrl}api/identity/kill`, {
-      method: 'DELETE'
-    })
-  })
-})
+  
+});

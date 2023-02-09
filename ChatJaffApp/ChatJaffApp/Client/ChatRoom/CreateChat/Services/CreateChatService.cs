@@ -24,7 +24,11 @@ namespace ChatJaffApp.Client.ChatRoom.CreateChat.Services
 
             var user = await _authenticationStateProvider.GetAuthenticationStateAsync();
             var userId = user.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var userName = user.User.FindFirst(ClaimTypes.Name).Value;
+
+            createChatRequest.Creator = userName.ToString();
             createChatRequest.ChatMembersIds.Add(Guid.Parse(userId));
+            createChatRequest.CreatorId = Guid.Parse(userId);
 
             var response = await _httpClient.PostAsJsonAsync("api/chatroom", createChatRequest);
             if (!response.IsSuccessStatusCode)

@@ -359,3 +359,5 @@ MigrationBackup/
 *.sqlite-shm
 *.sqlite-wal
 **/.DS_Store
+.ChatJaffApp/cypress/videos
+*.mp4
