@@ -20,10 +20,16 @@ describe("ChatSettings", () => {
       cy.get("#create-chat-button").click();
       });
 
+      it("remove member", () => {
+        cy.contains('Settings').click();
+        cy.contains('Remove').click();
+        cy.contains('catwoman').should('not.exist');
+      })
+
       it("delete chat", () => {
         cy.contains("Settings").click();
         cy.contains("Delete Chat").click();
         cy.contains('test chat').should('not.exist');
-        cy.contains('My Chat Rooms').should('exist');
+        cy.contains('My Chat Rooms')
       })
 })
