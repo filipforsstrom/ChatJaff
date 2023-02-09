@@ -1,4 +1,12 @@
-﻿namespace ChatJaffApp.Server.ChatRoom.Controllers
+﻿using AutoMapper;
+using ChatJaffApp.Server.ChatRoom.Contracts;
+using ChatJaffApp.Server.ChatRoom.Models;
+using ChatJaffApp.Server.Identity.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+
+namespace ChatJaffApp.Server.ChatRoom.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

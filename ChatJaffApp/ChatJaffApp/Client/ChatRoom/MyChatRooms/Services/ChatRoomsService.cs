@@ -1,4 +1,10 @@
-﻿namespace ChatJaffApp.Client.ChatRoom.MyChatRooms.Services
+﻿using ChatJaffApp.Client.ChatRoom.CreateChat.Models;
+using ChatJaffApp.Client.ChatRoom.MyChatRooms.Contracts;
+using ChatJaffApp.Client.ChatRoom.MyChatRooms.Models;
+using ChatJaffApp.Client.Shared.Models;
+using System.Net.Http.Json;
+
+namespace ChatJaffApp.Client.ChatRoom.MyChatRooms.Services
 {
     public class ChatRoomsService : IChatRoomsService
     {

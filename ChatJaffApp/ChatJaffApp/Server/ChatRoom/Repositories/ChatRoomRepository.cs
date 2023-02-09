@@ -1,4 +1,9 @@
-﻿namespace ChatJaffApp.Server.ChatRoom.Repositories
+﻿using ChatJaffApp.Server.ChatRoom.Contracts;
+using ChatJaffApp.Server.ChatRoom.Models;
+using ChatJaffApp.Server.Data;
+using Microsoft.EntityFrameworkCore;
+
+namespace ChatJaffApp.Server.ChatRoom.Repositories
 {
     public class ChatRoomRepository : IChatRoomRepository
     {
