@@ -66,13 +66,21 @@ namespace ChatJaffApp.Client.ChatRoom.MyChatRooms.Services
             return responseViewModel;
 
         }
-        public async Task<string> RemoveChatMember(Guid chatId, Guid userId)
+        public async Task<ServiceResponseViewModel<string>> RemoveChatMember(Guid chatId, Guid userId)
         {
+            ServiceResponseViewModel<string> responseViewModel = new();
             var response = await _httpClient.DeleteAsync($"api/chatroom/{chatId}/members/{userId}");
 
+            if(!(response.StatusCode == System.Net.HttpStatusCode.NotFound))
+            {
+                responseViewModel.Message = "Something went wrong";
+                responseViewModel.Success = false;
+                return responseViewModel;
+            }
 
-            var result = await response.Content.ReadAsStringAsync();
-            return result;
+            responseViewModel.Message = await response.Content.ReadAsStringAsync();
+            responseViewModel.Success = true;
+            return responseViewModel;
         }
 
         public async Task<ServiceResponseViewModel<ChatMemberResponse>> AddChatMember(AddMemberDto addMemberDto)

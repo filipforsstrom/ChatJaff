@@ -12,7 +12,7 @@ namespace ChatJaffApp.Client.ChatRoom.MyChatRooms.Contracts
         Task<List<ChatRoomsViewModel>> GetMyChats();
         Task<GetChatRoomDto> GetChatRoom(Guid chatId);
         Task<ServiceResponseViewModel<string>> DeleteChatRoom(Guid chatId);
-        Task<string> RemoveChatMember(Guid chatId, Guid userId);
+        Task<ServiceResponseViewModel<string>> RemoveChatMember(Guid chatId, Guid userId);
         Task<ServiceResponseViewModel<ChatMemberResponse>> AddChatMember(AddMemberDto addMemberDto);
     }
 }
