@@ -133,7 +133,7 @@ namespace ChatJaffApp.Server.ChatRoom.Controllers
                     {
                         // Ensure related messages are deleted
                         // Run after x days
-                        // await _chatKeyRepository.DeleteChatKey(chatRoom.Id);
+                        await _chatKeyRepository.DeleteChatKey(chatRoom.Id);
                     }
                     catch (Exception)
                     {
