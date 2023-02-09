@@ -4,8 +4,8 @@ describe("Dashboard", () => {
   beforeEach(function () {
     cy.visit(baseUrl);
     cy.contains("Login").click();
-    cy.get("#email").type("member2@gmail.com");
-    cy.get("#password").type("member2");
+    cy.get("#email").type("admin1@gmail.com");
+    cy.get("#password").type("admin1");
     cy.get("#login-button").click();
     cy.contains("Logout");
   });
