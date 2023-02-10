@@ -10,6 +10,7 @@ describe("Login", () => {
     cy.get("#register-username").type("sandy");
     cy.get("#register-password").type("Member123!");
     cy.get("#register-confirmed-password").type("Member123!");
+    cy.get("#agree-checkbox").click();
     cy.get("#register-button").click();
   });
 
@@ -37,7 +38,7 @@ describe("Login", () => {
     cy.contains("Invalid Credentials");
   });
 
-  it.only("locks out a user after 4 attempts", function () {
+  it("locks out a user after 4 attempts", function () {
     cy.visit(baseUrl);
     cy.get('[data-cy="reglink"]').click();
 
@@ -45,6 +46,7 @@ describe("Login", () => {
     cy.get("#register-username").type("megan");
     cy.get("#register-password").type("Member123!");
     cy.get("#register-confirmed-password").type("Member123!");
+    cy.get("#agree-checkbox").click();
     cy.get("#register-button").click();
 
     cy.get("#email").type("member391023@gmail.com");
