@@ -1,4 +1,6 @@
-﻿namespace ChatJaffApp.Server.ChatRoom.Encryption
+﻿using System.Text;
+
+namespace ChatJaffApp.Server.ChatRoom.Encryption
 {
     public class EncryptionHelper
     {
@@ -25,6 +27,18 @@
             return key;
 
         
+        }
+
+        public string EncryptMessage(string message, string chatKey)
+        {
+
+            var keyStringArray = chatKey.Split(".");
+            string key = keyStringArray[0];
+
+            // skapa salt
+            byte[] salt = Encoding.Unicode.GetBytes(keyStringArray[1]);
+
+            return AesEncryptManager.Encrypt(message, key, salt);
         }
 
 
