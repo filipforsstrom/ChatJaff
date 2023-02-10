@@ -38,7 +38,7 @@ namespace ChatJaffApp.Server.ChatRoom.Controllers
         [Route("{messageId:guid}")]
         public async Task<IActionResult> EditMessage([FromRoute]Guid messageId, [FromBody] EditMessageDto newMessage)
         {
-            string result = newMessage.EditedMessage;
+            string returnMessage = newMessage.EditedMessage;
             var message = await _messageRepository.GetMesssage(messageId);
 
             var chatKey = await _chatKeyRepository.GetChatKeyAsync(message.ChatId);
@@ -53,7 +53,7 @@ namespace ChatJaffApp.Server.ChatRoom.Controllers
             {
                 return BadRequest();
             }
-            return Ok(result);
+            return Ok(returnMessage);
         }
     }
 }
