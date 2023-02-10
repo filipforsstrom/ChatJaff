@@ -30,7 +30,7 @@ namespace ChatJaffApp.Server.Identity.Data
                 NormalizedUserName = "MEMBER1",
                 Email = "member1@gmail.com",
                 NormalizedEmail = "MEMBER1@GMAIL.COM",
-                LockoutEnabled = false,
+                LockoutEnabled = true,
                 EmailConfirmed = true,
                 AgreedToUserTerms=true,
             };
