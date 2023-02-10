@@ -47,9 +47,10 @@
             await authStateProvider.Register(register);
             navigationManager.NavigateTo("account/login");
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            errorMessage = "Failed to register.";
+            //errorMessage = "Failed to register.";
+            errorMessage = ex.Message;
         }
     }
 }
