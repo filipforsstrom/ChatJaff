@@ -1,5 +1,6 @@
 using ChatJaffApp.Server.ChatRoom.Contracts;
 using ChatJaffApp.Server.ChatRoom.Controllers;
+using ChatJaffApp.Server.ChatRoom.Models;
 using ChatJaffApp.Server.Data;
 using ChatJaffApp.Server.Data.Contracts;
 using ChatJaffApp.Server.Data.Models;
@@ -47,6 +48,25 @@ namespace ChatJaffApp.Server.ChatRoom.Repositories
             }
            
 
+        }
+
+        public async Task<Message> EditMessage(EditMessageDto newMessage)
+        {
+            try
+            {
+                var oldMessage = GetMesssage(newMessage.MessageId);
+                oldMessage.Content = newMessage.EditedMessage;
+
+                _context.Update(oldMessage);
+                await _context.SaveChangesAsync();
+                return oldMessage;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+
+            
         }
 
         private Message GetMesssage(Guid id)
