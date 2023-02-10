@@ -6,7 +6,7 @@ namespace ChatJaffApp.Client.ChatRoom.Messages.Contracts
 {
     public interface IMessageService
     {
-        Task<ServiceResponseViewModel<ReceiveMessageDto>> EditMessage(EditMessageRequest newMessage);
+        Task<ServiceResponseViewModel<string>> EditMessage(EditMessageRequest newMessage);
         Task<ServiceResponseViewModel<string>> DeleteMessage(Guid id);
 
     }
