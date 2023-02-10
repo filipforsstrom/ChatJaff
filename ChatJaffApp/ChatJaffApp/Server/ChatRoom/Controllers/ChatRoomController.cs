@@ -9,8 +9,6 @@ using ChatJaffApp.Server.Identity.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Reflection.Metadata.Ecma335;
 using System.Text;
 
 namespace ChatJaffApp.Server.ChatRoom.Controllers
