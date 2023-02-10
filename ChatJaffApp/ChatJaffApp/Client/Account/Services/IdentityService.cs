@@ -78,6 +78,7 @@ namespace ChatJaffApp.Client.Account.Services
                 Email = register.Email,
                 Password = register.Password,
                 Username = register.Username,
+                AgreedToUserTerms = register.ConfirmUserTerms,
             };
 
             var response = await _httpClient.PostAsJsonAsync("api/Identity/Register", registerRequest);

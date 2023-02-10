@@ -17,5 +17,7 @@ namespace ChatJaffApp.Client.Account.Models
         [Required]
         [Compare(nameof(Password), ErrorMessage = "Password do not match")]
         public string? ValidatePassword { get; set; }
+
+        public bool ConfirmUserTerms { get; set; }=false;
     }
 }
