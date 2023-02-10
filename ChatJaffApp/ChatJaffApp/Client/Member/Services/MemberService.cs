@@ -1,12 +1,12 @@
 ﻿using ChatJaffApp.Client.ChatRoom.CreateChat.Models;
-using ChatJaffApp.Client.ChatRoom.Member.Contracts;
-using ChatJaffApp.Client.ChatRoom.Member.Models;
 using ChatJaffApp.Client.ChatRoom.MyChatRooms.Models;
+using ChatJaffApp.Client.Member.Contracts;
+using ChatJaffApp.Client.Member.Models;
 using ChatJaffApp.Client.Shared.Models;
 using System.Net.Http;
 using System.Net.Http.Json;
 
-namespace ChatJaffApp.Client.ChatRoom.Member.Services
+namespace ChatJaffApp.Client.Member.Services
 {
     public class MemberService : IMemberService
     {
@@ -15,24 +15,6 @@ namespace ChatJaffApp.Client.ChatRoom.Member.Services
         public MemberService(HttpClient httpClient)
         {
             _httpClient = httpClient;
-        }
-
-        public async Task<ServiceResponseViewModel<ChatMemberResponse>> AddChatMember(AddMemberDto addMemberDto)
-        {
-            ServiceResponseViewModel<ChatMemberResponse> addMemberResponse = new();
-            var response = await _httpClient.PatchAsJsonAsync($"api/chatroom/{addMemberDto.ChatId}", addMemberDto.UserId);
-
-            if (!response.IsSuccessStatusCode)
-            {
-                addMemberResponse.Success = false;
-                addMemberResponse.Message = await response.Content.ReadAsStringAsync();
-                return addMemberResponse;
-            }
-
-            addMemberResponse.Success = true;
-            addMemberResponse.Message = await response.Content.ReadAsStringAsync();
-            return addMemberResponse;
-
         }
 
         public async Task<List<ChatMemberResponse>> GetAllMembers()
