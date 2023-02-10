@@ -3,6 +3,7 @@ using ChatJaffApp.Server.ChatRoom.Contracts;
 using ChatJaffApp.Server.ChatRoom.Encryption;
 using ChatJaffApp.Server.ChatRoom.Models;
 using ChatJaffApp.Server.ChatRoom.Repositories;
+using ChatJaffApp.Server.Data.Contracts;
 using ChatJaffApp.Server.Data.Models;
 using ChatJaffApp.Server.Identity.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -10,6 +11,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Reflection.Metadata.Ecma335;
+using System.Text;
 
 namespace ChatJaffApp.Server.ChatRoom.Controllers
 {
@@ -65,6 +67,20 @@ namespace ChatJaffApp.Server.ChatRoom.Controllers
             try
             {
                 var chatRoom = await _chatRoomRepository.GetChatRoomAsync(chatId);
+
+                var key = await _chatKeyRepository.GetChatKeyAsync(chatRoom.Id);
+
+                string[] keyList = key.Split(".");
+                var generatedKey = keyList[0];
+                var generatedSalt = Encoding.Unicode.GetBytes(keyList[1]);
+
+
+                foreach (var message in chatRoom.Messages)
+                {
+                    message.Content = AesEncryptManager.Decrypt(message.Content, generatedKey, generatedSalt);
+                }
+
+
                 var chatRoomDto = _chatRoomRepository.ConvertChatToDto(chatRoom);
                 return Ok(chatRoomDto);
             }

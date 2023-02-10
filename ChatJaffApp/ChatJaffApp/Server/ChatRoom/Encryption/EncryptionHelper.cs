@@ -10,7 +10,7 @@
             String randomstring = "";
 
             for (int i = 0; i < size; i++)
-            {
+            {   
                 int x = res.Next(str.Length);
                 randomstring = randomstring + str[x];
             }
