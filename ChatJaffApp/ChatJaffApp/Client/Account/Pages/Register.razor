@@ -33,7 +33,7 @@
             <NavLink id="cancel-register-link" href="account/login" class="btn btn-link">Cancel</NavLink>
 
            
-            <input type="checkbox" @bind-value="register.ConfirmUserTerms" />
+            <input id="agree-checkbox" type="checkbox" @bind-value="register.ConfirmUserTerms" />
             <label>I agree to user terms</label>
         </EditForm>
         <p style="color:red">@errorMessage</p>

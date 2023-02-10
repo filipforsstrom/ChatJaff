@@ -32,6 +32,7 @@ namespace ChatJaffApp.Server.Identity.Data
                 NormalizedEmail = "MEMBER1@GMAIL.COM",
                 LockoutEnabled = false,
                 EmailConfirmed = true,
+                AgreedToUserTerms=true,
             };
             member1.PasswordHash = passwordHasher.HashPassword(member1, "member1");
 
@@ -44,6 +45,7 @@ namespace ChatJaffApp.Server.Identity.Data
                 NormalizedEmail = "MEMBER2@GMAIL.COM",
                 LockoutEnabled = false,
                 EmailConfirmed = true,
+                AgreedToUserTerms=true,
             };
 
             member2.PasswordHash = passwordHasher.HashPassword(member2, "member2");
@@ -57,7 +59,8 @@ namespace ChatJaffApp.Server.Identity.Data
                 NormalizedEmail = "BANNED1@GMAIL.COM",
                 LockoutEnabled = false,
                 EmailConfirmed = true,
-                IsBanned = true
+                IsBanned = true,
+                AgreedToUserTerms=true,
             };
 
             banned1.PasswordHash = passwordHasher.HashPassword(banned1, "banned1");
@@ -71,7 +74,8 @@ namespace ChatJaffApp.Server.Identity.Data
                 NormalizedEmail = "TOBAN1@GMAIL.COM",
                 LockoutEnabled = false,
                 EmailConfirmed = true,
-                IsBanned = false
+                IsBanned = false,
+                AgreedToUserTerms=true,
             };
 
             toBan1.PasswordHash = passwordHasher.HashPassword(banned1, "toban1");
@@ -85,7 +89,9 @@ namespace ChatJaffApp.Server.Identity.Data
                 NormalizedEmail = "ADMIN1@GMAIL.COM",
                 LockoutEnabled = false,
                 EmailConfirmed = true,
-                IsBanned = false
+                IsBanned = false,
+                AgreedToUserTerms=true,
+                
             };
 
             admin1.PasswordHash = passwordHasher.HashPassword(banned1, "admin1");
