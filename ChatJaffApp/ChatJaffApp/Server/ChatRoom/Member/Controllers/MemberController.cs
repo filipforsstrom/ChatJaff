@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using static ChatJaffApp.Server.ChatRoom.Controllers.ChatRoomController;
 using ChatJaffApp.Server.ChatRoom.Member.Contracts;
 using ChatJaffApp.Server.ChatRoom.Contracts;
-using ChatJaffApp.Client.ChatRoom.Member.Contracts;
+using ChatJaffApp.Client.Member.Contracts;
 
 namespace ChatJaffApp.Server.ChatRoom.Member.Controllers
 {

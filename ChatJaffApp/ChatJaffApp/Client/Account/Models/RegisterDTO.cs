@@ -9,6 +9,8 @@
 
         public string? Password { get; set; }
 
+        public bool? AgreedToUserTerms { get; set; }=false;
+
 
     }
 }

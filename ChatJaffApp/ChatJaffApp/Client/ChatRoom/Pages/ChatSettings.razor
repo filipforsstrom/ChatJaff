@@ -1,9 +1,10 @@
 ﻿@page "/chatrooms/{id:guid}/settings/"
-@using ChatJaffApp.Client.ChatRoom.Components
-@using ChatJaffApp.Client.ChatRoom.Member.Models;
+@using ChatJaffApp.Client.ChatRoom.Components;
 @using ChatJaffApp.Client.ChatRoom.MyChatRooms.Contracts;
 @using System.Security.Claims;
 @using ChatJaffApp.Client.ChatRoom.MyChatRooms.Models;
+@using ChatJaffApp.Client.Member.Contracts;
+@using ChatJaffApp.Client.Member.Models;
 @inject IMemberService memberService
 @inject IChatRoomsService chatRoomService
 @inject AuthenticationStateProvider authenticationStateProvider;
@@ -25,9 +26,13 @@
                     {
                         <li class="list-group-item">
                             <p>@member.Username</p>
-                            @if (IsModerator)
+                            @if(IsModerator)
                             {
-                                <button class="btn btn-danger btn-sm" @onclick="() => DeleteMemberFromChat(member)">Remove</button>
+                                <button class="btn btn-danger btn-sm" @onclick="() => RemoveMemberFromChat(member)">@(member.UserId == UserId ? "Leave" : "Remove")</button>
+                            }
+                            else if(member.UserId == UserId)
+                            {
+                                <button class="btn btn-danger btn-sm" @onclick="() => RemoveMemberFromChat(member)">Leave</button>
                             }
                         </li>
                     }
@@ -46,9 +51,9 @@
         <h2>Add Member</h2>
         <FindMemberForChat CurrentChatMembers="ChatMembers" OnFoundMember="HandleFoundMember"></FindMemberForChat>
 
-        @if (!string.IsNullOrEmpty(ErrorMessage))
+        @if (!string.IsNullOrEmpty(Message))
         {
-            <p>@ErrorMessage</p>
+            <p>@Message</p>
         }
 
         @if (IsModerator)
@@ -65,7 +70,7 @@
     public bool IsModerator { get; set; }
     public List<ChatMemberViewModel> ChatMembers = new();
     public GetChatRoomDto ChatRoom { get; set; } = new();
-    public string? ErrorMessage { get; set; }
+    public string? Message { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -76,27 +81,37 @@
         IsModerator = UserId == ChatRoom.CreatorId;
     }
 
-    public async Task DeleteMemberFromChat(ChatMemberViewModel memberToDeleteFromChat)
+    public async Task RemoveMemberFromChat(ChatMemberViewModel member)
     {
-        if(memberToDeleteFromChat is null)
+        if (member is null)
         {
             return;
         }
-        ChatRoom.ChatMembers.Remove(memberToDeleteFromChat);
+
+        var result = await chatRoomService.RemoveChatMember(Id, member.UserId);
+
+        if (!result.Success)
+        {
+            Message = result.Message;
+            return;
+        }
+
+        ChatMembers.Remove(member);
+
     }
 
     public async Task OnDeleteChatRoom()
     {
         if (!IsModerator)
         {
-            ErrorMessage = "Not allowed";
+            Message = "Not allowed";
         }
 
         var result = await chatRoomService.DeleteChatRoom(Id);
 
         if (!result.Success)
         {
-            ErrorMessage = result.Message;
+            Message = result.Message;
         }
 
         navManager.NavigateTo("/chatrooms");
@@ -110,11 +125,11 @@
                 ChatId = Id
             };
 
-        var memberResponse = await memberService.AddChatMember(addMemberDto);
+        var memberResponse = await chatRoomService.AddChatMember(addMemberDto);
 
         if (!memberResponse.Success)
         {
-            ErrorMessage = memberResponse.Message;
+            Message = memberResponse.Message;
             return;
         }
 

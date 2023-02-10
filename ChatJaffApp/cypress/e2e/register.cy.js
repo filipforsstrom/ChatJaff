@@ -12,6 +12,7 @@ describe("register", () => {
     cy.get("#register-username").type("sandy");
     cy.get("#register-password").type("Member123!");
     cy.get("#register-confirmed-password").type("Member123!");
+    cy.get("#agree-checkbox").click();
     cy.get("#register-button").click();
     cy.url().should("include", "account/login");
   });

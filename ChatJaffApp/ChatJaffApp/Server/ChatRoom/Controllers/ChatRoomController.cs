@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using ChatJaffApp.Server.ChatRoom.Contracts;
+using ChatJaffApp.Server.ChatRoom.Encryption;
 using ChatJaffApp.Server.ChatRoom.Models;
 using ChatJaffApp.Server.Identity.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -15,12 +16,14 @@ namespace ChatJaffApp.Server.ChatRoom.Controllers
         private readonly IChatRoomRepository _chatRoomRepository;
         private readonly IMapper _mapper;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly IChatKeyRepository _chatKeyRepository;
 
-        public ChatRoomController(IChatRoomRepository chatRoomRepository, IMapper mapper, SignInManager<ApplicationUser> signInManager)
+        public ChatRoomController(IChatRoomRepository chatRoomRepository, IMapper mapper, SignInManager<ApplicationUser> signInManager, IChatKeyRepository chatKeyRepository)
         {
             _chatRoomRepository = chatRoomRepository;
             _mapper = mapper;
             _signInManager = signInManager;
+            _chatKeyRepository = chatKeyRepository;
         }
 
         [Authorize]
@@ -104,12 +107,19 @@ namespace ChatJaffApp.Server.ChatRoom.Controllers
 
             var result = await _chatRoomRepository.CreateChatRoomAsync(newChat);
 
+            if (chatRequest.Encrypted)
+            {
+                EncryptionHelper encryptionHelper = new();
+                var dbKey = encryptionHelper.GenerateDbKey();
+                _chatKeyRepository.AddChatKeyAsync(result, dbKey);
+            }
+
             return Ok(result);
         }
 
         [Authorize]
-        [HttpPatch]
-        [Route("{chatId:guid}")]
+        [HttpPost]
+        [Route("{chatId:guid}/members")]
         public async Task<IActionResult> AddMemberToChat([FromRoute] Guid chatId, [FromBody] Guid userId)
         {
             var chatRoom = await _chatRoomRepository.GetChatRoomAsync(chatId);
@@ -119,6 +129,20 @@ namespace ChatJaffApp.Server.ChatRoom.Controllers
             await _chatRoomRepository.UpdateChatRoomAsync(chatRoom);
 
             return Ok("Member added");
+        }
+
+        [Authorize]
+        [HttpDelete]
+        [Route("{chatId:guid}/members/{userId:guid}")]
+        public async Task<IActionResult> RemoveMemberFromChat([FromRoute] Guid chatId, [FromRoute] Guid userId)
+        {
+            var chatRoom = await _chatRoomRepository.GetChatRoomAsync(chatId);
+
+            chatRoom.RemoveMember(userId);
+
+            await _chatRoomRepository.UpdateChatRoomAsync(chatRoom);
+
+            return NotFound("Member Removed");
         }
 
         [Authorize]
@@ -135,6 +159,21 @@ namespace ChatJaffApp.Server.ChatRoom.Controllers
                 {
                     return BadRequest();
                 }
+
+                if (chatRoom.Encrypted)
+                {
+                    try
+                    {
+                        // Ensure related messages are deleted
+                        // Run after x days
+                        await _chatKeyRepository.DeleteChatKey(chatRoom.Id);
+                    }
+                    catch (Exception)
+                    {
+                        // log error
+                    }
+                }
+
                 return NoContent();
 
             }

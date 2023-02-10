@@ -12,5 +12,6 @@ namespace ChatJaffApp.Server.ChatRoom.Contracts
         void AddMember(Guid userId);
         ICollection<Message> Messages { get; set; }
         Guid CreatorId { get; set; }
+        void RemoveMember(Guid userId);
     }
 }
