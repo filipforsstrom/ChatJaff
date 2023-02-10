@@ -31,8 +31,12 @@
                 Register
             </button>
             <NavLink id="cancel-register-link" href="account/login" class="btn btn-link">Cancel</NavLink>
+
+           
+            <input id="agree-checkbox" type="checkbox" @bind-value="register.ConfirmUserTerms" />
+            <label>I agree to user terms</label>
         </EditForm>
-        <p>@errorMessage</p>
+        <p style="color:red">@errorMessage</p>
     </div>
 </div>
 
@@ -42,14 +46,22 @@
 
     private async Task HandleSubmit()
     {
-        try
+        if (!register.ConfirmUserTerms)
         {
-            await authStateProvider.Register(register);
-            navigationManager.NavigateTo("account/login");
+            errorMessage = "You must agree to user terms to register";
         }
-        catch (Exception)
+        else
         {
-            errorMessage = "Failed to register.";
+            try
+            {
+                await authStateProvider.Register(register);
+                navigationManager.NavigateTo("account/login");
+            }
+            catch (Exception)
+            {
+                errorMessage = "Failed to register.";
+            }
         }
+       
     }
 }
