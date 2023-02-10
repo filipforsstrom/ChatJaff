@@ -94,13 +94,13 @@ namespace ChatJaffApp.Server.Identity.Controller
             }
             catch (AuthenticationException exception)
             {
-                return Unauthorized(exception.Message);
+                return Unauthorized("Unauthorized access");
             }
             catch (NullReferenceException exception)
             {
-                return BadRequest(exception.Message);
+                return BadRequest("Invalid Credentials");
             }
-            catch (Exception exception)
+            catch (Exception)
             {
                 return StatusCode(500);
             }

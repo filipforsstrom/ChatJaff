@@ -45,7 +45,13 @@
         }
         catch (Exception ex)
         {
-            FailedLogin = ex.Message;
+            if (string.IsNullOrEmpty(ex.Message))
+            {
+                FailedLogin = "Service error";
+            } else
+            {
+                FailedLogin = ex.Message;                
+            }
         }
     }
 }
