@@ -1,6 +1,9 @@
 ﻿using ChatJaffApp.Client.ChatRoom.Messages.Contracts;
+using ChatJaffApp.Client.ChatRoom.Messages.Models;
 using ChatJaffApp.Client.Shared.Models;
 using ChatJaffApp.Client.Shared.Models.Contracts;
+using System.Net.Http.Json;
+using static ChatJaffApp.Client.ChatRoom.Pages.ChatRoom;
 
 namespace ChatJaffApp.Client.ChatRoom.Messages.Services
 {
@@ -12,14 +15,23 @@ namespace ChatJaffApp.Client.ChatRoom.Messages.Services
         {
             _httpClient = httpClient;
         }
-        public Task GetChatMessages()
-        {
-            throw new NotImplementedException();
-        }
 
-        public Task SendMessage()
+        public async Task<ServiceResponseViewModel<ReceiveMessageDto>> EditMessage(EditMessageRequest newMessage)
         {
-            throw new NotImplementedException();
+            ServiceResponseViewModel<ReceiveMessageDto> responseViewModel = new();
+
+            var response = await _httpClient.PostAsJsonAsync("/api/message/", newMessage);
+            if(!response.IsSuccessStatusCode)
+            {
+                responseViewModel.Success = false;
+                responseViewModel.Message = response.Content.ToString();
+
+            }
+            responseViewModel.Success = true;
+            responseViewModel.Message = "";
+            responseViewModel.Data = await response.Content.ReadFromJsonAsync<ReceiveMessageDto>();
+
+            return responseViewModel;
         }
 
         public async Task<ServiceResponseViewModel<string>> DeleteMessage(Guid id)
