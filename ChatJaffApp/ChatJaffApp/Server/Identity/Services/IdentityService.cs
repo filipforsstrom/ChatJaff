@@ -37,28 +37,24 @@ namespace ChatJaffApp.Server.Identity.Services
             return new LoginResponseDto
             {
                 Token = jwt
-
             };
-
         }
 
         public async Task<ApplicationUser> GetUserFromIdentityDb(string userName)
         {
-
             var user = await _signInManager.UserManager.FindByEmailAsync(userName);
             if (user is null)
             {
                 throw new KeyNotFoundException("No user found");
             }
             return user;
-
         }
         private async Task<string> CreateTokenAsync(ApplicationUser user)
         {
             var claims = await CreateUserClaimsAsync(user);
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
                _configuration.GetSection("JWTSettings:SecretForKey").Value));
-               
+
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var token = new JwtSecurityToken(
@@ -82,7 +78,6 @@ namespace ChatJaffApp.Server.Identity.Services
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id),
                 new Claim(ClaimTypes.Name, user.UserName)
-
             };
 
             foreach (var role in roles)
@@ -90,10 +85,19 @@ namespace ChatJaffApp.Server.Identity.Services
                 claims.Add(new Claim(ClaimTypes.Role, role));
             }
 
-
             return claims;
         }
 
-        
+        public async Task BanUserAsync(string userName)
+        {
+            var user = await _signInManager.UserManager.FindByNameAsync(userName);
+            if (user is null)
+            {
+                throw new Exception("No user found");
+            }
+
+            user.IsBanned = true;
+            await _signInManager.UserManager.UpdateAsync(user);
+        }
     }
 }

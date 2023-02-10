@@ -8,6 +8,6 @@ namespace ChatJaffApp.Server.Identity.Services
     {
         Task<ILoginResponseDto> LoginAsync(ILoginRequestDto loginRequest);
         Task<ApplicationUser> GetUserFromIdentityDb(string userName);
-
+        Task BanUserAsync(string userName);
     }
 }
