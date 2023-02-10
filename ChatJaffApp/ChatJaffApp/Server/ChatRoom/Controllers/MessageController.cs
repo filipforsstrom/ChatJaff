@@ -28,8 +28,9 @@ namespace ChatJaffApp.Server.ChatRoom.Controllers
         }
 
         [Authorize]
-        [HttpPost]
-        public async Task<IActionResult> EditMessage([FromBody] EditMessageDto newMessage)
+        [HttpPut]
+        [Route("{messageId:guid}")]
+        public async Task<IActionResult> EditMessage([FromRoute]Guid messageId, [FromBody] EditMessageDto newMessage)
         {
             var response = await _messageRepository.EditMessage(newMessage);
             if(response is null)

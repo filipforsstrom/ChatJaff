@@ -20,7 +20,7 @@ namespace ChatJaffApp.Client.ChatRoom.Messages.Services
         {
             ServiceResponseViewModel<ReceiveMessageDto> responseViewModel = new();
 
-            var response = await _httpClient.PostAsJsonAsync("/api/message/", newMessage);
+            var response = await _httpClient.PutAsJsonAsync($"/api/message/{newMessage.MessageId}", newMessage);
             if(!response.IsSuccessStatusCode)
             {
                 responseViewModel.Success = false;
