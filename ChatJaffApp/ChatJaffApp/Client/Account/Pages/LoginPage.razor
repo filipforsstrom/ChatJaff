@@ -17,12 +17,15 @@
                 <label>Password</label>
                 <InputText id="password" @bind-Value="loginModel.Password" type="password" class="form-control" />
             </div>
-            <button id="login-button"  class="btn btn-primary">
+            <button id="login-button"  class="btn btn-primary mt-2">
                 Login
             </button>
             <NavLink id="register-link" href="account/register" class="btn btn-link">Register</NavLink>
         </EditForm>
-        <h2>@FailedLogin</h2>
+        
+    </div>
+    <div>
+        <h4 style="color:red;">@FailedLogin</h4>
     </div>
 </div>
 
@@ -34,12 +37,13 @@
     {
         try
         {
+            FailedLogin = null;
             await authStateProvider.Login(loginModel);
             navigationManager.NavigateTo("");
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            FailedLogin = "Login failed";
+            FailedLogin = ex.Message;
         }
     }
 }

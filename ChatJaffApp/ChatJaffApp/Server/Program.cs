@@ -22,7 +22,13 @@ builder.Services.AddServiceInjections();
 builder.Services.AddDbContext<IdentityContext>(options => options.UseSqlite(
     builder.Configuration.GetConnectionString("IdentityDb")
     ));
-builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+{    
+    options.SignIn.RequireConfirmedAccount = false;
+    options.Lockout.MaxFailedAccessAttempts = 4;
+    options.Lockout.AllowedForNewUsers = true;
+    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(30);
+})
     .AddEntityFrameworkStores<IdentityContext>();
 
 builder.Services.ConfigureAuthentication(builder.Configuration);

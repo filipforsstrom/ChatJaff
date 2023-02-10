@@ -71,9 +71,18 @@ namespace ChatJaffApp.Server.Identity.Controller
 
                 if (userInDb.IsBanned) return BadRequest("User is banned");
 
-                var signInResult = await _signInManager.CheckPasswordSignInAsync(userInDb, user.Password, false);
+                var signInResult = await _signInManager.CheckPasswordSignInAsync(userInDb, user.Password, lockoutOnFailure: true);
+                
+                if (!signInResult.Succeeded)
+                {
+                    string errorMessage = "Invalid Credentials";
 
-                if (!signInResult.Succeeded) return BadRequest("Invalid Credentials");
+                    if (signInResult.IsLockedOut)
+                    {
+                        errorMessage = "User is locked out";
+                    }
+                    return BadRequest(errorMessage);
+                }
 
                 await _signInManager.SignInAsync(userInDb, new AuthenticationProperties
                 {
