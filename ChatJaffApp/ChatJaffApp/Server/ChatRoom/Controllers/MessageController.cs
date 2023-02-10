@@ -1,4 +1,5 @@
 ﻿using ChatJaffApp.Server.ChatRoom.Contracts;
+using ChatJaffApp.Server.ChatRoom.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -24,6 +25,19 @@ namespace ChatJaffApp.Server.ChatRoom.Controllers
             await _messageRepository.DeleteMessage(id);
 
             return Ok();
+        }
+
+        [Authorize]
+        [HttpPut]
+        [Route("{messageId:guid}")]
+        public async Task<IActionResult> EditMessage([FromRoute]Guid messageId, [FromBody] EditMessageDto newMessage)
+        {
+            var response = await _messageRepository.EditMessage(newMessage);
+            if(response is null)
+            {
+                return BadRequest(response);
+            }
+            return Ok(response);
         }
     }
 }
