@@ -38,7 +38,7 @@ namespace ChatJaffApp.Server.ChatRoom.Repositories
         {
             try
             {
-                var message = GetMesssage(id);
+                var message = await GetMesssage(id);
                 _context.Messages.Remove(message);
                 await _context.SaveChangesAsync();
             }
@@ -50,16 +50,21 @@ namespace ChatJaffApp.Server.ChatRoom.Repositories
 
         }
 
-        public async Task<Message> EditMessage(EditMessageDto newMessage)
+        public async Task<bool> EditMessage(EditMessageDto newMessage)
         {
             try
             {
-                var oldMessage = GetMesssage(newMessage.MessageId);
+                var oldMessage = await GetMesssage(newMessage.MessageId);
                 oldMessage.Content = newMessage.EditedMessage;
 
                 _context.Update(oldMessage);
-                await _context.SaveChangesAsync();
-                return oldMessage;
+                var result = await _context.SaveChangesAsync();
+
+                if(result == 0)
+                {
+                    return false;
+                }
+                return true;
             }
             catch (Exception ex)
             {
@@ -69,7 +74,7 @@ namespace ChatJaffApp.Server.ChatRoom.Repositories
             
         }
 
-        private Message GetMesssage(Guid id)
+        public async Task<Message> GetMesssage(Guid id)
         {
 
             var message = _context.Messages.Select(m => m).Where(m => m.Id == id).FirstOrDefault();
