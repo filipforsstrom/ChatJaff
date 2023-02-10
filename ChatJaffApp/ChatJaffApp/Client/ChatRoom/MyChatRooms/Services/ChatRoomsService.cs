@@ -1,6 +1,7 @@
 ﻿using ChatJaffApp.Client.ChatRoom.CreateChat.Models;
 using ChatJaffApp.Client.ChatRoom.MyChatRooms.Contracts;
 using ChatJaffApp.Client.ChatRoom.MyChatRooms.Models;
+using ChatJaffApp.Client.Member.Models;
 using ChatJaffApp.Client.Shared.Models;
 using System.Net.Http.Json;
 
@@ -25,19 +26,6 @@ namespace ChatJaffApp.Client.ChatRoom.MyChatRooms.Services
             return chatRoomList;
         }
 
-        public async Task<List<ChatMemberViewModel>> GetChatMembers(Guid chatId)
-        {
-            var response = await _httpClient.GetAsync($"/api/chatroom/{chatId}");
-
-            if (!response.IsSuccessStatusCode)
-            {
-                return new List<ChatMemberViewModel>();
-            }
-
-            var chatRoom = await response.Content.ReadFromJsonAsync<GetChatRoomDto>();
-            return chatRoom.ChatMembers;
-        }
-
         public async Task<List<ChatRoomsViewModel>> GetMyChats()
         {
             var response = await _httpClient.GetAsync($"/api/chatroom");
@@ -48,8 +36,6 @@ namespace ChatJaffApp.Client.ChatRoom.MyChatRooms.Services
             var MyChats = await response.Content.ReadFromJsonAsync<List<ChatRoomsViewModel>>();
             return MyChats;
         }
-     
-        
 
         public async Task<GetChatRoomDto> GetChatRoom(Guid chatId)
         {
@@ -79,6 +65,39 @@ namespace ChatJaffApp.Client.ChatRoom.MyChatRooms.Services
             responseViewModel.Success = true;
             return responseViewModel;
 
+        }
+        public async Task<ServiceResponseViewModel<string>> RemoveChatMember(Guid chatId, Guid userId)
+        {
+            ServiceResponseViewModel<string> responseViewModel = new();
+            var response = await _httpClient.DeleteAsync($"api/chatroom/{chatId}/members/{userId}");
+
+            if(!(response.StatusCode == System.Net.HttpStatusCode.NotFound))
+            {
+                responseViewModel.Message = "Something went wrong";
+                responseViewModel.Success = false;
+                return responseViewModel;
+            }
+
+            responseViewModel.Message = await response.Content.ReadAsStringAsync();
+            responseViewModel.Success = true;
+            return responseViewModel;
+        }
+
+        public async Task<ServiceResponseViewModel<ChatMemberResponse>> AddChatMember(AddMemberDto addMemberDto)
+        {
+            ServiceResponseViewModel<ChatMemberResponse> addMemberResponse = new();
+            var response = await _httpClient.PostAsJsonAsync($"api/chatroom/{addMemberDto.ChatId}/members", addMemberDto.UserId);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                addMemberResponse.Success = false;
+                addMemberResponse.Message = await response.Content.ReadAsStringAsync();
+                return addMemberResponse;
+            }
+
+            addMemberResponse.Success = true;
+            addMemberResponse.Message = await response.Content.ReadAsStringAsync();
+            return addMemberResponse;
         }
     }
 }

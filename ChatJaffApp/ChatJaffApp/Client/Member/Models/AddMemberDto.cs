@@ -1,4 +1,4 @@
-﻿namespace ChatJaffApp.Client.ChatRoom.Member.Models
+﻿namespace ChatJaffApp.Client.Member.Models
 {
     public class AddMemberDto
     {
