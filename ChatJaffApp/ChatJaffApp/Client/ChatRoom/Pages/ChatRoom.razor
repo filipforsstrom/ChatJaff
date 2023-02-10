@@ -186,10 +186,10 @@
         if (response.Success)
         {
             //spara det uppdaterade meddelandet i listan lokalt
-            ReceiveMessageDto editedMessageToAdd = response.Data;
-            editedMessageToAdd.UserName = CurrentUserName;
+            //ReceiveMessageDto editedMessageToAdd = response.Data;
+            ////editedMessageToAdd.UserName = CurrentUserName;
 
-            Messages.Find(m => m.Id == editedMessageToAdd.Id).Content = editedMessageToAdd.Content;
+            Messages.Find(m => m.Id == messageId).Content = response.Data;
             messageEdited = false;
             await InvokeAsync(StateHasChanged);
         }
