@@ -55,7 +55,7 @@ describe("Login", () => {
 
 
     for (let i = 0; i < 4; i++) {
-      cy.get("#login-button").click().then((btn) => cy.wait(1000))
+      cy.get("#login-button").click()
 
     }
 
