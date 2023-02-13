@@ -98,6 +98,11 @@
 
         ChatMembers.Remove(member);
 
+        if(!ChatMembers.Any(c => c.UserId == UserId))
+        {
+            navManager.NavigateTo("/chatrooms");
+        }
+
     }
 
     public async Task OnDeleteChatRoom()
