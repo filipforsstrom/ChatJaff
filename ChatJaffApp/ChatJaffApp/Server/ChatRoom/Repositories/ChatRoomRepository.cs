@@ -1,11 +1,6 @@
-﻿using ChatJaffApp.Client.ChatRoom.CreateChat.Models;
-using ChatJaffApp.Client.ChatRoom.MyChatRooms.Models;
-using ChatJaffApp.Client.ChatRoom.Pages;
-using ChatJaffApp.Server.ChatRoom.Contracts;
-using ChatJaffApp.Server.ChatRoom.Controllers;
+﻿using ChatJaffApp.Server.ChatRoom.Contracts;
 using ChatJaffApp.Server.ChatRoom.Models;
 using ChatJaffApp.Server.Data;
-using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
 namespace ChatJaffApp.Server.ChatRoom.Repositories
@@ -36,6 +31,15 @@ namespace ChatJaffApp.Server.ChatRoom.Repositories
             var chatRooms = _context.ChatRooms.Where(x => x.ChatMembers.Any(cm => cm.UserId == memberId)).ToList();
             return chatRooms;
         }
+
+        public async Task<IEnumerable<ChatMember>> GetChatRoomMembersAsync(Guid chatId)
+        {
+            var chatRoomMembers = await _context.ChatMembers.Include(c => c.Member)
+                .ToListAsync();
+
+            return chatRoomMembers;
+        }
+
         public async Task<Chat> GetChatRoomAsync(Guid chatId)
         {
             var chatRoom = await _context.ChatRooms.Include(c => c.ChatMembers)
@@ -44,7 +48,7 @@ namespace ChatJaffApp.Server.ChatRoom.Repositories
                 .ThenInclude(m => m.Member)
                 .FirstOrDefaultAsync(c => c.Id == chatId);
 
-            if(chatRoom == null)
+            if (chatRoom == null)
             {
                 throw new KeyNotFoundException();
             }

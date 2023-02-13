@@ -48,9 +48,9 @@
                         <button style="margin-top: 2px;" data-cy="delete-message-button" disabled="@messageEdited" class="btn btn-primary btn-sm" @onclick="() => deleteMessage(message.Id)">Delete</button>
                         <button style="margin-top: 2px;" data-cy="edit-message-button" disabled="@messageEdited" class="btn btn-info btn-sm" @onclick="() => editMessage()">Edit</button>
                     }
-                    
-            </li>
-        }
+
+                </li>
+            }
         </ul>
     }
 </div>
@@ -84,42 +84,61 @@
         GetStoredMessages();
 
         var state = await authStateProvider.GetAuthenticationStateAsync();
-        var userId = state.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+        var userIdValue = state.User.FindFirst(ClaimTypes.NameIdentifier).Value;
         CurrentUserName = state.User.FindFirst(ClaimTypes.Name).Value;
+        Guid userId = Guid.Parse(userIdValue);
+        var creatorId = CurrentChatRoom.CreatorId;
 
-        MessageDto.UserId = Guid.Parse(userId);
-        MessageDto.UserName = CurrentUserName;
-        MessageDto.Encrypted = CurrentChatRoom.Encrypted;
+        //ChatMemberViewModel currentUser = new()
+        //{
+        //    UserId = userId,
+        //    Username = CurrentUserName,
+        //};
+        //CurrentChatRoom.ChatMembers.Add(currentUser);
 
-        var url = navigation.ToAbsoluteUri("/chathub");
 
-        hubConnection = new HubConnectionBuilder()
-            .WithUrl(url)
-            .WithAutomaticReconnect()
-            .Build();
 
-        hubConnection.On<string>("ReceiveMessage", async (response) =>
+        if (CurrentChatRoom.ChatMembers.Any(chatmember => chatmember.UserId.Equals(userId)))
         {
-            var deserializedResponse = JsonSerializer.Deserialize<ReceiveMessageDto>(response);
+            MessageDto.UserId = Guid.Parse(userIdValue);
+            MessageDto.UserName = CurrentUserName;
+            MessageDto.Encrypted = CurrentChatRoom.Encrypted;
 
-            Messages.Add(deserializedResponse);
-            await InvokeAsync(StateHasChanged);
-        });
+            var url = navigation.ToAbsoluteUri("/chathub");
 
-        hubConnection.On<string>("MemberJoined", (message) =>
-        {
-            ReceiveMessageDto memberJoinedResponse = new()
+            hubConnection = new HubConnectionBuilder()
+                .WithUrl(url)
+                .WithAutomaticReconnect()
+                .Build();
+
+            hubConnection.On<string>("ReceiveMessage", async (response) =>
             {
-                UserName = "System",
-                Content = message,
-                Sent = DateTime.UtcNow
-            };
+                var deserializedResponse = JsonSerializer.Deserialize<ReceiveMessageDto>(response);
 
-            Messages.Add(memberJoinedResponse);
-            InvokeAsync(StateHasChanged);
-        });        
-        await hubConnection.StartAsync();
-        await hubConnection.SendAsync("AddToGroup", Id);
+                Messages.Add(deserializedResponse);
+                await InvokeAsync(StateHasChanged);
+            });
+
+            hubConnection.On<string>("MemberJoined", (message) =>
+            {
+                ReceiveMessageDto memberJoinedResponse = new()
+                    {
+                        UserName = "System",
+                        Content = message,
+                        Sent = DateTime.UtcNow
+                    };
+
+                Messages.Add(memberJoinedResponse);
+                InvokeAsync(StateHasChanged);
+            });
+            await hubConnection.StartAsync();
+            await hubConnection.SendAsync("AddToGroup", Id);
+        }
+        else
+        {
+            navigation.NavigateTo("/");
+        }
+
     }
 
     private void GetStoredMessages()
@@ -128,12 +147,12 @@
         foreach (var message in CurrentChatRoom.Messages)
         {
             Messages.Add(new ReceiveMessageDto
-            {
-                Id = message.Id,
-                UserName = message.UserName,
-                Content = message.Content,
-                Sent = message.Sent
-            });
+                {
+                    Id = message.Id,
+                    UserName = message.UserName,
+                    Content = message.Content,
+                    Sent = message.Sent
+                });
         };
     }
 
@@ -200,7 +219,7 @@
 
     public class SendMessageDto
     {
-        public Guid UserId {get; set;}
+        public Guid UserId { get; set; }
         public string Content { get; set; }
         public string UserName { get; set; }
         public bool Encrypted { get; set; }
@@ -213,6 +232,4 @@
         public string? Content { get; set; }
         public DateTime Sent { get; set; }
     }
-
-    
 }
