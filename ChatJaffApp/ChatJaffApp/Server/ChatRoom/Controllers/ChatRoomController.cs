@@ -44,7 +44,7 @@ namespace ChatJaffApp.Server.ChatRoom.Controllers
         public async Task<IActionResult> GetMyChats()
         {
             var userInContext = await _signInManager.UserManager.GetUserAsync(HttpContext.User);
-            if(userInContext == null) { return NotFound(); }
+            if (userInContext == null) { return NotFound(); }
 
             try
             {
@@ -54,6 +54,22 @@ namespace ChatJaffApp.Server.ChatRoom.Controllers
             catch
             {
                 return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+        [Authorize]
+        [HttpGet]
+        [Route("{chatId:guid}/members")]
+        public async Task<IActionResult> GetChatRoomCreator(Guid chatId)
+        {
+            try
+            {
+                var chat = await _chatRoomRepository.GetChatRoomAsync(chatId);
+                return Ok(chat);
+            }
+            catch
+            {
+                return StatusCode(500);
             }
         }
 
@@ -89,7 +105,24 @@ namespace ChatJaffApp.Server.ChatRoom.Controllers
                 return StatusCode(500);
             }
         }
-        
+
+
+
+        [Authorize]
+        [HttpGet]
+        [Route("{chatId:guid}/members")]
+        public async Task<IActionResult> GetChatRoomMembers([FromRoute] Guid chatId)
+        {
+            try
+            {
+                var chatRoomMembers = await _chatRoomRepository.GetChatRoomMembersAsync(chatId);
+                return Ok(chatRoomMembers);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500);
+            }
+        }
 
         [Authorize]
         [HttpPost]
@@ -99,7 +132,7 @@ namespace ChatJaffApp.Server.ChatRoom.Controllers
             {
                 Encrypted = chatRequest.Encrypted,
                 ChatName = chatRequest.ChatName,
-                CreatorId=chatRequest.CreatorId,
+                CreatorId = chatRequest.CreatorId,
 
             };
 
