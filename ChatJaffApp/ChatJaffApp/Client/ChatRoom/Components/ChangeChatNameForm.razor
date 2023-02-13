@@ -21,6 +21,7 @@
     public async Task InvokeParentMethod()
     {  
         await HandleClick.InvokeAsync(formModel.Name);
+        formModel.Name = string.Empty;
     }
 
     private class FormDto

@@ -138,6 +138,7 @@
         try
         {
             await chatRoomService.ChangeChatName(newName, Id);
+            ChatRoom.ChatName = newName;
         }
         catch (Exception ex)
         {

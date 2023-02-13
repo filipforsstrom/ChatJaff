@@ -173,5 +173,30 @@ namespace ChatJaffApp.Server.ChatRoom.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
+
+        [Authorize]
+        [HttpPut("{id:guid}")]
+        public async Task<IActionResult> UpdateChatroom(Guid id, UpdateChatroomDto chatroomDto)
+        {
+            try
+            {
+                var chatroomInDb = await _chatRoomRepository.GetChatRoomAsync(id);
+                if (chatroomInDb != null)
+                {
+                    chatroomInDb.ChatName = chatroomDto.Name;
+                    await _chatRoomRepository.UpdateChatRoomAsync(chatroomInDb);
+                    
+                    return Ok();
+                }
+                else
+                {
+                    return BadRequest("Invalid Arguments");
+                }
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
     }
 }
