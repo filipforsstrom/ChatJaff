@@ -16,9 +16,9 @@ namespace ChatJaffApp.Client.ChatRoom.Messages.Services
             _httpClient = httpClient;
         }
 
-        public async Task<ServiceResponseViewModel<ReceiveMessageDto>> EditMessage(EditMessageRequest newMessage)
+        public async Task<ServiceResponseViewModel<string>> EditMessage(EditMessageRequest newMessage)
         {
-            ServiceResponseViewModel<ReceiveMessageDto> responseViewModel = new();
+            ServiceResponseViewModel<string> responseViewModel = new();
 
             var response = await _httpClient.PutAsJsonAsync($"/api/message/{newMessage.MessageId}", newMessage);
             if(!response.IsSuccessStatusCode)
@@ -29,7 +29,7 @@ namespace ChatJaffApp.Client.ChatRoom.Messages.Services
             }
             responseViewModel.Success = true;
             responseViewModel.Message = "";
-            responseViewModel.Data = await response.Content.ReadFromJsonAsync<ReceiveMessageDto>();
+            responseViewModel.Data = await response.Content.ReadAsStringAsync();
 
             return responseViewModel;
         }

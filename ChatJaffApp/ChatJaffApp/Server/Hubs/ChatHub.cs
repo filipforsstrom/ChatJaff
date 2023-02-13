@@ -20,7 +20,7 @@ namespace ChatJaffApp.Server.Hubs
         private readonly IChatKeyRepository _chatKeyRepository;
         private readonly IMapper _mapper;
 
-        public ChatHub(IMessageRepository messageRepository, IChatKeyRepository chatKeyRepository, IMapper mapper)
+        public ChatHub(IMessageRepository messageRepository, IChatKeyRepository chatKeyRepository, IMapper mapper) 
         {
             _messageRepository = messageRepository;
             _chatKeyRepository = chatKeyRepository;
@@ -42,7 +42,8 @@ namespace ChatJaffApp.Server.Hubs
                 try
                 {
                     var chatkey = await _chatKeyRepository.GetChatKeyAsync(chatroomId);
-                    messageToStore.Content = EncryptMessage(messageToStore.Content, chatkey);
+                    EncryptionHelper encryptionHelper = new();
+                    messageToStore.Content = encryptionHelper.EncryptMessage(messageToStore.Content, chatkey);
                 }
                 catch (Exception)
                 {
@@ -77,21 +78,6 @@ namespace ChatJaffApp.Server.Hubs
 
             await Clients.Group(groupName).SendAsync("Send", $"{Context.ConnectionId} has left the group {groupName}.");
         }
-        //public async Task ChatNotificationAsync(string message, string receiverUserId, string senderUserId)
-        //{
-        //    await Clients.All.SendAsync("ReceiveChatNotification", message, receiverUserId, senderUserId);
-        //}
-
-        private string EncryptMessage(string message, string chatKey)
-        {
-            
-            var keyStringArray = chatKey.Split(".");
-            string key = keyStringArray[0];
-
-            // skapa salt
-            byte[] salt = Encoding.Unicode.GetBytes(keyStringArray[1]);
-
-            return AesEncryptManager.Encrypt(message, key, salt);
-        }
+        
     }
 }
