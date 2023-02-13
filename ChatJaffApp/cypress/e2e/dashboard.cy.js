@@ -18,6 +18,7 @@ describe("Dashboard", () => {
 
   it("Find member", () => {
     cy.contains("Dashboard").click();
-    cy.get("#searchbar").click().type("randy");
+    // cy.get("#searchbar").click().type("randy");
+    cy.get('[data-cy="searchbar"]').click().type("randy");
   });
 });

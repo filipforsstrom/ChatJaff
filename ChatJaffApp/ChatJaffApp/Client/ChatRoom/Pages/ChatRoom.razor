@@ -1,6 +1,7 @@
 ﻿@page "/chatrooms/{id:guid}"
 @using System.Security.Claims;
 @using ChatJaffApp.Client.ChatRoom.Messages.Contracts;
+@using ChatJaffApp.Client.ChatRoom.Messages.Models;
 @using Microsoft.AspNetCore.SignalR.Client;
 @using System.Text.Json;
 @using ChatJaffApp.Client.ChatRoom.MyChatRooms.Contracts;
@@ -18,21 +19,34 @@
 @inject IMessageService messageService
 <h3>Welcome</h3>
 
-<div>
+<div style="max-height: 50vh; overflow-y:auto;">
     <p>Your Messages:</p>
     @if (Messages != null)
     {
-        <ul id="messagesinchatlist" style="list-style-type: none;">
-            @foreach (var message in Messages)
-            {
+        <ul id="messagesinchatlist"  style="list-style-type: none;">
 
+
+        @foreach (var message in Messages)
+        {
+               
                 <li style="padding: 5px; background-color: @(MessageDto.UserName == message.UserName ? "green" : "cornflowerblue"); color: whitesmoke; margin-bottom: 5px; max-width: 300px;display: flex;
                     justify-content: center; align-items: center; flex-direction: column;">
                     <h4 id="messagecontent" style="font-size: 15px;">@message.UserName says @message.Content</h4>
-                    <p id="messagetimestamp" style="font-size: 10px;">Sent: @message.Sent</p>
                     @if (message.UserName == CurrentUserName)
                     {
-                        <button data-cy="delete-message-button" class="btn btn-primary btn-sm" @onclick="() => deleteMessage(message.Id)">delete</button>
+                        @if (messageEdited)
+                        {
+                            <InputTextArea placeholder="@message.Content" maxlength="150" @bind-Value="editedMessage"></InputTextArea>
+                            <button style="margin-top: 2px;" class="btn btn-info btn-sm" @onclick="() => sendEditMessage(message.Id)">Save</button>
+                        }  
+                    }
+          
+
+                <p id="messagetimestamp" style="font-size: 10px;">Sent: @message.Sent</p>
+                    @if(message.UserName == CurrentUserName)
+                    {
+                        <button style="margin-top: 2px;" data-cy="delete-message-button" disabled="@messageEdited" class="btn btn-primary btn-sm" @onclick="() => deleteMessage(message.Id)">Delete</button>
+                        <button style="margin-top: 2px;" data-cy="edit-message-button" disabled="@messageEdited" class="btn btn-info btn-sm" @onclick="() => editMessage()">Edit</button>
                     }
 
                 </li>
@@ -58,11 +72,11 @@
     private bool Encrypted { get; set; } = false;
     public GetChatRoomDto CurrentChatRoom { get; set; }
     private EncryptionManager keeperOfSecrets = new();
-
-
     private string? CurrentUserName { get; set; } = string.Empty;
     private HubConnection? hubConnection;
     public bool IsConnected => hubConnection.State == HubConnectionState.Connected;
+    private bool messageEdited { get; set; } = false; 
+    private string editedMessage { get; set; } = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
@@ -150,8 +164,8 @@
             ErrorMessage = "Message can not be empty";
             //ta bort meddelande efteråt
         }
-        else
-        {
+        else {
+
             var messageModelToJson = JsonSerializer.Serialize(MessageDto);
             await hubConnection.SendAsync("SendMessageAsync", messageModelToJson, Id);
 
@@ -173,11 +187,34 @@
         {
             var message = Messages.Select(m => m).Where(m => m.Id == id).FirstOrDefault();
             Messages.Remove(message);
-            InvokeAsync(StateHasChanged);
+            await InvokeAsync(StateHasChanged);
         }
 
+    }
+
+    public void editMessage()
+    {
+        messageEdited = true;
+    }
+
+    public async void sendEditMessage(Guid messageId)
+    {
+        EditMessageRequest newMessage = new() { MessageId = messageId , EditedMessage = editedMessage};
+
+        var response = await messageService.EditMessage(newMessage);
+        if (response.Success)
+        {
+
+            Messages.Find(m => m.Id == messageId).Content = response.Data;
+            messageEdited = false;
+            await InvokeAsync(StateHasChanged);
+        }
+        
+        
 
     }
+
+    
 
 
     public class SendMessageDto
@@ -194,6 +231,5 @@
         public string? UserName { get; set; }
         public string? Content { get; set; }
         public DateTime Sent { get; set; }
-        public string IdAsString { get; set; }
     }
 }
