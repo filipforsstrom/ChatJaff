@@ -3,8 +3,8 @@
     <div>
         <EditForm Model="formModel" OnValidSubmit="InvokeParentMethod">
             <DataAnnotationsValidator />
-            <InputText @bind-Value="formModel.Name" />
-            <button class="btn btn-sm btn-success">
+            <InputText @bind-Value="formModel.Name" data-cy="chatname-input"/>
+            <button class="btn btn-sm btn-success" data-cy="chatname-updatebtn">
                 Change
             </button>
             <ValidationSummary />

@@ -12,9 +12,12 @@
 
 <div>
     <container>
-        <h2>
-            @ChatRoom.ChatName Settings
-        </h2>
+        @if (ChatRoom.ChatName != null)
+        {
+            <h2 data-cy="chatroom-settings-title">
+                @ChatRoom.ChatName
+            </h2>
+        }
         <div class="card" style="width: 18rem; ">
             <div class="card-header">
                 Chat members
@@ -49,7 +52,7 @@
 
         @if (!string.IsNullOrEmpty(Message))
         {
-            <p>@Message</p>
+            <p data-cy="chatsettings-error-message">@Message</p>
         }
 
         @if (IsModerator)
