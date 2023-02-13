@@ -66,18 +66,20 @@ namespace ChatJaffApp.Server.ChatRoom.Controllers
             {
                 var chatRoom = await _chatRoomRepository.GetChatRoomAsync(chatId);
 
-                var key = await _chatKeyRepository.GetChatKeyAsync(chatRoom.Id);
-
-                string[] keyList = key.Split(".");
-                var generatedKey = keyList[0];
-                var generatedSalt = Encoding.Unicode.GetBytes(keyList[1]);
-
-
-                foreach (var message in chatRoom.Messages)
+                if (chatRoom.Encrypted)
                 {
-                    message.Content = AesEncryptManager.Decrypt(message.Content, generatedKey, generatedSalt);
-                }
+                    var key = await _chatKeyRepository.GetChatKeyAsync(chatRoom.Id);
 
+                    string[] keyList = key.Split(".");
+                    var generatedKey = keyList[0];
+                    var generatedSalt = Encoding.Unicode.GetBytes(keyList[1]);
+
+
+                    foreach (var message in chatRoom.Messages)
+                    {
+                        message.Content = AesEncryptManager.Decrypt(message.Content, generatedKey, generatedSalt);
+                    }
+                }
 
                 var chatRoomDto = _chatRoomRepository.ConvertChatToDto(chatRoom);
                 return Ok(chatRoomDto);
