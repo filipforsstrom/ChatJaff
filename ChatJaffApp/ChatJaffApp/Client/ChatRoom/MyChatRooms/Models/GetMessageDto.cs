@@ -7,5 +7,6 @@
         public string? UserName { get; set; }
         public string? Content { get; set; }
         public DateTime Sent { get; set; }
+        public bool IsFlagged { get; set; }
     }
 }
