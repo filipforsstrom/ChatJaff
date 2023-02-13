@@ -17,19 +17,32 @@
 @inject IChatRoomsService chatRoomsService
 @attribute [Authorize]
 @inject IMessageService messageService
+@inject IJSRuntime _jsRuntime
+
 <h3>Welcome</h3>
 
-<div style="max-height: 50vh; overflow-y:auto;">
+<div id="chatContainer" style="max-height: 50vh; overflow-y:auto;">
     <p>Your Messages:</p>
     @if (Messages != null)
     {
-        <ul id="messagesinchatlist"  style="list-style-type: none;">
+        @*<ul id="messagesinchatlist"  style="list-style-type: none;">*@
 
 
         @foreach (var message in Messages)
         {
-               
-                <li style="padding: 5px; background-color: @(MessageDto.UserName == message.UserName ? "green" : "cornflowerblue"); color: whitesmoke; margin-bottom: 5px; max-width: 300px;display: flex;
+            <div class="card" style="width: 18rem; margin-bottom: 5px; background-color: @(MessageDto.UserName == message.UserName ? "green" : "cornflowerblue"); color: whitesmoke;">
+                    <div class="card-body">
+                        <h6 class="card-title">@message.UserName</h6>
+                        <p class="card-subtitle mb-2 text-muted">Sent: @message.Sent</p>
+                        <p class="card-text">@message.Content</p>
+                        <a href=" class="card-link">Card link</a>
+                        <a href="#" class="card-link">Another link</a>
+                        <i class="bi bi-balloon-fill"></i>
+                    </div>
+                </div>
+
+
+                @*<li style="padding: 5px; background-color: @(MessageDto.UserName == message.UserName ? "green" : "cornflowerblue"); color: whitesmoke; margin-bottom: 5px; max-width: 300px;display: flex;
                     justify-content: center; align-items: center; flex-direction: column;">
                     <h4 id="messagecontent" style="font-size: 15px;">@message.UserName says @message.Content</h4>
                     @if (message.UserName == CurrentUserName)
@@ -59,10 +72,10 @@
                         <button style="margin-top: 2px;" data-cy="flag-message-button" disabled="@messageEdited" class="btn btn-info btn sm" @onclick="()=> flagMessage(message.Id)">Flag</button>
                     }      
                     
-            </li>
+            </li>*@
         }
 
-        </ul>
+        @*</ul>*@
     }
 </div>
 <div>
@@ -127,6 +140,7 @@
                 var deserializedResponse = JsonSerializer.Deserialize<ReceiveMessageDto>(response);
 
                 Messages.Add(deserializedResponse);
+                await _jsRuntime.InvokeAsync<string>("ScrollToBottom", "chatContainer");
                 await InvokeAsync(StateHasChanged);
             });
 
@@ -150,6 +164,11 @@
             navigation.NavigateTo("/");
         }
 
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await _jsRuntime.InvokeAsync<string>("ScrollToBottom", "chatContainer");
     }
 
     private void GetStoredMessages()
