@@ -23,20 +23,20 @@
     @if (Messages != null)
     {
         <ul id="messagesinchatlist" style="list-style-type: none;">
-        @foreach (var message in Messages)
-        {
-               
+            @foreach (var message in Messages)
+            {
+
                 <li style="padding: 5px; background-color: @(MessageDto.UserName == message.UserName ? "green" : "cornflowerblue"); color: whitesmoke; margin-bottom: 5px; max-width: 300px;display: flex;
                     justify-content: center; align-items: center; flex-direction: column;">
-                <h4 id="messagecontent" style="font-size: 15px;">@message.UserName says @message.Content</h4>
-                <p id="messagetimestamp" style="font-size: 10px;">Sent: @message.Sent</p>
-                    @if(message.UserName == CurrentUserName)
+                    <h4 id="messagecontent" style="font-size: 15px;">@message.UserName says @message.Content</h4>
+                    <p id="messagetimestamp" style="font-size: 10px;">Sent: @message.Sent</p>
+                    @if (message.UserName == CurrentUserName)
                     {
                         <button data-cy="delete-message-button" class="btn btn-primary btn-sm" @onclick="() => deleteMessage(message.Id)">delete</button>
                     }
-                    
-            </li>
-        }
+
+                </li>
+            }
         </ul>
     }
 </div>
@@ -59,6 +59,7 @@
     public GetChatRoomDto CurrentChatRoom { get; set; }
     private EncryptionManager keeperOfSecrets = new();
 
+
     private string? CurrentUserName { get; set; } = string.Empty;
     private HubConnection? hubConnection;
     public bool IsConnected => hubConnection.State == HubConnectionState.Connected;
@@ -71,10 +72,19 @@
         var state = await authStateProvider.GetAuthenticationStateAsync();
         var userIdValue = state.User.FindFirst(ClaimTypes.NameIdentifier).Value;
         CurrentUserName = state.User.FindFirst(ClaimTypes.Name).Value;
-        var chatMembers = await chatRoomsService.GetChatMembers(Id);
         Guid userId = Guid.Parse(userIdValue);
+        var creatorId = CurrentChatRoom.CreatorId;
 
-        if (chatMembers.Any(x => x.UserId == userId))
+        //ChatMemberViewModel currentUser = new()
+        //{
+        //    UserId = userId,
+        //    Username = CurrentUserName,
+        //};
+        //CurrentChatRoom.ChatMembers.Add(currentUser);
+
+
+
+        if (CurrentChatRoom.ChatMembers.Any(chatmember => chatmember.UserId.Equals(userId)))
         {
             MessageDto.UserId = Guid.Parse(userIdValue);
             MessageDto.UserName = CurrentUserName;
@@ -87,13 +97,13 @@
                 .WithAutomaticReconnect()
                 .Build();
 
-        hubConnection.On<string>("ReceiveMessage", async (response) =>
-        {
-            var deserializedResponse = JsonSerializer.Deserialize<ReceiveMessageDto>(response);
+            hubConnection.On<string>("ReceiveMessage", async (response) =>
+            {
+                var deserializedResponse = JsonSerializer.Deserialize<ReceiveMessageDto>(response);
 
-            Messages.Add(deserializedResponse);
-            await InvokeAsync(StateHasChanged);
-        });
+                Messages.Add(deserializedResponse);
+                await InvokeAsync(StateHasChanged);
+            });
 
             hubConnection.On<string>("MemberJoined", (message) =>
             {
@@ -112,22 +122,23 @@
         }
         else
         {
-            navigation.NavigateTo("/login");
+            navigation.NavigateTo("/");
         }
+
     }
 
     private void GetStoredMessages()
     {
-        
+
         foreach (var message in CurrentChatRoom.Messages)
         {
             Messages.Add(new ReceiveMessageDto
-            {
-                Id = message.Id,
-                UserName = message.UserName,
-                Content = message.Content,
-                Sent = message.Sent
-            });
+                {
+                    Id = message.Id,
+                    UserName = message.UserName,
+                    Content = message.Content,
+                    Sent = message.Sent
+                });
         };
     }
 
@@ -171,7 +182,7 @@
 
     public class SendMessageDto
     {
-        public Guid UserId {get; set;}
+        public Guid UserId { get; set; }
         public string Content { get; set; }
         public string UserName { get; set; }
         public bool Encrypted { get; set; }
@@ -185,6 +196,4 @@
         public DateTime Sent { get; set; }
         public string IdAsString { get; set; }
     }
-
-
 }

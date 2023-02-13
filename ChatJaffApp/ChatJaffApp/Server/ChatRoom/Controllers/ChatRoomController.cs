@@ -55,6 +55,22 @@ namespace ChatJaffApp.Server.ChatRoom.Controllers
 
         [Authorize]
         [HttpGet]
+        [Route("{chatId:guid}/members")]
+        public async Task<IActionResult> GetChatRoomCreator(Guid chatId)
+        {
+            try
+            {
+                var chat = await _chatRoomRepository.GetChatRoomAsync(chatId);
+                return Ok(chat);
+            }
+            catch
+            {
+                return StatusCode(500);
+            }
+        }
+
+        [Authorize]
+        [HttpGet]
         [Route("{chatId:guid}")]
         public async Task<IActionResult> GetChatRoom([FromRoute] Guid chatId)
         {
