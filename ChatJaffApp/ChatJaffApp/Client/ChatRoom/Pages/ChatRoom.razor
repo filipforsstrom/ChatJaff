@@ -47,6 +47,7 @@
                     {
                         <button style="margin-top: 2px;" data-cy="delete-message-button" disabled="@messageEdited" class="btn btn-primary btn-sm" @onclick="() => deleteMessage(message.Id)">Delete</button>
                         <button style="margin-top: 2px;" data-cy="edit-message-button" disabled="@messageEdited" class="btn btn-info btn-sm" @onclick="() => editMessage()">Edit</button>
+                        <button style="margin-top: 2px;" data-cy="flag-message-button" disabled="@messageEdited" class="btn btn-info btn sm" @onclick="()=> flagMessage(message.Id)">Flag</button>
                     }
                     
             </li>
@@ -137,6 +138,8 @@
         };
     }
 
+
+
     private async Task onSendMessageClick()
     {
 
@@ -170,6 +173,22 @@
             Messages.Remove(message);
             await InvokeAsync(StateHasChanged);
         }
+
+
+
+    }
+
+    public async void flagMessage(Guid messageId)
+    {
+        var response = await messageService.FlagMessage(messageId);
+
+        if (response.Success)
+        {
+            
+        }
+
+
+
 
     }
 

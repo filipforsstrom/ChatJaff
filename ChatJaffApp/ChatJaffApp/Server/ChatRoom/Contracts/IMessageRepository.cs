@@ -13,4 +13,5 @@ public interface IMessageRepository
 
     Task<bool> EditMessage(EditMessageDto newMessage);
     Task<Message> GetMesssage(Guid id);
+    Task<bool> FlagMessage(Guid messageId);
 }
