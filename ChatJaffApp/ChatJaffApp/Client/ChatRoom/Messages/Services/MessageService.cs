@@ -49,5 +49,25 @@ namespace ChatJaffApp.Client.ChatRoom.Messages.Services
             responseViewModel.Success = true;
             return responseViewModel;
         }
+        public async Task<ServiceResponseViewModel<string>> FlagMessage(Guid messageId)
+        {
+            ServiceResponseViewModel<string> responseViewModel = new();
+            var response = await _httpClient.PutAsJsonAsync($"/api/message/", messageId );
+
+            if (!response.IsSuccessStatusCode)
+            {
+                responseViewModel.Message = "Something went wrong";
+                responseViewModel.Success = false;
+            }
+
+            responseViewModel.Message = "This message has been flagged";
+            responseViewModel.Success = true;
+
+            return responseViewModel;
+
+
+
+
+        }
     }
 }

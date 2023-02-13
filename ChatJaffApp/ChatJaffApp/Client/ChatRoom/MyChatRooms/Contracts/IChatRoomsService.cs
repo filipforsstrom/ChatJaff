@@ -14,5 +14,6 @@ namespace ChatJaffApp.Client.ChatRoom.MyChatRooms.Contracts
         Task<ServiceResponseViewModel<string>> DeleteChatRoom(Guid chatId);
         Task<ServiceResponseViewModel<string>> RemoveChatMember(Guid chatId, Guid userId);
         Task<ServiceResponseViewModel<ChatMemberResponse>> AddChatMember(AddMemberDto addMemberDto);
+        Task ChangeChatName(string newName, Guid chatroomId);
     }
 }

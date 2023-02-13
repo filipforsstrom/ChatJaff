@@ -54,6 +54,19 @@ namespace ChatJaffApp.Server.ChatRoom.Controllers
                 return BadRequest();
             }
             return Ok(returnMessage);
+        }  
+
+        [Authorize]
+        [HttpPut]
+        
+        public async Task<IActionResult> FlagMessage([FromBody] Guid messageId)
+        {
+            var response = await _messageRepository.FlagMessage(messageId);
+            if (response==null)
+            {
+                return BadRequest();
+            }
+            return Ok(response);
         }
     }
 }
