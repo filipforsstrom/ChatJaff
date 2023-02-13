@@ -47,10 +47,21 @@
                     {
                         <button style="margin-top: 2px;" data-cy="delete-message-button" disabled="@messageEdited" class="btn btn-primary btn-sm" @onclick="() => deleteMessage(message.Id)">Delete</button>
                         <button style="margin-top: 2px;" data-cy="edit-message-button" disabled="@messageEdited" class="btn btn-info btn-sm" @onclick="() => editMessage()">Edit</button>
+                        
                     }
 
-                </li>
-            }
+                    @if(message.IsFlagged)
+                    {
+                        <p>flagged</p>
+                    }
+                    else
+                    {
+                        <button style="margin-top: 2px;" data-cy="flag-message-button" disabled="@messageEdited" class="btn btn-info btn sm" @onclick="()=> flagMessage(message.Id)">Flag</button>
+                    }      
+                    
+            </li>
+        }
+
         </ul>
     }
 </div>
@@ -151,10 +162,16 @@
                     Id = message.Id,
                     UserName = message.UserName,
                     Content = message.Content,
-                    Sent = message.Sent
-                });
+
+                    Sent = message.Sent,
+                    IsFlagged = message.IsFlagged,
+
+            });
+
         };
     }
+
+
 
     private async Task onSendMessageClick()
     {
@@ -189,6 +206,24 @@
             Messages.Remove(message);
             await InvokeAsync(StateHasChanged);
         }
+
+
+
+    }
+
+    public async void flagMessage(Guid messageId)
+    {
+        var response = await messageService.FlagMessage(messageId);
+
+        if (response.Success)
+        {
+            Messages.Find(m => m.Id == messageId).IsFlagged = true;
+
+            await InvokeAsync(StateHasChanged);
+        }
+
+
+
 
     }
 
@@ -230,6 +265,7 @@
         public Guid Id { get; set; }
         public string? UserName { get; set; }
         public string? Content { get; set; }
+        public bool IsFlagged { get; set; }
         public DateTime Sent { get; set; }
     }
 }

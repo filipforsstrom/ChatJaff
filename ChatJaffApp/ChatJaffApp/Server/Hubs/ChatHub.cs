@@ -26,9 +26,10 @@ namespace ChatJaffApp.Server.Hubs
             _chatKeyRepository = chatKeyRepository;
             _mapper = mapper;
         }
-
+       
         public async Task SendMessageAsync(string message, Guid chatroomId)
         {
+            
             var deserializedMessage = JsonSerializer.Deserialize<MessageDto>(message);
             deserializedMessage.Sent = DateTime.UtcNow;
             deserializedMessage.ChatroomId = chatroomId;

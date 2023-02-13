@@ -147,7 +147,7 @@ namespace ChatJaffApp.Server.ChatRoom.Controllers
             {
                 EncryptionHelper encryptionHelper = new();
                 var dbKey = encryptionHelper.GenerateDbKey();
-                _chatKeyRepository.AddChatKeyAsync(result, dbKey);
+                await _chatKeyRepository.AddChatKeyAsync(result, dbKey);
             }
 
             return Ok(result);

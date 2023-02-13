@@ -16,5 +16,7 @@ namespace ChatJaffApp.Server.Data.Models
 
         public Chat Chat { get; set; }
         public Member Member { get; set; }
+
+        public bool IsFlagged { get; set; }
     }
 }
