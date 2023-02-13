@@ -38,7 +38,7 @@ namespace ChatJaffApp.Server.Data
 				new Chat() {
 					Id = Guid.Parse("{5D728EC3-1F6B-4170-8827-BC064AE25A41}"),
 					ChatName = "Chat 1",
-					Encrypted= true,
+					Encrypted= false,
                     CreatorId = Guid.Parse("b8381d75-d110-42f9-85e5-9c92a062fbc8")
                 },
                 new Chat() {

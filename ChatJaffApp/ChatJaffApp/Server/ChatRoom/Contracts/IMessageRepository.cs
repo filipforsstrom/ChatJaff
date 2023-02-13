@@ -11,5 +11,6 @@ public interface IMessageRepository
     Task<Guid> AddMessageAsync(Message message);
     Task DeleteMessage(Guid id);
 
-    Task<Message> EditMessage(EditMessageDto newMessage);
+    Task<bool> EditMessage(EditMessageDto newMessage);
+    Task<Message> GetMesssage(Guid id);
 }
