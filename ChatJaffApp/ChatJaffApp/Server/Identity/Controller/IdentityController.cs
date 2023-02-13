@@ -182,6 +182,30 @@ namespace ChatJaffApp.Server.Identity.Controller
         }
 
         [Authorize]
+        [HttpPost]
+        [Route("{userId:guid}/[action]")]
+        public async Task<IActionResult> ChangeUserName([FromRoute] string userId, [FromBody] string userName)
+        {
+            var httpUserId = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+            if(!httpUserId.Equals(httpUserId, StringComparison.OrdinalIgnoreCase))
+            {
+                return BadRequest();
+            }
+
+            var user = await _signInManager.UserManager.FindByIdAsync(httpUserId);
+
+            var response = await _signInManager.UserManager.SetUserNameAsync(user, userName);
+            if (response.Succeeded)
+            {
+                await _memberRepository.ChangeMemberUserName(Guid.Parse(userId), userName);
+                return Ok(response);
+            }
+
+            return BadRequest();
+        }
+
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteIdentity(Guid id)
         {
