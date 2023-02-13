@@ -1,0 +1,32 @@
+﻿<div class="mt-2 mb-2">
+    <h2>Edit chat name</h2>
+    <div>
+        <EditForm Model="formModel" OnValidSubmit="InvokeParentMethod">
+            <DataAnnotationsValidator />
+            <InputText @bind-Value="formModel.Name" />
+            <button class="btn btn-sm btn-success">
+                Change
+            </button>
+            <ValidationSummary />
+        </EditForm>
+        
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public EventCallback<string> HandleClick { get; set; }
+    private FormDto formModel { get; set; } = new();
+
+    public async Task InvokeParentMethod()
+    {  
+        await HandleClick.InvokeAsync(formModel.Name);
+    }
+
+    private class FormDto
+    {
+        [Required(ErrorMessage = "Name must be atleast 3 characters.")]
+        [MinLength(3)]
+        public string? Name { get; set; } = string.Empty;
+    }
+}

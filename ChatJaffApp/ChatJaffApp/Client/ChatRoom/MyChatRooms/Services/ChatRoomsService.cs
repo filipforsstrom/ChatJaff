@@ -4,6 +4,8 @@ using ChatJaffApp.Client.ChatRoom.MyChatRooms.Models;
 using ChatJaffApp.Client.Member.Models;
 using ChatJaffApp.Client.Shared.Models;
 using System.Net.Http.Json;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace ChatJaffApp.Client.ChatRoom.MyChatRooms.Services
 {
@@ -98,6 +100,22 @@ namespace ChatJaffApp.Client.ChatRoom.MyChatRooms.Services
             addMemberResponse.Success = true;
             addMemberResponse.Message = await response.Content.ReadAsStringAsync();
             return addMemberResponse;
+        }
+
+        public async Task ChangeChatName(string newName, Guid chatroomId)
+        {
+            UpdateChatroomDto updatedChatroom = new UpdateChatroomDto
+            {
+                Id= chatroomId,
+                Name= newName,
+            };
+
+            var updateChatNameResponse = await _httpClient.PutAsJsonAsync($"api/chatroom/{chatroomId}", updatedChatroom);
+            if (!updateChatNameResponse.IsSuccessStatusCode)
+            {
+                var responseMessage = await updateChatNameResponse.Content.ReadAsStringAsync();
+                throw new Exception(responseMessage);
+            }
         }
     }
 }
