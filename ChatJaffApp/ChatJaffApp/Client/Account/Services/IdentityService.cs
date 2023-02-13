@@ -86,7 +86,7 @@ namespace ChatJaffApp.Client.Account.Services
             if (!response.IsSuccessStatusCode)
             {
                 registerResponse.Data = await response.Content.ReadAsStringAsync();
-                return registerResponse;
+                throw new Exception(registerResponse.Data);
             }
 
             registerResponse.Success = true;
