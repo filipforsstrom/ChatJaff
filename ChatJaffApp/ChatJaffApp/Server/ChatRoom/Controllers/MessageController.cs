@@ -39,14 +39,18 @@ namespace ChatJaffApp.Server.ChatRoom.Controllers
         public async Task<IActionResult> EditMessage([FromRoute]Guid messageId, [FromBody] EditMessageDto newMessage)
         {
             string returnMessage = newMessage.EditedMessage;
-            var message = await _messageRepository.GetMesssage(messageId);
 
-            var chatKey = await _chatKeyRepository.GetChatKeyAsync(message.ChatId);
+            if(newMessage.Encrypted)
+            { 
+                var message = await _messageRepository.GetMesssage(messageId);
+                var chatKey = await _chatKeyRepository.GetChatKeyAsync(message.ChatId);
 
-            EncryptionHelper encryptionHelper = new();
-            string encryptedMessage = encryptionHelper.EncryptMessage(newMessage.EditedMessage, chatKey);
+                EncryptionHelper encryptionHelper = new();
+                string encryptedMessage = encryptionHelper.EncryptMessage(newMessage.EditedMessage, chatKey);
 
-            newMessage.EditedMessage = encryptedMessage;
+                newMessage.EditedMessage = encryptedMessage;
+            }
+            
 
             var response = await _messageRepository.EditMessage(newMessage);
             if(!response)
