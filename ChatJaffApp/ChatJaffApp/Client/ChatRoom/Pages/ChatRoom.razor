@@ -15,6 +15,7 @@
 @inject IMessageService messageService
 @inject IJSRuntime _jsRuntime
 
+<PageTitle>@CurrentChatRoom.ChatName</PageTitle>
 <h3>@CurrentChatRoom.ChatName</h3>
 
 <div id="chatContainer" style="height: 55vh; overflow-y:auto;">
@@ -47,7 +48,7 @@
                 @if (message.IsEdited)
                 {
                     <InputTextArea placeholder="@message.Content" maxlength="150" @bind-Value="EditedMessage"></InputTextArea>
-                    <button style="margin-top: 2px;" class="btn btn-info btn-sm" @onclick="() => SendEditMessage(message.Id)">Save</button>
+                    <button style="margin-top: 2px;border-bottom-left-radius: 15px;border-bottom-right-radius: 15px;" class="btn btn-info btn-sm" @onclick="() => SendEditMessage(message.Id)">Save</button>
                 }
             </div>
         }

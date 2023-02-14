@@ -20,6 +20,11 @@ public static class ServiceExtensions
         services.ConfigureApplicationCookie(options =>
         {
             options.Cookie.HttpOnly = true;
+            options.Events.OnRedirectToAccessDenied = context =>
+            {
+                context.Response.StatusCode = 403;
+                return Task.CompletedTask;
+            };
             options.Events.OnRedirectToLogin = context =>
             {
                 context.Response.StatusCode = 401;

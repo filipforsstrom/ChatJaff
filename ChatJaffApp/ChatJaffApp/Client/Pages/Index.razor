@@ -1,14 +1,29 @@
 ﻿@page "/"
+@inject NavigationManager navigationManager
 
 <PageTitle>Index</PageTitle>
 
-<h1 name="testingName">Hello, world!</h1>
-
-Welcome to your new app.
-
-<h2>Not registered?</h2>
-<NavLink data-cy="reglink" class="nav-link" href="account/register">
-    <span class="oi oi-person" aria-hidden="true"></span> Click here!
+<h1 name="testingName" style=" text-align: center; color: darkslateblue; margin-top:100px">Lets start a chat! </h1>
+<AuthorizeView>
+    <NotAuthorized>
+<div style=" display:flex; justify-content:center; margin-top: 30px">
+    <button class="btn btn-outline-primary btn-lg" style="align-self:center" @onclick="Login">Login</button>
+</div>
+<div style="margin-top: 50px;">
+    <h6 style=" text-align: center; color: darkslateblue;">Not registered?</h6>
+    <NavLink data-cy="reglink" style=" text-align: center" class="nav-link" href="account/register">
+        <span  class="oi oi-person" aria-hidden="true"></span> Click here!
 </NavLink>
+</div>
+    </NotAuthorized>
+</AuthorizeView>
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+
+@code{
+
+
+    private void Login()
+    {
+        navigationManager.NavigateTo("/account/login");
+    }
+}

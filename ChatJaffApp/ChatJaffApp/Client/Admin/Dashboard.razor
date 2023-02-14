@@ -12,7 +12,7 @@
 @using ChatJaffApp.Client.Member.Models;
 @using Microsoft.AspNetCore.Authorization;
 @attribute [Authorize (Roles = "Admin")];
-
+<PageTitle>Dashboard</PageTitle>
 <h3>Members</h3>
 
 <div class="text-center bg-blue-100">
@@ -38,7 +38,6 @@
                     <tr>
                         <td>@member.Username</td>
                         <td>
-                            <a class="btn btn-success">Show more info</a>
                             <button data-cy="banbutton" onclick="@(async () => await BanMember(member.Username))" class="btn btn-danger">Ban user</button>
                         </td>
                     </tr>
