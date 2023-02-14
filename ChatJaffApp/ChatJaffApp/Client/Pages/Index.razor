@@ -4,6 +4,8 @@
 <PageTitle>Index</PageTitle>
 
 <h1 name="testingName" style=" text-align: center; color: darkslateblue; margin-top:100px">Lets start a chat! </h1>
+<AuthorizeView>
+    <NotAuthorized>
 <div style=" display:flex; justify-content:center; margin-top: 30px">
     <button class="btn btn-outline-primary btn-lg" style="align-self:center" @onclick="Login">Login</button>
 </div>
@@ -13,6 +15,8 @@
         <span  class="oi oi-person" aria-hidden="true"></span> Click here!
 </NavLink>
 </div>
+    </NotAuthorized>
+</AuthorizeView>
 
 
 @code{
