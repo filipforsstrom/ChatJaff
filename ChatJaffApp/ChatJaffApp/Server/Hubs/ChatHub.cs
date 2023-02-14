@@ -20,7 +20,7 @@ public class ChatHub : Hub
     private readonly IMessageRepository _messageRepository;
     private readonly IChatKeyRepository _chatKeyRepository;
     private readonly IMapper _mapper;
-    private readonly static ConnectionMapping<Guid> _connections =
+    private static readonly ConnectionMapping<Guid> _connections =
             new();
 
     public ChatHub(IChatRoomRepository chatRoomRepository, IMessageRepository messageRepository, IChatKeyRepository chatKeyRepository, IMapper mapper) 
