@@ -8,6 +8,7 @@ describe("register", () => {
 
   it("Registers a new user", function () {
     cy.get("#register-email").type("member4@gmail.com");
+    cy.get("#register-phone").type("+4670486792");
     cy.get("#register-username").type("sandy4");
     cy.get("#register-password").type("Member123!");
     cy.get("#register-confirmed-password").type("Member123!");
