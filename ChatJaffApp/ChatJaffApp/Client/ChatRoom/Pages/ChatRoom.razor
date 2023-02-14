@@ -13,60 +13,55 @@
 @inject IChatRoomsService chatRoomsService
 @attribute [Authorize]
 @inject IMessageService messageService
-<h3>Welcome</h3>
+@inject IJSRuntime _jsRuntime
 
-<div style="max-height: 50vh; overflow-y:auto;">
-    <p>Your Messages:</p>
+<h3>@CurrentChatRoom.ChatName</h3>
+
+<div id="chatContainer" style="height: 55vh; overflow-y:auto;">
+   
     @if (Messages != null)
     {
-        <ul id="messagesinchatlist"  style="list-style-type: none;">
-
 
         @foreach (var message in Messages)
         {
-               
-                <li style="padding: 5px; background-color: @(MessageDto.UserName == message.UserName ? "green" : "cornflowerblue"); color: whitesmoke; margin-bottom: 5px; max-width: 300px;display: flex;
-                    justify-content: center; align-items: center; flex-direction: column;">
-                    <h4 id="messagecontent" style="font-size: 15px;">@message.UserName says @message.Content</h4>
-                    @if (message.UserName == CurrentUserName)
-                    {
-                        @if (messageEdited)
-                        {
-                            <InputTextArea placeholder="@message.Content" maxlength="150" @bind-Value="editedMessage"></InputTextArea>
-                            <button style="margin-top: 2px;" class="btn btn-info btn-sm" @onclick="() => sendEditMessage(message.Id)">Save</button>
-                        }  
-                    }
-          
+            <div class="card" style="width: 18rem; margin-bottom: 5px; background-color: @(!message.IsFlagged? (MessageDto.UserName == message.UserName ? "forestgreen" : "cornflowerblue"):"darkred"); color: whitesmoke; border-radius: 15px;">
+                <div class="card-body">
+                    <h6 style = "font-size:14px"class="card-title">@message.UserName</h6>
+                    <p style="color:lightgray; font-size: 9px;" class="card-subtitle mb-2">Sent: @message.Sent</p>
+                    <p class="card-text">@message.Content</p>
 
-                <p id="messagetimestamp" style="font-size: 10px;">Sent: @message.Sent</p>
-                    @if(message.UserName == CurrentUserName)
-                    {
-                        <button style="margin-top: 2px;" data-cy="delete-message-button" disabled="@messageEdited" class="btn btn-primary btn-sm" @onclick="() => deleteMessage(message.Id)">Delete</button>
-                        <button style="margin-top: 2px;" data-cy="edit-message-button" disabled="@messageEdited" class="btn btn-info btn-sm" @onclick="() => editMessage()">Edit</button>
-                        
-                    }
 
-                    @if(message.IsFlagged)
+                    @if (!message.IsFlagged && MessageDto.UserName ==message.UserName)
                     {
-                        <p>flagged</p>
+                        <i @onclick="()=>EditMessage(message.Id)" style="margin-right: 90px" class="bi bi-pencil-square"></i>
+                        <i @onclick="()=>DeleteMessage(message.Id)" style="margin-right: 90px" class="bi bi-x-circle"></i>
+
                     }
-                    else
+                    @if (MessageDto.UserName != message.UserName && message.UserName !="System")
                     {
-                        <button style="margin-top: 2px;" data-cy="flag-message-button" disabled="@messageEdited" class="btn btn-info btn sm" @onclick="()=> flagMessage(message.Id)">Flag</button>
-                    }      
+                        <i @onclick="()=>FlagMessage(message.Id)" class="@(message.IsFlagged? "bi bi-flag-fill" : "bi bi-flag")"></i>
+                    }
                     
-            </li>
+
+                </div>
+                @if (message.IsEdited)
+                {
+                    <InputTextArea placeholder="@message.Content" maxlength="150" @bind-Value="EditedMessage"></InputTextArea>
+                    <button style="margin-top: 2px;" class="btn btn-info btn-sm" @onclick="() => SendEditMessage(message.Id)">Save</button>
+                }
+            </div>
         }
 
-        </ul>
     }
 </div>
-<div>
-    <InputTextArea id="messageinputarea" maxlength="150" @bind-Value="MessageDto.Content" />
-    <button id="sendmessagebtn" @onclick="onSendMessageClick" class=" btn btn-primary">Send</button>
+<div class="card" style="width: 18rem; margin-top: 20px">
+    
+        <InputTextArea  class="card-body" id="messageinputarea" maxlength="150" @bind-Value="MessageDto.Content" />
+        <button style="margin-top:5px" id="sendmessagebtn" @onclick="OnSendMessageClick" class=" btn btn-primary">Send</button>
+    
 </div>
 <div>
-    <button style="margin-top: 5px" class="btn btn-primary" @onclick="onSettingsClick">Settings</button>
+    <button style="margin-top: 5px" class="btn btn-primary" @onclick="OnSettingsClick">Settings</button>
 </div>
 
 
@@ -77,12 +72,13 @@
     private string ErrorMessage { get; set; } = string.Empty;
     private List<ReceiveMessageDto> Messages { get; set; } = new();
     private bool Encrypted { get; set; } = false;
-    public GetChatRoomDto CurrentChatRoom { get; set; }
+    public GetChatRoomDto CurrentChatRoom { get; set; } = new();
+   
+
     private string? CurrentUserName { get; set; } = string.Empty;
-    private HubConnection? hubConnection;
-    public bool IsConnected => hubConnection.State == HubConnectionState.Connected;
-    private bool messageEdited { get; set; } = false; 
-    private string editedMessage { get; set; } = string.Empty;
+    private HubConnection? HubConnection;
+    public bool IsConnected => HubConnection.State == HubConnectionState.Connected;
+    private string EditedMessage { get; set; } = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
@@ -95,15 +91,6 @@
         Guid userId = Guid.Parse(userIdValue);
         var creatorId = CurrentChatRoom.CreatorId;
 
-        //ChatMemberViewModel currentUser = new()
-        //{
-        //    UserId = userId,
-        //    Username = CurrentUserName,
-        //};
-        //CurrentChatRoom.ChatMembers.Add(currentUser);
-
-
-
         if (CurrentChatRoom.ChatMembers.Any(chatmember => chatmember.UserId.Equals(userId)))
         {
             MessageDto.UserId = Guid.Parse(userIdValue);
@@ -112,20 +99,21 @@
 
             var url = navigation.ToAbsoluteUri("/chathub");
 
-            hubConnection = new HubConnectionBuilder()
+            HubConnection = new HubConnectionBuilder()
                 .WithUrl(url)
                 .WithAutomaticReconnect()
                 .Build();
 
-            hubConnection.On<string>("ReceiveMessage", async (response) =>
+            HubConnection.On<string>("ReceiveMessage", async (response) =>
             {
                 var deserializedResponse = JsonSerializer.Deserialize<ReceiveMessageDto>(response);
 
                 Messages.Add(deserializedResponse);
+                await _jsRuntime.InvokeAsync<string>("ScrollToBottom", "chatContainer");
                 await InvokeAsync(StateHasChanged);
             });
 
-            hubConnection.On<string>("MemberJoined", (message) =>
+            HubConnection.On<string>("MemberJoined", (message) =>
             {
                 ReceiveMessageDto memberJoinedResponse = new()
                     {
@@ -137,14 +125,19 @@
                 Messages.Add(memberJoinedResponse);
                 InvokeAsync(StateHasChanged);
             });
-            await hubConnection.StartAsync();
-            await hubConnection.SendAsync("AddToGroup", Id);
+            await HubConnection.StartAsync();
+            await HubConnection.SendAsync("AddToGroup", Id);
         }
         else
         {
             navigation.NavigateTo("/");
         }
 
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await _jsRuntime.InvokeAsync<string>("ScrollToBottom", "chatContainer");
     }
 
     private void GetStoredMessages()
@@ -161,14 +154,12 @@
                     Sent = message.Sent,
                     IsFlagged = message.IsFlagged,
 
-            });
+                });
 
         };
     }
 
-
-
-    private async Task onSendMessageClick()
+    private async Task OnSendMessageClick()
     {
 
         if (string.IsNullOrEmpty(MessageDto.Content))
@@ -176,22 +167,23 @@
             ErrorMessage = "Message can not be empty";
             //ta bort meddelande efteråt
         }
-        else {
+        else
+        {
 
             var messageModelToJson = JsonSerializer.Serialize(MessageDto);
-            await hubConnection.SendAsync("SendMessageAsync", messageModelToJson, Id);
+            await HubConnection.SendAsync("SendMessageAsync", messageModelToJson, Id);
 
             MessageDto.Content = string.Empty;
         }
 
     }
 
-    private void onSettingsClick()
+    private void OnSettingsClick()
     {
         navigation.NavigateTo($"/chatrooms/{Id}/settings/");
     }
 
-    public async void deleteMessage(Guid id)
+    public async void DeleteMessage(Guid id)
     {
 
         var response = await messageService.DeleteMessage(id);
@@ -202,11 +194,9 @@
             await InvokeAsync(StateHasChanged);
         }
 
-
-
     }
 
-    public async void flagMessage(Guid messageId)
+    public async void FlagMessage(Guid messageId)
     {
         var response = await messageService.FlagMessage(messageId);
 
@@ -217,35 +207,28 @@
             await InvokeAsync(StateHasChanged);
         }
 
-
-
-
     }
 
-    public void editMessage()
+    public void EditMessage(Guid messageId)
     {
-        messageEdited = true;
+        Messages.Find(m => m.Id == messageId).IsEdited = true;
     }
 
-    public async void sendEditMessage(Guid messageId)
+    public async void SendEditMessage(Guid messageId)
     {
-        EditMessageRequest newMessage = new() { MessageId = messageId , EditedMessage = editedMessage};
+        EditMessageRequest newMessage = new() { MessageId = messageId, EditedMessage = EditedMessage, Encrypted = MessageDto.Encrypted };
 
         var response = await messageService.EditMessage(newMessage);
         if (response.Success)
         {
 
-            Messages.Find(m => m.Id == messageId).Content = response.Data;
-            messageEdited = false;
+            var message = Messages.Find(m => m.Id == messageId);
+            message.Content = response.Data;
+            message.IsEdited = false;
             await InvokeAsync(StateHasChanged);
         }
-        
-        
 
     }
-
-    
-
 
     public class SendMessageDto
     {
@@ -262,5 +245,6 @@
         public string? Content { get; set; }
         public bool IsFlagged { get; set; }
         public DateTime Sent { get; set; }
+        public bool IsEdited { get; set; }
     }
 }
