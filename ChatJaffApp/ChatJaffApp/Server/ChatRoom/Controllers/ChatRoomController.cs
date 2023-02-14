@@ -3,13 +3,13 @@ using ChatJaffApp.Server.ChatRoom.Contracts;
 using ChatJaffApp.Server.ChatRoom.Encryption;
 using ChatJaffApp.Server.ChatRoom.Models;
 using ChatJaffApp.Server.ChatRoom.Repositories;
+using ChatJaffApp.Server.Data.Contracts;
 using ChatJaffApp.Server.Data.Models;
 using ChatJaffApp.Server.Identity.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Reflection.Metadata.Ecma335;
+using System.Text;
 
 namespace ChatJaffApp.Server.ChatRoom.Controllers
 {
@@ -44,7 +44,7 @@ namespace ChatJaffApp.Server.ChatRoom.Controllers
         public async Task<IActionResult> GetMyChats()
         {
             var userInContext = await _signInManager.UserManager.GetUserAsync(HttpContext.User);
-            if(userInContext == null) { return NotFound(); }
+            if (userInContext == null) { return NotFound(); }
 
             try
             {
@@ -59,12 +59,44 @@ namespace ChatJaffApp.Server.ChatRoom.Controllers
 
         [Authorize]
         [HttpGet]
+        [Route("{chatId:guid}/members")]
+        public async Task<IActionResult> GetChatRoomCreator(Guid chatId)
+        {
+            try
+            {
+                var chat = await _chatRoomRepository.GetChatRoomAsync(chatId);
+                return Ok(chat);
+            }
+            catch
+            {
+                return StatusCode(500);
+            }
+        }
+
+        [Authorize]
+        [HttpGet]
         [Route("{chatId:guid}")]
         public async Task<IActionResult> GetChatRoom([FromRoute] Guid chatId)
         {
             try
             {
                 var chatRoom = await _chatRoomRepository.GetChatRoomAsync(chatId);
+
+                if (chatRoom.Encrypted)
+                {
+                    var key = await _chatKeyRepository.GetChatKeyAsync(chatRoom.Id);
+
+                    string[] keyList = key.Split(".");
+                    var generatedKey = keyList[0];
+                    var generatedSalt = Encoding.Unicode.GetBytes(keyList[1]);
+
+
+                    foreach (var message in chatRoom.Messages)
+                    {
+                        message.Content = AesEncryptManager.Decrypt(message.Content, generatedKey, generatedSalt);
+                    }
+                }
+
                 var chatRoomDto = _chatRoomRepository.ConvertChatToDto(chatRoom);
                 return Ok(chatRoomDto);
             }
@@ -74,7 +106,23 @@ namespace ChatJaffApp.Server.ChatRoom.Controllers
             }
         }
 
-        
+
+
+        [Authorize]
+        [HttpGet]
+        [Route("{chatId:guid}/members")]
+        public async Task<IActionResult> GetChatRoomMembers([FromRoute] Guid chatId)
+        {
+            try
+            {
+                var chatRoomMembers = await _chatRoomRepository.GetChatRoomMembersAsync(chatId);
+                return Ok(chatRoomMembers);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500);
+            }
+        }
 
         [Authorize]
         [HttpPost]
@@ -84,7 +132,7 @@ namespace ChatJaffApp.Server.ChatRoom.Controllers
             {
                 Encrypted = chatRequest.Encrypted,
                 ChatName = chatRequest.ChatName,
-                CreatorId=chatRequest.CreatorId,
+                CreatorId = chatRequest.CreatorId,
 
             };
 
@@ -99,15 +147,15 @@ namespace ChatJaffApp.Server.ChatRoom.Controllers
             {
                 EncryptionHelper encryptionHelper = new();
                 var dbKey = encryptionHelper.GenerateDbKey();
-                _chatKeyRepository.AddChatKeyAsync(result, dbKey);
+                await _chatKeyRepository.AddChatKeyAsync(result, dbKey);
             }
 
             return Ok(result);
         }
 
         [Authorize]
-        [HttpPatch]
-        [Route("{chatId:guid}")]
+        [HttpPost]
+        [Route("{chatId:guid}/members")]
         public async Task<IActionResult> AddMemberToChat([FromRoute] Guid chatId, [FromBody] Guid userId)
         {
             var chatRoom = await _chatRoomRepository.GetChatRoomAsync(chatId);
@@ -117,6 +165,20 @@ namespace ChatJaffApp.Server.ChatRoom.Controllers
             await _chatRoomRepository.UpdateChatRoomAsync(chatRoom);
 
             return Ok("Member added");
+        }
+
+        [Authorize]
+        [HttpDelete]
+        [Route("{chatId:guid}/members/{userId:guid}")]
+        public async Task<IActionResult> RemoveMemberFromChat([FromRoute] Guid chatId, [FromRoute] Guid userId)
+        {
+            var chatRoom = await _chatRoomRepository.GetChatRoomAsync(chatId);
+
+            chatRoom.RemoveMember(userId);
+
+            await _chatRoomRepository.UpdateChatRoomAsync(chatRoom);
+
+            return NotFound("Member Removed");
         }
 
         [Authorize]
@@ -156,6 +218,31 @@ namespace ChatJaffApp.Server.ChatRoom.Controllers
                 return NotFound(ex.Message);
             }
             catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+        [Authorize]
+        [HttpPut("{id:guid}")]
+        public async Task<IActionResult> UpdateChatroom(Guid id, UpdateChatroomDto chatroomDto)
+        {
+            try
+            {
+                var chatroomInDb = await _chatRoomRepository.GetChatRoomAsync(id);
+                if (chatroomInDb != null)
+                {
+                    chatroomInDb.ChatName = chatroomDto.Name;
+                    await _chatRoomRepository.UpdateChatRoomAsync(chatroomInDb);
+                    
+                    return Ok();
+                }
+                else
+                {
+                    return BadRequest("Invalid Arguments");
+                }
+            }
+            catch (Exception)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }

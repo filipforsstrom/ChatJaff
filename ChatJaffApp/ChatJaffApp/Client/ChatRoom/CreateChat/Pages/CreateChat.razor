@@ -6,7 +6,7 @@
 @inject NavigationManager navManager;
 @inject ICreateChatService createChatservice;
 @inject CustomAuthStateProvider authStateProvider;
-
+<PageTitle>Create Chat</PageTitle>
 <div>
     <div>
         <h3>Add User To Chat</h3>
@@ -39,7 +39,7 @@
             <p>
             <label>
                 Chat name:
-                <InputText id="chat-name" @bind-Value="createChatRequest.ChatName" />
+                <InputText maxlength="20" id="chat-name" @bind-Value="createChatRequest.ChatName" />
             </label>
             </p>
             <p>
@@ -65,7 +65,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-     
+
     }
 
     private void HandleFoundMember(ChatMemberViewModel memberToAddToChat)
@@ -89,6 +89,11 @@
         if (ChatMembers?.Count < 1)
         {
             ErrorMessage = "Please add members to the chat.";
+            return;
+        }
+        else if (string.IsNullOrEmpty(createChatRequest.ChatName) || createChatRequest.ChatName.Length < 3)
+        {
+            ErrorMessage = "Chat name must be atleast three characters";
             return;
         }
         else

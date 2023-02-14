@@ -24,6 +24,12 @@ namespace ChatJaffApp.Server.ChatRoom.Models
         {
             ChatMembers.Add(new ChatMember {UserId = userId});
         }
+
+        public void RemoveMember(Guid userId)
+        {
+            var memberToRemove = ChatMembers.Find(x => x.UserId == userId);
+            ChatMembers.Remove(memberToRemove);
+        }
     }
    
 }

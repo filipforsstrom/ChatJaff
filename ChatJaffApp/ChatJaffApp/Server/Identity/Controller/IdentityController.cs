@@ -71,9 +71,18 @@ namespace ChatJaffApp.Server.Identity.Controller
 
                 if (userInDb.IsBanned) return BadRequest("User is banned");
 
-                var signInResult = await _signInManager.CheckPasswordSignInAsync(userInDb, user.Password, false);
+                var signInResult = await _signInManager.CheckPasswordSignInAsync(userInDb, user.Password, lockoutOnFailure: true);
+                
+                if (!signInResult.Succeeded)
+                {
+                    string errorMessage = "Invalid Credentials";
 
-                if (!signInResult.Succeeded) return BadRequest("Invalid Credentials");
+                    if (signInResult.IsLockedOut)
+                    {
+                        errorMessage = "User is locked out";
+                    }
+                    return BadRequest(errorMessage);
+                }
 
                 await _signInManager.SignInAsync(userInDb, new AuthenticationProperties
                 {
@@ -85,13 +94,13 @@ namespace ChatJaffApp.Server.Identity.Controller
             }
             catch (AuthenticationException exception)
             {
-                return Unauthorized(exception.Message);
+                return Unauthorized("Unauthorized access");
             }
             catch (NullReferenceException exception)
             {
-                return BadRequest(exception.Message);
+                return BadRequest("Invalid Credentials");
             }
-            catch (Exception exception)
+            catch (Exception)
             {
                 return StatusCode(500);
             }
@@ -173,6 +182,30 @@ namespace ChatJaffApp.Server.Identity.Controller
         }
 
         [Authorize]
+        [HttpPost]
+        [Route("{userId:guid}/[action]")]
+        public async Task<IActionResult> ChangeUserName([FromRoute] string userId, [FromBody] string userName)
+        {
+            var httpUserId = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+            if(!httpUserId.Equals(httpUserId, StringComparison.OrdinalIgnoreCase))
+            {
+                return BadRequest();
+            }
+
+            var user = await _signInManager.UserManager.FindByIdAsync(httpUserId);
+
+            var response = await _signInManager.UserManager.SetUserNameAsync(user, userName);
+            if (response.Succeeded)
+            {
+                await _memberRepository.ChangeMemberUserName(Guid.Parse(userId), userName);
+                return Ok(response);
+            }
+
+            return BadRequest();
+        }
+
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteIdentity(Guid id)
         {
@@ -180,7 +213,7 @@ namespace ChatJaffApp.Server.Identity.Controller
 
             try
             {
-                if (userId == id.ToString())
+                if (userId.ToLower() == id.ToString().ToLower())
                 {
                     var userToDelete = await _signInManager.UserManager.FindByIdAsync(userId);
                     if (userToDelete != null)
@@ -203,7 +236,7 @@ namespace ChatJaffApp.Server.Identity.Controller
             }
         }
 
-        [Authorize]
+        [Authorize (Roles = "Admin")]
         [HttpPut("banUser")]
         public async Task<IActionResult> BanUser([FromBody] string userName)
         {

@@ -1,12 +1,11 @@
-using Blazor.SubtleCrypto;
 using Blazored.LocalStorage;
 using ChatJaffApp.Client;
 using ChatJaffApp.Client.Account.Contracts;
 using ChatJaffApp.Client.Account.Services;
 using ChatJaffApp.Client.ChatRoom.CreateChat.Contracts;
 using ChatJaffApp.Client.ChatRoom.CreateChat.Services;
-using ChatJaffApp.Client.ChatRoom.Member.Contracts;
-using ChatJaffApp.Client.ChatRoom.Member.Services;
+using ChatJaffApp.Client.Member.Contracts;
+using ChatJaffApp.Client.Member.Services;
 using ChatJaffApp.Client.ChatRoom.Messages.Contracts;
 using ChatJaffApp.Client.ChatRoom.Messages.Services;
 using ChatJaffApp.Client.ChatRoom.MyChatRooms.Contracts;
@@ -25,13 +24,8 @@ builder.Services.AddScoped<IMemberService, MemberService>();
 builder.Services.AddScoped<IChatRoomsService, ChatRoomsService>();
 builder.Services.AddScoped<IMessageService, MessageService>();
 
-
-builder.Services.AddSubtleCrypto(options =>
-    options.Key = "OURSUPERDUPERSECRETKEYHIDDENINÖSTERVÄRN");
-//builder.Services.AddOptions();
-
 builder.Services.AddScoped<CustomAuthStateProvider>();
-builder.Services.AddScoped<AuthenticationStateProvider>(s => s.GetRequiredService<CustomAuthStateProvider>());  
+builder.Services.AddScoped<AuthenticationStateProvider>(s => s.GetRequiredService<CustomAuthStateProvider>());
 
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 

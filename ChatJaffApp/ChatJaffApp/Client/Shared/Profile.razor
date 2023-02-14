@@ -14,7 +14,20 @@
 
 <div style="display: flex; padding: 10px;flex-direction: column; gap: 50px; box-shadow: rgba(0, 0, 0, 0.16) 0px 10px 36px 0px, rgba(0, 0, 0, 0.06) 0px 0px 0px 1px;">
     <div>
-        <h4>User Info</h4>
+        <h4>Profile</h4>
+        <h4>Change Username</h4>
+        <EditForm Model="changeUserNameForm" OnValidSubmit="OnChangeUserNameSubmit" style="display: flex; gap: 20px; flex-direction: column; max-width: 300px;">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+            <div class="form-group">
+                <label>New username</label>
+                <InputText id="new-username-field" class="form-control" @bind-Value="changeUserNameForm.NewUsername" />
+            </div>
+            <button id="change-username-button" class="btn btn-sm btn-success">Confirm</button>
+        </EditForm>
+        <div>
+            <p>@changeUserNameResponseMessage</p>
+        </div>
     </div>
 
     <div>
@@ -52,14 +65,14 @@
         <div class="modal-dialog" @onclick:stopPropagation="true">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title">Really delete profile?</h4>                    
+                    <h4 class="modal-title">Really delete profile?</h4>
                 </div>
                 <div class="modal-body">
                     <p>This will remove you from our database.</p>
                     <p>@deleteIdentityResponseMessage</p>
                     <button id="cancel-delete-button" type="button" class="btn btn-sm btn-primary" @onclick="toggleDeleteDialog">Cancel</button>
                     <button id="confirm-delete-button" type="button" class="btn btn-sm btn-danger" @onclick="onDeleteClick">Confirm</button>
-                </div>                
+                </div>
             </div>
         </div>
     </div>
@@ -75,20 +88,29 @@
     public string? changePasswordResponseMessage { get; set; } = string.Empty;
     public string? deleteIdentityResponseMessage { get; set; } = string.Empty;
 
+    public ChangeUsernameForm changeUserNameForm { get; set; } = new();
+    public string? changeUserNameResponseMessage { get; set; } = string.Empty;
+    public string UserName { get; set; } = string.Empty;
+    public string UserId { get; set; } = string.Empty;
+
     protected async override Task OnInitializedAsync()
     {
+        var state = await authenticationStateProvider.GetAuthenticationStateAsync();
+        UserId = state.User.FindFirst(ClaimTypes.NameIdentifier).Value;
 
+        var currentUser = await identityService.CurrentUserInfo();
+        UserName = currentUser.UserName;
     }
 
     public async Task onChangePasswordSubmit()
     {
-
-        var changePasswordResponse = await identityService.ChangePassword(changePasswordForm);        
+        var changePasswordResponse = await identityService.ChangePassword(changePasswordForm);
 
         if (changePasswordResponse.Success)
         {
             changePasswordResponseMessage = "Password changed.";
-        } else
+        }
+        else
         {
             changePasswordResponseMessage = "Failed";
         }
@@ -102,10 +124,7 @@
 
     public async Task onDeleteClick()
     {
-        var state = await authenticationStateProvider.GetAuthenticationStateAsync();
-        var userId = state.User.FindFirst(ClaimTypes.NameIdentifier).Value;
-
-        var deleteResponse = await identityService.DeleteIdentity(userId);
+        var deleteResponse = await identityService.DeleteIdentity(UserId);
 
         if (deleteResponse.Success)
         {
@@ -113,11 +132,36 @@
             await authenticationStateProvider.Logout();
             navManager.NavigateTo("/account/login");
 
-        } else
+        }
+        else
         {
             deleteIdentityResponseMessage = deleteResponse.Data;
         }
     }
 
-    
+    public async Task OnChangeUserNameSubmit()
+    {
+        if (changeUserNameForm.NewUsername.Equals(UserName, StringComparison.OrdinalIgnoreCase))
+        {
+            changeUserNameResponseMessage = "That's already your username!";
+            return;
+        }
+
+        var changeUsernameResponse = await identityService.ChangeUserName(Guid.Parse(UserId), changeUserNameForm.NewUsername);
+
+        changeUserNameResponseMessage = changeUsernameResponse.Message;
+
+        if (changeUsernameResponse.Success)
+        {
+            changeUserNameResponseMessage += " Please re-login to have up-to-date data.";
+        }
+    }
+
+    public class ChangeUsernameForm
+    {
+        [Required(ErrorMessage = "New username is required.")]
+        public string NewUsername { get; set; }
+    }
+
+
 }

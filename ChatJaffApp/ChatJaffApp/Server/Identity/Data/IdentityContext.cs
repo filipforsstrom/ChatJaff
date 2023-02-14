@@ -30,8 +30,9 @@ namespace ChatJaffApp.Server.Identity.Data
                 NormalizedUserName = "MEMBER1",
                 Email = "member1@gmail.com",
                 NormalizedEmail = "MEMBER1@GMAIL.COM",
-                LockoutEnabled = false,
+                LockoutEnabled = true,
                 EmailConfirmed = true,
+                AgreedToUserTerms=true,
             };
             member1.PasswordHash = passwordHasher.HashPassword(member1, "member1");
 
@@ -44,6 +45,7 @@ namespace ChatJaffApp.Server.Identity.Data
                 NormalizedEmail = "MEMBER2@GMAIL.COM",
                 LockoutEnabled = false,
                 EmailConfirmed = true,
+                AgreedToUserTerms=true,
             };
 
             member2.PasswordHash = passwordHasher.HashPassword(member2, "member2");
@@ -57,7 +59,8 @@ namespace ChatJaffApp.Server.Identity.Data
                 NormalizedEmail = "BANNED1@GMAIL.COM",
                 LockoutEnabled = false,
                 EmailConfirmed = true,
-                IsBanned = true
+                IsBanned = true,
+                AgreedToUserTerms=true,
             };
 
             banned1.PasswordHash = passwordHasher.HashPassword(banned1, "banned1");
@@ -71,13 +74,31 @@ namespace ChatJaffApp.Server.Identity.Data
                 NormalizedEmail = "TOBAN1@GMAIL.COM",
                 LockoutEnabled = false,
                 EmailConfirmed = true,
-                IsBanned = false
+                IsBanned = false,
+                AgreedToUserTerms=true,
             };
 
             toBan1.PasswordHash = passwordHasher.HashPassword(banned1, "toban1");
+
+            ApplicationUser admin1 = new ApplicationUser()
+            {
+                Id = "b8381d75-d110-42f9-85e5-9c92a0111123",
+                UserName = "admin1",
+                NormalizedUserName = "ADMIN1",
+                Email = "admin1@gmail.com",
+                NormalizedEmail = "ADMIN1@GMAIL.COM",
+                LockoutEnabled = false,
+                EmailConfirmed = true,
+                IsBanned = false,
+                AgreedToUserTerms=true,
+                
+            };
+
+            admin1.PasswordHash = passwordHasher.HashPassword(banned1, "admin1");
+
             var listOfInitialUsers = new List<ApplicationUser>()
             {
-                member1, member2, banned1, toBan1
+                member1, member2, banned1, toBan1, admin1
             };
             builder.Entity<ApplicationUser>().HasData(listOfInitialUsers);
         }
@@ -99,6 +120,13 @@ namespace ChatJaffApp.Server.Identity.Data
                     Name = "Moderator",
                     ConcurrencyStamp = "1",
                     NormalizedName = "MODERATOR"
+                },
+                new IdentityRole()
+                {
+                    Id = "AdminId",
+                    Name = "Admin",
+                    ConcurrencyStamp = "1",
+                    NormalizedName = "ADMIN"
                 }
                 );
         }
@@ -114,6 +142,11 @@ namespace ChatJaffApp.Server.Identity.Data
                 {
                     RoleId = "MemberId",
                     UserId = "b8381d75-d110-42f9-85e5-9c92a062fbc8"
+                },
+                new IdentityUserRole<string>()
+                {
+                    RoleId = "AdminId",
+                    UserId = "b8381d75-d110-42f9-85e5-9c92a0111123"
                 }
                 );
         }

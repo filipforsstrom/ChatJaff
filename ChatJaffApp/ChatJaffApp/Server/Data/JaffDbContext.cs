@@ -1,7 +1,6 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore;
-using ChatJaffApp.Server.ChatRoom.Models;
+﻿using ChatJaffApp.Server.ChatRoom.Models;
 using ChatJaffApp.Server.Data.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace ChatJaffApp.Server.Data
 {
@@ -38,7 +37,7 @@ namespace ChatJaffApp.Server.Data
 				new Chat() {
 					Id = Guid.Parse("{5D728EC3-1F6B-4170-8827-BC064AE25A41}"),
 					ChatName = "Chat 1",
-					Encrypted= true,
+					Encrypted= false,
                     CreatorId = Guid.Parse("b8381d75-d110-42f9-85e5-9c92a062fbc8")
                 },
                 new Chat() {
@@ -55,7 +54,7 @@ namespace ChatJaffApp.Server.Data
         private void SeedChatKey(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<ChatKey>().HasData(new ChatKey
-            { 
+            {
                 ChatRoomId = Guid.Parse("{5D728EC3-1F6B-4170-8827-BC064AE25A41}"),
                 Key = "123.banana"
             });
@@ -86,14 +85,17 @@ namespace ChatJaffApp.Server.Data
                     Id = Guid.Parse("{ABDA0517-7354-49FC-9239-8E350B42FB9D}"),
                     UserId = Guid.Parse("9F7E8005-873A-489D-B569-AFB17A58B051") ,
                     ChatId= Guid.Parse("{5D728EC3-1F6B-4170-8827-BC064AE25A41}"),
-                    Content = " Cathy, Meet me at the batcave girrl"
+                    Content = " Cathy, Meet me at the batcave girrl",
+                    IsFlagged=false,
 
                 },
                 new Message() {
                     Id = Guid.Parse("{439F95CC-B2D6-4375-9281-6A5C65BA3806}"),
                     UserId = Guid.Parse("C4423797-979C-4A72-A7F8-53499AAB5469") ,
                     ChatId= Guid.Parse("{5D728EC3-1F6B-4170-8827-BC064AE25A41}"),
-                    Content = " Sure thang battyboy"
+                    Content = " Sure thang battyboy",
+                    IsFlagged=false,
+                
                 }
 
             };
@@ -109,9 +111,12 @@ namespace ChatJaffApp.Server.Data
                 new ChatMember() { UserId = Guid.Parse("9F7E8005-873A-489D-B569-AFB17A58B051"), ChatId = Guid.Parse("{5D728EC3-1F6B-4170-8827-BC064AE25A41}") },
                 new ChatMember() { UserId = Guid.Parse("C4423797-979C-4A72-A7F8-53499AAB5469"), ChatId = Guid.Parse("{5D728EC3-1F6B-4170-8827-BC064AE25A41}") },
                 new ChatMember() { UserId =  Guid.Parse("{28E44613-4ACE-474B-965F-E589E72AAF46}"), ChatId = Guid.Parse("{5D728EC3-1F6B-4170-8827-BC064AE25A41}") },
+                new ChatMember() { UserId = Guid.Parse("{9CEAA7AB-1C67-4ED4-A86A-6BD01DF6C310}"), ChatId = Guid.Parse("{5D728EC3-1F6B-4170-8827-BC064AE25A41}") },
+                new ChatMember() { UserId = Guid.Parse("{b8381d75-d110-42f9-85e5-9c92a062fbc8}"), ChatId = Guid.Parse("{5D728EC3-1F6B-4170-8827-BC064AE25A41}") },
                 new ChatMember() { UserId =  Guid.Parse("{E36D119F-F8E3-4BD1-A3F1-0845F8CBE529}"), ChatId = Guid.Parse("{1FCF8EB7-2658-47E2-AFF5-C396AE65DE92}") },
                 new ChatMember() { UserId =  Guid.Parse("{28E44613-4ACE-474B-965F-E589E72AAF46}"), ChatId = Guid.Parse("{1FCF8EB7-2658-47E2-AFF5-C396AE65DE92}") },
-                new ChatMember() { UserId =  Guid.Parse("{95A471EE-E8A7-44D4-BB13-C5090FB1A5CE}"), ChatId = Guid.Parse("{1FCF8EB7-2658-47E2-AFF5-C396AE65DE92}") }
+                new ChatMember() { UserId =  Guid.Parse("{95A471EE-E8A7-44D4-BB13-C5090FB1A5CE}"), ChatId = Guid.Parse("{1FCF8EB7-2658-47E2-AFF5-C396AE65DE92}") },
+                new ChatMember() { UserId =  Guid.Parse("{9CEAA7AB-1C67-4ED4-A86A-6BD01DF6C310}"), ChatId = Guid.Parse("{1FCF8EB7-2658-47E2-AFF5-C396AE65DE92}") }
             };
 
             modelBuilder.Entity<ChatMember>().HasData(chatMembers);
