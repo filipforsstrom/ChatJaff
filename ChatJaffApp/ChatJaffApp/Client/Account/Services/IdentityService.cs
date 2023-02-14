@@ -1,11 +1,6 @@
-﻿using Blazored.LocalStorage;
-using ChatJaffApp.Client.Account.Contracts;
+﻿using ChatJaffApp.Client.Account.Contracts;
 using ChatJaffApp.Client.Account.Models;
 using ChatJaffApp.Client.Shared.Models;
-using ChatJaffApp.Client.Shared.Models.Contracts;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Authorization;
-using System.Net.Http;
 using System.Net.Http.Json;
 
 namespace ChatJaffApp.Client.Account.Services
@@ -25,8 +20,8 @@ namespace ChatJaffApp.Client.Account.Services
 
             ChangePasswordDTO changePasswordDTO = new()
             {
-                OldPassword= changePassword.OldPassword,
-                NewPassword= changePassword.NewPassword,
+                OldPassword = changePassword.OldPassword,
+                NewPassword = changePassword.NewPassword,
             };
             var apiResponse = await _httpClient.PostAsJsonAsync("api/identity/changepassword", changePasswordDTO);
 
@@ -51,7 +46,8 @@ namespace ChatJaffApp.Client.Account.Services
             if (apiResponse.IsSuccessStatusCode)
             {
                 deleteResponse.Success = true;
-            } else
+            }
+            else
             {
                 deleteResponse.Data = await apiResponse.Content.ReadAsStringAsync();
             }
@@ -60,7 +56,7 @@ namespace ChatJaffApp.Client.Account.Services
         }
 
         public async Task Login(LoginDto login)
-        {            
+        {
             var loginResponse = await _httpClient.PostAsJsonAsync("api/identity/login", login);
             if (loginResponse.StatusCode == System.Net.HttpStatusCode.BadRequest)
             {
@@ -76,6 +72,7 @@ namespace ChatJaffApp.Client.Account.Services
             RegisterDTO registerRequest = new RegisterDTO()
             {
                 Email = register.Email,
+                PhoneNumber = register.PhoneNumber,
                 Password = register.Password,
                 Username = register.Username,
                 AgreedToUserTerms = register.ConfirmUserTerms,
