@@ -38,7 +38,6 @@
                     <tr>
                         <td>@member.Username</td>
                         <td>
-                            <a class="btn btn-success">Show more info</a>
                             <button data-cy="banbutton" onclick="@(async () => await BanMember(member.Username))" class="btn btn-danger">Ban user</button>
                         </td>
                     </tr>
