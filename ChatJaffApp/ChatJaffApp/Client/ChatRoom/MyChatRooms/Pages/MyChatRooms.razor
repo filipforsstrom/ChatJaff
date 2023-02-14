@@ -6,55 +6,33 @@
 @inject AuthenticationStateProvider authenticationStateProvider;
 @inject IChatRoomsService _chatRoomsService
 @attribute [Authorize]
-
+<PageTitle>My Chatrooms</PageTitle>
 <h3>
     <label>
         Create new chat
         <a id="add-new-chat-button" href="/chatRooms/createchat"><button class="btn btn-primary">+</button></a>
     </label>
 </h3>
-<div style="display: flex;">
-    <div style="flex: 1;">
-        <ul>
-            <h3 style="text-align: center; margin: 0;">All Chat Rooms</h3>
-            @foreach (var chatRoom in ChatRoomList)
-            {
-                <a href="/chatrooms/@chatRoom.Id" class="list-group-item list-group-item-action list-group-item-light rounded-0">
-                    <div class="media">
-                        <div class="media-body ml-4">
-                            <tr>
-                                <td>
-                                    <p class="font-italic text-muted mb-0 text-small">@chatRoom.ChatName</p>
-                                </td>
-                            </tr>
-                        </div>
+<div style="flex: 1;">
+    <ul>
+        <h3 style="text-align: center; margin: 0;">My Chat Rooms</h3>
+        @foreach (var chatRoom in MyChats)
+        {
+            <a href="/chatrooms/@chatRoom.Id" class="list-group-item list-group-item-action list-group-item-light rounded-0">
+                <div class="media">
+                    <div class="media-body ml-4">
+                        <tr>
+                            <td>
+                                <p class="font-italic text-muted mb-0 text-small">@chatRoom.ChatName</p>
+                            </td>
+                        </tr>
                     </div>
-                </a>
-            }
-        </ul>
-    </div>
-    <div style="flex: 1;">
-        <ul>
-            <h3 style="text-align: center; margin: 0;">My Chat Rooms</h3>
-            @foreach (var chatRoom in MyChats)
-            {
-                <a href="/chatrooms/@chatRoom.Id" class="list-group-item list-group-item-action list-group-item-light rounded-0">
-                    <div class="media">
-                        <div class="media-body ml-4">
-                            <tr>
-                                <td>
-                                    <p class="font-italic text-muted mb-0 text-small">@chatRoom.ChatName</p>
-                                </td>
-                            </tr>
-                        </div>
-                    </div>
-                </a>
-            }
-        </ul>
-    </div>
+                </div>
+            </a>
+        }
+    </ul>
 </div>
 @code {
-    public List<ChatRoomsViewModel> ChatRoomList { get; set; } = new();
     public List<ChatRoomsViewModel> MyChats { get; set; } = new();
 
     protected override async Task OnInitializedAsync()
