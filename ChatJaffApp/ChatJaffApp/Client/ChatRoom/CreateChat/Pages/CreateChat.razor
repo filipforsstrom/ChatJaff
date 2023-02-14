@@ -6,7 +6,7 @@
 @inject NavigationManager navManager;
 @inject ICreateChatService createChatservice;
 @inject CustomAuthStateProvider authStateProvider;
-
+<PageTitle>Create Chat</PageTitle>
 <div>
     <div>
         <h3>Add User To Chat</h3>
@@ -39,7 +39,7 @@
             <p>
             <label>
                 Chat name:
-                <InputText id="chat-name" @bind-Value="createChatRequest.ChatName" />
+                <InputText maxlength="20" id="chat-name" @bind-Value="createChatRequest.ChatName" />
             </label>
             </p>
             <p>
