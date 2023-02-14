@@ -74,7 +74,7 @@
     private List<ReceiveMessageDto> Messages { get; set; } = new();
     private bool Encrypted { get; set; } = false;
     public GetChatRoomDto CurrentChatRoom { get; set; } = new();
-   
+
 
     private string? CurrentUserName { get; set; } = string.Empty;
     private HubConnection? HubConnection;
@@ -226,6 +226,7 @@
             var message = Messages.Find(m => m.Id == messageId);
             message.Content = response.Data;
             message.IsEdited = false;
+            EditedMessage = "";
             await InvokeAsync(StateHasChanged);
         }
 
