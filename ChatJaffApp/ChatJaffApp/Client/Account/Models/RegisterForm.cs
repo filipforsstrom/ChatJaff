@@ -14,7 +14,7 @@ namespace ChatJaffApp.Client.Account.Models
 
         [Required]
         [MinLength(6, ErrorMessage = "The Password field must be a minimum of 6 characters")]
-        [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8}$", 
+        [RegularExpression(@"^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$", 
             ErrorMessage = "Password must meet requirements: must have at least one non alphanumeric character, must have at least one digit ('0'-'9'), must have at least one uppercase ('A'-'Z'), must have at least one lowercase ('a'-'z').")]
         public string? Password { get; set; }
 
