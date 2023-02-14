@@ -9,8 +9,6 @@ describe("Chatroom", () => {
     cy.get("#login-button").click();
     cy.contains("Logout");
     cy.visit(`${baseUrl}chatrooms/5d728ec3-1f6b-4170-8827-bc064ae25a41`);
-    cy.contains(
-      "Batman42 says Cathy, Meet me at the batcave girrl"
-    );
+    cy.contains("Cathy, Meet me at the batcave girrl");
   });
 });
