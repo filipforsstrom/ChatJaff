@@ -1,4 +1,5 @@
 ﻿using ChatJaffApp.Client.Account.Models;
+using ChatJaffApp.Client.Shared.Models;
 using ChatJaffApp.Client.Shared.Models.Contracts;
 
 namespace ChatJaffApp.Client.Account.Contracts
@@ -15,7 +16,6 @@ namespace ChatJaffApp.Client.Account.Contracts
 
         Task<ChangePasswordResponse> ChangePassword(ChangePasswordForm changePassword);
         Task<DeleteIdentityResponseDto> DeleteIdentity(string identityId);
-
-
+        Task<ServiceResponseViewModel<string>> ChangeUserName(Guid userId, string userName);
     }
 }

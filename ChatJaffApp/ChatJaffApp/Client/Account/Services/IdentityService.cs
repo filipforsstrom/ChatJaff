@@ -106,5 +106,22 @@ namespace ChatJaffApp.Client.Account.Services
             var result = await _httpClient.GetFromJsonAsync<CurrentUserDto>("api/identity/currentuserinfo");
             return result;
         }
+
+        public async Task<ServiceResponseViewModel<string>> ChangeUserName(Guid userId, string userName)
+        {
+            ServiceResponseViewModel<string> responseViewModel = new();
+            var response = await _httpClient.PostAsJsonAsync($"api/identity/{userId}/changeusername", userName);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                responseViewModel.Success = false;
+                responseViewModel.Message = "Failed to change username.";
+                return responseViewModel;
+            }
+
+            responseViewModel.Success = true;
+            responseViewModel.Message = "Username change success!";
+            return responseViewModel;
+        }
     }
 }
