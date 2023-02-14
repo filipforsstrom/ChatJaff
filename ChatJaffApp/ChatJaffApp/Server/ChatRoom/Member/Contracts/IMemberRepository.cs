@@ -9,5 +9,6 @@ namespace ChatJaffApp.Server.ChatRoom.Member.Contracts
         Task<GetMemberDto> GetMember(string searchedUserName);
         IEnumerable<ChatJaffApp.Server.Data.Models.Member> GetAllMembers();
         Task AddMemberToDb(Guid userId, string userName);
+        Task ChangeMemberUserName(Guid userId, string userName);
     }
 }

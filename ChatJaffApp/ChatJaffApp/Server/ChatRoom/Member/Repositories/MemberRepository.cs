@@ -1,5 +1,6 @@
 ﻿using ChatJaffApp.Server.ChatRoom.Member.Contracts;
 using ChatJaffApp.Server.ChatRoom.Member.Models;
+using ChatJaffApp.Server.Data.Models;
 using ChatJaffApp.Server.Data;
 using Microsoft.AspNetCore.Server.IIS.Core;
 using Microsoft.EntityFrameworkCore;
@@ -33,6 +34,31 @@ namespace ChatJaffApp.Server.ChatRoom.Member.Repositories
                 throw new Exception(ex.Message);
             }
         
+        }
+
+        public async Task ChangeMemberUserName(Guid userId, string newUserName)
+        {
+            var memberToUpdate = await _context.Members.FindAsync(userId);
+            
+            if(memberToUpdate == null) 
+            {
+                return;
+            }
+
+            try
+            {
+                memberToUpdate.UserName = newUserName;
+                var result = _context.Members.Update(memberToUpdate);
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException ex)
+            {
+                throw new DbUpdateException("Something went wrong");
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         public IEnumerable<ChatJaffApp.Server.Data.Models.Member> GetAllMembers()

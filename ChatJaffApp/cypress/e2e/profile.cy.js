@@ -14,6 +14,21 @@ describe("Profile", () => {
     cy.contains("User Info");
   });
 
+  it("fails to change username when already exists", function () {
+    cy.get("#current-username").contains("member2")
+    cy.get("#new-username-field").type("member1")
+    cy.get("#change-username-button").click();
+    cy.contains("Failed to change username.")
+  })
+
+  it("change username", function () {
+    cy.get("#current-username").contains("member2")
+    cy.get("#new-username-field").type("member3")
+    cy.get("#change-username-button").click()
+    cy.get("#current-username").contains("member3")
+    cy.contains("Username change success!")
+  })
+
   it("fails when changing password", function () {
     //change password without confirming new password
     cy.get("#old-password-field").type("member2");
@@ -34,6 +49,11 @@ describe("Profile", () => {
     cy.get("#change-password-button").click();
     cy.contains("Password changed");
   });
+
+  //change username to name that already exists
+  
+  //change username successfully
+  
 });
 
 describe("delete account", () => {
