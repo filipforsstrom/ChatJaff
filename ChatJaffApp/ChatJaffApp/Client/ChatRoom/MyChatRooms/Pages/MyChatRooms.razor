@@ -37,14 +37,6 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var state = await authenticationStateProvider.GetAuthenticationStateAsync();
-        var userId = state.User.FindFirst(ClaimTypes.NameIdentifier).Value;
-
-        if (Guid.TryParse(userId, out Guid parsedId))
-        {
-            MyChats = await _chatRoomsService.GetMyChats();
-        }
-
-        ChatRoomList = await _chatRoomsService.GetAllChats();
+        MyChats = await _chatRoomsService.GetMyChats();
     }
 }
