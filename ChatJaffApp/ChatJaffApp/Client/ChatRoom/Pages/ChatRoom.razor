@@ -1,6 +1,7 @@
 ﻿@page "/chatrooms/{id:guid}"
 @using System.Security.Claims;
 @using ChatJaffApp.Client.ChatRoom.Messages.Contracts;
+@using ChatJaffApp.Client.ChatRoom.Messages.Models;
 @using Microsoft.AspNetCore.SignalR.Client;
 @using System.Text.Json;
 @using ChatJaffApp.Client.ChatRoom.MyChatRooms.Contracts;
@@ -18,25 +19,49 @@
 @inject IMessageService messageService
 <h3>Welcome</h3>
 
-<div>
+<div style="max-height: 50vh; overflow-y:auto;">
     <p>Your Messages:</p>
     @if (Messages != null)
     {
-        <ul id="messagesinchatlist" style="list-style-type: none;">
+        <ul id="messagesinchatlist"  style="list-style-type: none;">
+
+
         @foreach (var message in Messages)
         {
                
                 <li style="padding: 5px; background-color: @(MessageDto.UserName == message.UserName ? "green" : "cornflowerblue"); color: whitesmoke; margin-bottom: 5px; max-width: 300px;display: flex;
                     justify-content: center; align-items: center; flex-direction: column;">
-                <h4 id="messagecontent" style="font-size: 15px;">@message.UserName says @message.Content</h4>
+                    <h4 id="messagecontent" style="font-size: 15px;">@message.UserName says @message.Content</h4>
+                    @if (message.UserName == CurrentUserName)
+                    {
+                        @if (messageEdited)
+                        {
+                            <InputTextArea placeholder="@message.Content" maxlength="150" @bind-Value="editedMessage"></InputTextArea>
+                            <button style="margin-top: 2px;" class="btn btn-info btn-sm" @onclick="() => sendEditMessage(message.Id)">Save</button>
+                        }  
+                    }
+          
+
                 <p id="messagetimestamp" style="font-size: 10px;">Sent: @message.Sent</p>
                     @if(message.UserName == CurrentUserName)
                     {
-                        <button data-cy="delete-message-button" class="btn btn-primary btn-sm" @onclick="() => deleteMessage(message.Id)">delete</button>
+                        <button style="margin-top: 2px;" data-cy="delete-message-button" disabled="@messageEdited" class="btn btn-primary btn-sm" @onclick="() => deleteMessage(message.Id)">Delete</button>
+                        <button style="margin-top: 2px;" data-cy="edit-message-button" disabled="@messageEdited" class="btn btn-info btn-sm" @onclick="() => editMessage()">Edit</button>
+                        
                     }
+
+                    @if(message.IsFlagged)
+                    {
+                        <p>flagged</p>
+                    }
+                    else
+                    {
+                        <button style="margin-top: 2px;" data-cy="flag-message-button" disabled="@messageEdited" class="btn btn-info btn sm" @onclick="()=> flagMessage(message.Id)">Flag</button>
+                    }      
                     
             </li>
         }
+
         </ul>
     }
 </div>
@@ -58,11 +83,11 @@
     private bool Encrypted { get; set; } = false;
     public GetChatRoomDto CurrentChatRoom { get; set; }
     private EncryptionManager keeperOfSecrets = new();
-
     private string? CurrentUserName { get; set; } = string.Empty;
     private HubConnection? hubConnection;
     public bool IsConnected => hubConnection.State == HubConnectionState.Connected;
-
+    private bool messageEdited { get; set; } = false; 
+    private string editedMessage { get; set; } = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
@@ -70,58 +95,83 @@
         GetStoredMessages();
 
         var state = await authStateProvider.GetAuthenticationStateAsync();
-        var userId = state.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+        var userIdValue = state.User.FindFirst(ClaimTypes.NameIdentifier).Value;
         CurrentUserName = state.User.FindFirst(ClaimTypes.Name).Value;
+        Guid userId = Guid.Parse(userIdValue);
+        var creatorId = CurrentChatRoom.CreatorId;
 
-        MessageDto.UserId = Guid.Parse(userId);
-        MessageDto.UserName = CurrentUserName;
-        MessageDto.Encrypted = CurrentChatRoom.Encrypted;
+        //ChatMemberViewModel currentUser = new()
+        //{
+        //    UserId = userId,
+        //    Username = CurrentUserName,
+        //};
+        //CurrentChatRoom.ChatMembers.Add(currentUser);
 
-        var url = navigation.ToAbsoluteUri("/chathub");
 
-        hubConnection = new HubConnectionBuilder()
-            .WithUrl(url)
-            .WithAutomaticReconnect()
-            .Build();
 
-        hubConnection.On<string>("ReceiveMessage", async (response) =>
+        if (CurrentChatRoom.ChatMembers.Any(chatmember => chatmember.UserId.Equals(userId)))
         {
-            var deserializedResponse = JsonSerializer.Deserialize<ReceiveMessageDto>(response);
+            MessageDto.UserId = Guid.Parse(userIdValue);
+            MessageDto.UserName = CurrentUserName;
+            MessageDto.Encrypted = CurrentChatRoom.Encrypted;
 
-            Messages.Add(deserializedResponse);
-            await InvokeAsync(StateHasChanged);
-        });
+            var url = navigation.ToAbsoluteUri("/chathub");
 
-        hubConnection.On<string>("MemberJoined", (message) =>
-        {
-            ReceiveMessageDto memberJoinedResponse = new()
+            hubConnection = new HubConnectionBuilder()
+                .WithUrl(url)
+                .WithAutomaticReconnect()
+                .Build();
+
+            hubConnection.On<string>("ReceiveMessage", async (response) =>
             {
-                UserName = "System",
-                Content = message,
-                Sent = DateTime.UtcNow
-            };
+                var deserializedResponse = JsonSerializer.Deserialize<ReceiveMessageDto>(response);
 
-            Messages.Add(memberJoinedResponse);
-            InvokeAsync(StateHasChanged);
-        });        
-        await hubConnection.StartAsync();
-        await hubConnection.SendAsync("AddToGroup", Id);
+                Messages.Add(deserializedResponse);
+                await InvokeAsync(StateHasChanged);
+            });
+
+            hubConnection.On<string>("MemberJoined", (message) =>
+            {
+                ReceiveMessageDto memberJoinedResponse = new()
+                    {
+                        UserName = "System",
+                        Content = message,
+                        Sent = DateTime.UtcNow
+                    };
+
+                Messages.Add(memberJoinedResponse);
+                InvokeAsync(StateHasChanged);
+            });
+            await hubConnection.StartAsync();
+            await hubConnection.SendAsync("AddToGroup", Id);
+        }
+        else
+        {
+            navigation.NavigateTo("/");
+        }
+
     }
 
     private void GetStoredMessages()
     {
-        
+
         foreach (var message in CurrentChatRoom.Messages)
         {
             Messages.Add(new ReceiveMessageDto
-            {
-                Id = message.Id,
-                UserName = message.UserName,
-                Content = message.Content,
-                Sent = message.Sent
+                {
+                    Id = message.Id,
+                    UserName = message.UserName,
+                    Content = message.Content,
+
+                    Sent = message.Sent,
+                    IsFlagged = message.IsFlagged,
+
             });
+
         };
     }
+
+
 
     private async Task onSendMessageClick()
     {
@@ -132,7 +182,7 @@
             //ta bort meddelande efteråt
         }
         else {
-           
+
             var messageModelToJson = JsonSerializer.Serialize(MessageDto);
             await hubConnection.SendAsync("SendMessageAsync", messageModelToJson, Id);
 
@@ -154,16 +204,57 @@
         {
             var message = Messages.Select(m => m).Where(m => m.Id == id).FirstOrDefault();
             Messages.Remove(message);
-            InvokeAsync(StateHasChanged);
+            await InvokeAsync(StateHasChanged);
         }
+
 
 
     }
 
+    public async void flagMessage(Guid messageId)
+    {
+        var response = await messageService.FlagMessage(messageId);
+
+        if (response.Success)
+        {
+            Messages.Find(m => m.Id == messageId).IsFlagged = true;
+
+            await InvokeAsync(StateHasChanged);
+        }
+
+
+
+
+    }
+
+    public void editMessage()
+    {
+        messageEdited = true;
+    }
+
+    public async void sendEditMessage(Guid messageId)
+    {
+        EditMessageRequest newMessage = new() { MessageId = messageId , EditedMessage = editedMessage};
+
+        var response = await messageService.EditMessage(newMessage);
+        if (response.Success)
+        {
+
+            Messages.Find(m => m.Id == messageId).Content = response.Data;
+            messageEdited = false;
+            await InvokeAsync(StateHasChanged);
+        }
+        
+        
+
+    }
+
+    
+
 
     public class SendMessageDto
     {
-        public Guid UserId {get; set;}
+        public Guid UserId { get; set; }
         public string Content { get; set; }
         public string UserName { get; set; }
         public bool Encrypted { get; set; }
@@ -174,9 +265,7 @@
         public Guid Id { get; set; }
         public string? UserName { get; set; }
         public string? Content { get; set; }
+        public bool IsFlagged { get; set; }
         public DateTime Sent { get; set; }
-        public string IdAsString { get; set; }
     }
-
-    
 }

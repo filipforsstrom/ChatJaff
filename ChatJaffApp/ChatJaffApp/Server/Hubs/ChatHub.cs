@@ -23,14 +23,14 @@ public class ChatHub : Hub
     private readonly static ConnectionMapping<Guid> _connections =
             new();
 
-    public ChatHub(IChatRoomRepository chatRoomRepository, IMessageRepository messageRepository, IChatKeyRepository chatKeyRepository, IMapper mapper)
+    public ChatHub(IChatRoomRepository chatRoomRepository, IMessageRepository messageRepository, IChatKeyRepository chatKeyRepository, IMapper mapper) 
     {
         _chatRoomRepository = chatRoomRepository;
         _messageRepository = messageRepository;
         _chatKeyRepository = chatKeyRepository;
         _mapper = mapper;
     }
-
+       
     public async Task SendMessageAsync(string message, Guid chatroomId)
     {
         if (Context.UserIdentifier == null)
@@ -44,6 +44,7 @@ public class ChatHub : Hub
             return;
         }
 
+            
         var deserializedMessage = JsonSerializer.Deserialize<MessageDto>(message);
         deserializedMessage.Sent = DateTime.UtcNow;
         deserializedMessage.ChatroomId = chatroomId;
@@ -56,7 +57,8 @@ public class ChatHub : Hub
             try
             {
                 var chatkey = await _chatKeyRepository.GetChatKeyAsync(chatroomId);
-                messageToStore.Content = EncryptMessage(messageToStore.Content, chatkey);
+                    EncryptionHelper encryptionHelper = new();
+                messageToStore.Content = encryptionHelper.EncryptMessage(messageToStore.Content, chatkey);
             }
             catch (Exception)
             {
@@ -89,21 +91,7 @@ public class ChatHub : Hub
 
         await Clients.Group(groupName).SendAsync("Send", $"{Context.ConnectionId} has left the group {groupName}.");
     }
-    //public async Task ChatNotificationAsync(string message, string receiverUserId, string senderUserId)
-    //{
-    //    await Clients.All.SendAsync("ReceiveChatNotification", message, receiverUserId, senderUserId);
-    //}
 
-    private string EncryptMessage(string message, string chatKey)
-    {
-        var keyStringArray = chatKey.Split(".");
-        string key = keyStringArray[0];
-
-        // skapa salt
-        byte[] salt = Encoding.Unicode.GetBytes(keyStringArray[1]);
-
-        return AesEncryptManager.Encrypt(message, key, salt);
-    }
     public override Task OnConnectedAsync()
     {
         if (Context.UserIdentifier == null)
