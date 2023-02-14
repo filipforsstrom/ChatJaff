@@ -15,11 +15,11 @@
 <div style="display: flex; padding: 10px;flex-direction: column; gap: 50px; box-shadow: rgba(0, 0, 0, 0.16) 0px 10px 36px 0px, rgba(0, 0, 0, 0.06) 0px 0px 0px 1px;">
     <div>
         <h4>User Info</h4>
-        <p>Username: @UserName</p>
+        <p id="current-username">Username: @UserName</p>
     </div>
 
     <div>
-        <h4>Change UserName</h4>
+        <h4>Change Username</h4>
         <EditForm Model="changeUserNameForm" OnValidSubmit="OnChangeUserNameSubmit" style="display: flex; gap: 20px; flex-direction: column; max-width: 300px;">
             <DataAnnotationsValidator />
             <ValidationSummary />
@@ -101,7 +101,9 @@
     {
         var state = await authenticationStateProvider.GetAuthenticationStateAsync();
         UserId = state.User.FindFirst(ClaimTypes.NameIdentifier).Value;
-        UserName = state.User.FindFirst(ClaimTypes.Name).Value;
+
+        var currentUser = await identityService.CurrentUserInfo();
+        UserName = currentUser.UserName;
     }
 
     public async Task onChangePasswordSubmit()
@@ -155,7 +157,8 @@
 
         if (changeUsernameResponse.Success)
         {
-            changeUserNameResponseMessage += " Please login again to see changes";
+            changeUserNameResponseMessage += " Please re-login to have up-to-date data.";
+            UserName = changeUserNameForm.NewUsername;
         }
     }
 
