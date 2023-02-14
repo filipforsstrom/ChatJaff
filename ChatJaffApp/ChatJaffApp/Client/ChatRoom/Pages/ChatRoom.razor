@@ -23,12 +23,12 @@
     <p>Your Messages:</p>
     @if (Messages != null)
     {
-        <ul id="messagesinchatlist"  style="list-style-type: none;">
+        <ul id="messagesinchatlist" style="list-style-type: none;">
 
 
-        @foreach (var message in Messages)
-        {
-               
+            @foreach (var message in Messages)
+            {
+
                 <li style="padding: 5px; background-color: @(MessageDto.UserName == message.UserName ? "green" : "cornflowerblue"); color: whitesmoke; margin-bottom: 5px; max-width: 300px;display: flex;
                     justify-content: center; align-items: center; flex-direction: column;">
                     <h4 id="messagecontent" style="font-size: 15px;">@message.UserName says @message.Content</h4>
@@ -38,12 +38,12 @@
                         {
                             <InputTextArea placeholder="@message.Content" maxlength="150" @bind-Value="editedMessage"></InputTextArea>
                             <button style="margin-top: 2px;" class="btn btn-info btn-sm" @onclick="() => sendEditMessage(message.Id)">Save</button>
-                        }  
+                        }
                     }
-          
 
-                <p id="messagetimestamp" style="font-size: 10px;">Sent: @message.Sent</p>
-                    @if(message.UserName == CurrentUserName)
+
+                    <p id="messagetimestamp" style="font-size: 10px;">Sent: @message.Sent</p>
+                    @if (message.UserName == CurrentUserName)
                     {
                         <button style="margin-top: 2px;" data-cy="delete-message-button" disabled="@messageEdited" class="btn btn-primary btn-sm" @onclick="() => deleteMessage(message.Id)">Delete</button>
                         <button style="margin-top: 2px;" data-cy="edit-message-button" disabled="@messageEdited" class="btn btn-info btn-sm" @onclick="() => editMessage()">Edit</button>
@@ -75,7 +75,7 @@
     private string? CurrentUserName { get; set; } = string.Empty;
     private HubConnection? hubConnection;
     public bool IsConnected => hubConnection.State == HubConnectionState.Connected;
-    private bool messageEdited { get; set; } = false; 
+    private bool messageEdited { get; set; } = false;
     private string editedMessage { get; set; } = string.Empty;
 
     protected override async Task OnInitializedAsync()
@@ -88,15 +88,6 @@
         CurrentUserName = state.User.FindFirst(ClaimTypes.Name).Value;
         Guid userId = Guid.Parse(userIdValue);
         var creatorId = CurrentChatRoom.CreatorId;
-
-        //ChatMemberViewModel currentUser = new()
-        //{
-        //    UserId = userId,
-        //    Username = CurrentUserName,
-        //};
-        //CurrentChatRoom.ChatMembers.Add(currentUser);
-
-
 
         if (CurrentChatRoom.ChatMembers.Any(chatmember => chatmember.UserId.Equals(userId)))
         {
@@ -164,7 +155,8 @@
             ErrorMessage = "Message can not be empty";
             //ta bort meddelande efteråt
         }
-        else {
+        else
+        {
 
             var messageModelToJson = JsonSerializer.Serialize(MessageDto);
             await hubConnection.SendAsync("SendMessageAsync", messageModelToJson, Id);
@@ -199,7 +191,7 @@
 
     public async void sendEditMessage(Guid messageId)
     {
-        EditMessageRequest newMessage = new() { MessageId = messageId , EditedMessage = editedMessage};
+        EditMessageRequest newMessage = new() { MessageId = messageId, EditedMessage = editedMessage };
 
         var response = await messageService.EditMessage(newMessage);
         if (response.Success)
@@ -209,12 +201,12 @@
             messageEdited = false;
             await InvokeAsync(StateHasChanged);
         }
-        
-        
+
+
 
     }
 
-    
+
 
 
     public class SendMessageDto
