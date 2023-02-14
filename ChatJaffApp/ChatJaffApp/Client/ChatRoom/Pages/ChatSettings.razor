@@ -12,9 +12,12 @@
 
 <div>
     <container>
-        <h2>
-            Members
-        </h2>
+        @if (ChatRoom.ChatName != null)
+        {
+            <h2 data-cy="chatroom-settings-title">
+                @ChatRoom.ChatName
+            </h2>
+        }
         <div class="card" style="width: 18rem; ">
             <div class="card-header">
                 Chat members
@@ -43,21 +46,18 @@
                 }
             </ul>
         </div>
-
-        <br><br>
-        <h2>Change chat name</h2>
-        <input type="text" />
-        <br><br>
+        
         <h2>Add Member</h2>
         <FindMemberForChat CurrentChatMembers="ChatMembers" OnFoundMember="HandleFoundMember"></FindMemberForChat>
 
         @if (!string.IsNullOrEmpty(Message))
         {
-            <p>@Message</p>
+            <p data-cy="chatsettings-error-message">@Message</p>
         }
 
         @if (IsModerator)
         {
+            <ChangeChatNameForm HandleClick="@ChangeChatName" />
             <button class="btn btn-danger" @onclick="() => OnDeleteChatRoom()">Delete Chat</button>
         }
     </container>
@@ -98,6 +98,11 @@
 
         ChatMembers.Remove(member);
 
+        if(!ChatMembers.Any(c => c.UserId == UserId))
+        {
+            navManager.NavigateTo("/chatrooms");
+        }
+
     }
 
     public async Task OnDeleteChatRoom()
@@ -134,5 +139,18 @@
         }
 
         ChatMembers.Add(memberToAddToChat);
+    }
+
+    public async Task ChangeChatName(string newName)
+    {
+        try
+        {
+            await chatRoomService.ChangeChatName(newName, Id);
+            ChatRoom.ChatName = newName;
+        }
+        catch (Exception ex)
+        {
+            Message = ex.Message;
+        }
     }
 }

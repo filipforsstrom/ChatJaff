@@ -8,6 +8,7 @@ namespace ChatJaffApp.Client.ChatRoom.Messages.Contracts
     {
         Task<ServiceResponseViewModel<string>> EditMessage(EditMessageRequest newMessage);
         Task<ServiceResponseViewModel<string>> DeleteMessage(Guid id);
+        Task<ServiceResponseViewModel<string>> FlagMessage(Guid messageId);
 
     }
 }

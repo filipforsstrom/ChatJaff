@@ -84,5 +84,28 @@ namespace ChatJaffApp.Server.ChatRoom.Repositories
             }
             return message;
         }
+
+        public async Task<bool> FlagMessage(Guid messageId)
+        {
+            try
+            {
+                var oldMessage = await GetMesssage(messageId);
+                oldMessage.IsFlagged = true;
+
+                _context.Update(oldMessage);
+                var result = await _context.SaveChangesAsync();
+
+                if (result ==null)
+                {
+                    return false;
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+
+        }
     }
 }

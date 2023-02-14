@@ -16,6 +16,10 @@
                 <InputText id="register-email" @bind-Value="register.Email" class="form-control" />
             </div>
             <div class="form-group">
+                <label>Phone Numbers</label>
+                <InputText id="register-phone" @bind-Value="register.PhoneNumber" class="form-control" />
+            </div>
+            <div class="form-group">
                 <label>Username</label>
                 <InputText id="register-username" @bind-Value="register.Username" class="form-control" />
             </div>
@@ -31,10 +35,47 @@
                 Register
             </button>
             <NavLink id="cancel-register-link" href="account/login" class="btn btn-link">Cancel</NavLink>
-
-           
+            <br />
+            
             <input id="agree-checkbox" type="checkbox" @bind-value="register.ConfirmUserTerms" />
-            <label>I agree to user terms</label>
+            <label>
+                I agree to <b @onclick="() => showUserTerms = !showUserTerms">user terms</b>
+            </label>
+            @if (showUserTerms)
+            {
+                <div>
+                    <h3>Terms of Use</h3>
+                    <p>
+                        # Användarvillkor
+
+                        1. Du ansvarar för allt innehåll som du publicerar eller delar på vår plattform. Du får inte publicera eller dela något olagligt.
+                        2. Vi förbehåller oss rätten att ta bort innehåll som vi anser vara olämpligt eller som bryter mot våra användarvillkor.
+                        3. Du måste vara minst 18 år för att använda vår app.
+                        4. Som användare är du skylldig att ge korrekt information vid registering. Som användare har du skylldighet att uppdatera om din personliga information ändras.
+                        5. Vi erhåller oss rätten att ta bort en användare som bryter mot vår användarvillkor.
+                        6. Du får inte hacka eller på annat sett försöka förstöra vår plattform.
+                        7. Vi kommer aldrig att sälja dina uppgifter till tredje part eller använda dem på ett sätt som strider mot vår sekretesspolicy.
+                        8. Vår app kan innehålla länkar till tredjepartsresurser som itne vi kontrollerar. Vi ansvarar inte för innehållet på dessa webbplatser.
+                        9. Vi arbetar ständigt med att förbättra säkerheten på vår app, men vi kan inte garantera att din information är helt säker. Du ansvarar för att skydda ditt eget konto genom att välja ett säkert lösenord och inte dela dina inloggningsuppgfiter med någon annan.
+                        10. Vår app och allt innehåll som tillhandahålls genom appen är vår egendom. Du får inte kopiera, ändra eller distribuera vårt innehåll utan vårt samtycke.
+                        11. Vår app gör inte anspråk på äganderätten till informationen som du skickar från ditt konto eller via våra tjänster. Du måste ha de nödvändiga rättigheterna till sådan information som du skickar från ditt konto eller via våran tjänst.
+                        12. Vi förbehåller oss rätten att uppdatera dessa användarvillkor när som helst. Om detta sker kommer du som användare bli informerad.
+                        
+                        # Sekretesspolicy
+
+                        Denna sekretesspolicy beskriver hur vi samlar in, använder och skyddar din personliga information. Genom att använda vår app godkänner du denna sekretesspolicy.
+
+                        1. Vi samlar in personlig information som namn och e-postadress när du registrerar dig. Vi samlar också in information om din aktivitet på appen (GÖR VI DETTA?)
+                        2. Vi kan dela din information om det krävs enligt lag eller för att skydda vår app.
+                        3. Vi förbehåller oss rätten att uppdatera dessa användarvillkor när som helst. Om detta sker kommer du som användare bli informerad.
+
+                        # Dina rättigheter
+                        Chatjaff gör inte anspråk på äganderätten till informationen som du skickar från ditt konto eller via våra tjänster. 
+                        Du måste ha de nödvändiga rättigheterna till sådan information som du skickar från ditt konto eller via våran tjänst.
+                    </p>
+                </div>
+            }
+                
         </EditForm>
         <p style="color:red">@errorMessage</p>
     </div>
@@ -43,6 +84,7 @@
 @code {
     private RegisterForm register = new();
     private string errorMessage = String.Empty;
+    private bool showUserTerms { get; set; } = false;
 
     private async Task HandleSubmit()
     {

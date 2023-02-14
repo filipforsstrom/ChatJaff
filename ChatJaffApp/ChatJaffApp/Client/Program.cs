@@ -1,4 +1,3 @@
-using Blazor.SubtleCrypto;
 using Blazored.LocalStorage;
 using ChatJaffApp.Client;
 using ChatJaffApp.Client.Account.Contracts;
@@ -24,11 +23,6 @@ builder.Services.AddScoped<ICreateChatService, CreateChatService>();
 builder.Services.AddScoped<IMemberService, MemberService>();
 builder.Services.AddScoped<IChatRoomsService, ChatRoomsService>();
 builder.Services.AddScoped<IMessageService, MessageService>();
-
-
-builder.Services.AddSubtleCrypto(options =>
-    options.Key = "OURSUPERDUPERSECRETKEYHIDDENIN�STERV�RN");
-//builder.Services.AddOptions();
 
 builder.Services.AddScoped<CustomAuthStateProvider>();
 builder.Services.AddScoped<AuthenticationStateProvider>(s => s.GetRequiredService<CustomAuthStateProvider>());

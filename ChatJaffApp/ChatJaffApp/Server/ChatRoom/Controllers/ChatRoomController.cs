@@ -147,7 +147,7 @@ namespace ChatJaffApp.Server.ChatRoom.Controllers
             {
                 EncryptionHelper encryptionHelper = new();
                 var dbKey = encryptionHelper.GenerateDbKey();
-                _chatKeyRepository.AddChatKeyAsync(result, dbKey);
+                await _chatKeyRepository.AddChatKeyAsync(result, dbKey);
             }
 
             return Ok(result);
@@ -218,6 +218,31 @@ namespace ChatJaffApp.Server.ChatRoom.Controllers
                 return NotFound(ex.Message);
             }
             catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+        [Authorize]
+        [HttpPut("{id:guid}")]
+        public async Task<IActionResult> UpdateChatroom(Guid id, UpdateChatroomDto chatroomDto)
+        {
+            try
+            {
+                var chatroomInDb = await _chatRoomRepository.GetChatRoomAsync(id);
+                if (chatroomInDb != null)
+                {
+                    chatroomInDb.ChatName = chatroomDto.Name;
+                    await _chatRoomRepository.UpdateChatRoomAsync(chatroomInDb);
+                    
+                    return Ok();
+                }
+                else
+                {
+                    return BadRequest("Invalid Arguments");
+                }
+            }
+            catch (Exception)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }

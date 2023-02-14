@@ -21,10 +21,10 @@ namespace ChatJaffApp.Server.ChatRoom.Encryption
 
         public string GenerateDbKey() 
         {
-            var firstPart=RandomKey();
-            var secondPart=RandomKey();
-            var key = $"{firstPart}.{secondPart}";
-            return key;
+            var key=RandomKey();
+            var salt=RandomKey();
+            var keyAndSalt = $"{key}.{salt}";
+            return keyAndSalt;
 
         
         }
