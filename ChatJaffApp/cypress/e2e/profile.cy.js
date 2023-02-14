@@ -11,21 +11,19 @@ describe("Profile", () => {
   });
 
   it("shows profile visibility", function () {
-    cy.contains("User Info");
+    cy.contains("Profile");
   });
 
   it("fails to change username when already exists", function () {
-    cy.get("#current-username").contains("member2")
+    cy.contains("Change Username")
     cy.get("#new-username-field").type("member1")
     cy.get("#change-username-button").click();
     cy.contains("Failed to change username.")
   })
 
   it("change username", function () {
-    cy.get("#current-username").contains("member2")
     cy.get("#new-username-field").type("member3")
     cy.get("#change-username-button").click()
-    cy.get("#current-username").contains("member3")
     cy.contains("Username change success!")
   })
 
@@ -64,7 +62,7 @@ describe("delete account", () => {
     cy.get("#password").type("Member123!");
     cy.get("#login-button").click();
     cy.contains("Profile").click();
-    cy.contains("User Info");
+    cy.contains("Profile");
   });
 
   it("Deletes the account", function () {

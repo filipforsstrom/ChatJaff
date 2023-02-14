@@ -14,11 +14,7 @@
 
 <div style="display: flex; padding: 10px;flex-direction: column; gap: 50px; box-shadow: rgba(0, 0, 0, 0.16) 0px 10px 36px 0px, rgba(0, 0, 0, 0.06) 0px 0px 0px 1px;">
     <div>
-        <h4>User Info</h4>
-        <p id="current-username">Username: @UserName</p>
-    </div>
-
-    <div>
+        <h4>Profile</h4>
         <h4>Change Username</h4>
         <EditForm Model="changeUserNameForm" OnValidSubmit="OnChangeUserNameSubmit" style="display: flex; gap: 20px; flex-direction: column; max-width: 300px;">
             <DataAnnotationsValidator />
@@ -158,7 +154,6 @@
         if (changeUsernameResponse.Success)
         {
             changeUserNameResponseMessage += " Please re-login to have up-to-date data.";
-            UserName = changeUserNameForm.NewUsername;
         }
     }
 
