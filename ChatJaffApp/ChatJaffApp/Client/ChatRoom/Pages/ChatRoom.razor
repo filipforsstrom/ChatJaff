@@ -73,7 +73,7 @@
     private List<ReceiveMessageDto> Messages { get; set; } = new();
     private bool Encrypted { get; set; } = false;
     public GetChatRoomDto CurrentChatRoom { get; set; } = new();
-    private EncryptionManager KeeperOfSecrets = new();
+   
 
     private string? CurrentUserName { get; set; } = string.Empty;
     private HubConnection? HubConnection;
