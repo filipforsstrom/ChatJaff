@@ -213,7 +213,7 @@ namespace ChatJaffApp.Server.Identity.Controller
 
             try
             {
-                if (userId == id.ToString())
+                if (userId.ToLower() == id.ToString().ToLower())
                 {
                     var userToDelete = await _signInManager.UserManager.FindByIdAsync(userId);
                     if (userToDelete != null)
