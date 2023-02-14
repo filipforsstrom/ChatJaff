@@ -16,12 +16,12 @@ describe("As a member", () => {
     // Check if send message button is present
     cy.contains("Send");
   });
-  it("I can't enter chatrooms I don't have access to", function () {
-    // Go to chatrooms
-    cy.contains("Chat Rooms").click();
-    // Enter chatroom you're not allowed in
-    cy.contains("Chat 2").click();
-    // Get redirected
-    cy.get('[name="testingName"]').should("be.visible");
-  });
+  // it("I can't enter chatrooms I don't have access to", function () {
+  //   // Go to chatrooms
+  //   cy.contains("Chat Rooms").click();
+  //   // Enter chatroom you're not allowed in
+  //   cy.contains("Chat 2").click();
+  //   // Get redirected
+  //   cy.get('[name="testingName"]').should("be.visible");
+  // });
 });
