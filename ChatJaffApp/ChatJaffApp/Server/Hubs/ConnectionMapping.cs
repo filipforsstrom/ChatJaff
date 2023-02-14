@@ -3,18 +3,12 @@ using System.Linq;
 
 namespace ChatJaffApp.Server.Hubs;
 
-public class ConnectionMapping<T>
+public class ConnectionMapping<T> where T : notnull
 {
     private readonly Dictionary<T, Connections> _connections =
         new();
 
-    public int Count
-    {
-        get
-        {
-            return _connections.Count;
-        }
-    }
+    public int Count => _connections.Count;
 
     public class Connections
     {
@@ -39,9 +33,11 @@ public class ConnectionMapping<T>
         {
             if (!_connections.TryGetValue(key, out Connections connections))
             {
-                connections = new Connections();
-                connections.ConnectionId = new HashSet<string>();
-                connections.ChatRoomIds = new List<Guid>();
+                connections = new Connections
+                {
+                    ConnectionId = new HashSet<string>(),
+                    ChatRoomIds = new List<Guid>()
+                };
                 _connections.Add(key, connections);
             }
 
