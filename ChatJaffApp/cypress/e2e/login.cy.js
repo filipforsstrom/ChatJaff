@@ -1,12 +1,12 @@
 const baseUrl = "http://localhost:5172/";
 
-
 describe("Login", () => {
   before(function () {
     cy.visit(baseUrl);
     cy.get('[data-cy="reglink"]').click();
 
     cy.get("#register-email").type("member2000@gmail.com");
+    cy.get("#register-phone").type("+4670486792");
     cy.get("#register-username").type("sandy");
     cy.get("#register-password").type("Member123!");
     cy.get("#register-confirmed-password").type("Member123!");
@@ -43,6 +43,7 @@ describe("Login", () => {
     cy.get('[data-cy="reglink"]').click();
 
     cy.get("#register-email").type("member391023@gmail.com");
+    cy.get("#register-phone").type("+4670486792");
     cy.get("#register-username").type("megan");
     cy.get("#register-password").type("Member123!");
     cy.get("#register-confirmed-password").type("Member123!");
@@ -52,14 +53,12 @@ describe("Login", () => {
     cy.get("#email").type("member391023@gmail.com");
     cy.get("#password").type("member2");
 
-
-
     for (let i = 0; i < 4; i++) {
-      cy.get("#login-button").click().then(btn => cy.wait(1000))
-
+      cy.get("#login-button")
+        .click()
+        .then((btn) => cy.wait(1000));
     }
 
-    cy.contains("User is locked out")
+    cy.contains("User is locked out");
   });
-
 });
