@@ -33,7 +33,7 @@
                 <label>Validate Password</label>
                 <InputText id="register-confirmed-password" @bind-Value="register.ValidatePassword" type="password" class="form-control" />
             </div>
-            <button id="register-button" class="btn btn-primary mt-2">
+            <button style="margin-bottom: 5px" id="register-button" class="btn btn-primary mt-2">
                 Register
             </button>
             <NavLink id="cancel-register-link" href="account/login" class="btn btn-link">Cancel</NavLink>
@@ -46,32 +46,53 @@
             @if (showUserTerms)
             {
                 <div>
-                    <h3>Terms of Use</h3>
+                    <h3 style="margin-top:20px">Terms of Use</h3>
                     <p>
-                        # Användarvillkor
-
-                        1. Du ansvarar för allt innehåll som du publicerar eller delar på vår plattform. Du får inte publicera eller dela något olagligt.
-                        2. Vi förbehåller oss rätten att ta bort innehåll som vi anser vara olämpligt eller som bryter mot våra användarvillkor.
-                        3. Du måste vara minst 18 år för att använda vår app.
-                        4. Som användare är du skylldig att ge korrekt information vid registering. Som användare har du skylldighet att uppdatera om din personliga information ändras.
-                        5. Vi erhåller oss rätten att ta bort en användare som bryter mot vår användarvillkor.
-                        6. Du får inte hacka eller på annat sett försöka förstöra vår plattform.
-                        7. Vi kommer aldrig att sälja dina uppgifter till tredje part eller använda dem på ett sätt som strider mot vår sekretesspolicy.
-                        8. Vår app kan innehålla länkar till tredjepartsresurser som itne vi kontrollerar. Vi ansvarar inte för innehållet på dessa webbplatser.
-                        9. Vi arbetar ständigt med att förbättra säkerheten på vår app, men vi kan inte garantera att din information är helt säker. Du ansvarar för att skydda ditt eget konto genom att välja ett säkert lösenord och inte dela dina inloggningsuppgfiter med någon annan.
-                        10. Vår app och allt innehåll som tillhandahålls genom appen är vår egendom. Du får inte kopiera, ändra eller distribuera vårt innehåll utan vårt samtycke.
-                        11. Vår app gör inte anspråk på äganderätten till informationen som du skickar från ditt konto eller via våra tjänster. Du måste ha de nödvändiga rättigheterna till sådan information som du skickar från ditt konto eller via våran tjänst.
-                        12. Vi förbehåller oss rätten att uppdatera dessa användarvillkor när som helst. Om detta sker kommer du som användare bli informerad.
+                        <h5>Användarvillkor:</h5>
                         
-                        # Sekretesspolicy
+                        1. Du ansvarar för allt innehåll som du publicerar eller delar på vår plattform. Du får inte publicera eller dela något olagligt.
+                        <br>
+                        2. Vi förbehåller oss rätten att ta bort innehåll som vi anser vara olämpligt eller som bryter mot våra användarvillkor.
+                        <br>
+                        3. Du måste vara minst 18 år för att använda vår app.
+                        <br>
+                        4. Som användare är du skyldig att ge korrekt information vid registering. Som användare har du skylldighet att uppdatera om din personliga information ändras.
+                        <br>
+                        5. Vi erhåller oss rätten att ta bort en användare som bryter mot vår användarvillkor.
+                        <br>
+                        6. Du får inte hacka eller på annat sett försöka förstöra vår plattform.
+                        <br>
+                        7. Vi kommer aldrig att sälja dina uppgifter till tredje part eller använda dem på ett sätt som strider mot vår sekretesspolicy.
+                        <br>
+                        8. Vår app kan innehålla länkar till tredjepartsresurser som inte vi kontrollerar. Vi ansvarar inte för innehållet på dessa webbplatser.
+                        <br>
+                        9. Vi arbetar ständigt med att förbättra säkerheten på vår app, men vi kan inte garantera att din information är helt säker. Du ansvarar för att skydda ditt eget konto genom att välja ett säkert lösenord och inte dela dina inloggningsuppgfiter med någon annan.
+                        <br>
+                        10. Vår app och allt innehåll som tillhandahålls genom appen är vår egendom. Du får inte kopiera, ändra eller distribuera vårt innehåll utan vårt samtycke.
+                        <br>
+                        11. Vår app gör inte anspråk på äganderätten till informationen som du skickar från ditt konto eller via våra tjänster. Du måste ha de nödvändiga rättigheterna till sådan information som du skickar från ditt konto eller via våran tjänst.
+                        <br>
+                        12. Vi förbehåller oss rätten att uppdatera dessa användarvillkor när som helst. Om detta sker kommer du som användare bli informerad.
+                        <br>
+                        13. Dina meddelanden kommer att sparas 30 dagar efter att de tagits bort från chatten. 
+                        <br>
+                        14.Du kommer inte att använda (eller hjälpa andra att använda) våra tjänster på sätt som: <br>
+                        Är olagliga, obscena, ärekränkande, hotfulla, skadliga, trakasserande, hatiska, rasmässigt eller etniskt kränkande,
+                        <br><br>
 
+                        <h5>Sekretesspolicy:</h5>
+                        
                         Denna sekretesspolicy beskriver hur vi samlar in, använder och skyddar din personliga information. Genom att använda vår app godkänner du denna sekretesspolicy.
-
-                        1. Vi samlar in personlig information som namn och e-postadress när du registrerar dig. Vi samlar också in information om din aktivitet på appen (GÖR VI DETTA?)
+                        <br><br>
+                        1. Vi samlar in personlig information som namn och e-postadress när du registrerar dig. Vi samlar också in information om din aktivitet på appen.
+                        <br>
                         2. Vi kan dela din information om det krävs enligt lag eller för att skydda vår app.
+                        <br>
                         3. Vi förbehåller oss rätten att uppdatera dessa användarvillkor när som helst. Om detta sker kommer du som användare bli informerad.
+                        <br><br>
 
-                        # Dina rättigheter
+                        <h5>Dina rättigheter:</h5>
+                        
                         Chatjaff gör inte anspråk på äganderätten till informationen som du skickar från ditt konto eller via våra tjänster. 
                         Du måste ha de nödvändiga rättigheterna till sådan information som du skickar från ditt konto eller via våran tjänst.
                     </p>
